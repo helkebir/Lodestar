@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "ls.proto.eigen.proto";
+
+package ls.proto.systems;
+
+message StateSpace {
+  optional eigen.MatrixXd A = 1;
+  optional eigen.MatrixXd B = 2;
+  optional eigen.MatrixXd C = 3;
+  optional eigen.MatrixXd D = 4;
+
+  optional bool isDiscrete = 5;
+  optional double dt = 6;
+}
+
+message TransferFunction {
+  optional eigen.VectorXd num = 1;
+  optional eigen.VectorXd den = 2;
+}
