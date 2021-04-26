@@ -31,8 +31,8 @@ namespace ls { namespace systems {
 
         StateSpace toStateSpace() const;
 
-        DiscreteStateSpace toDiscreteStateSpace(double dt) const;
-        DiscreteStateSpace toDiscreteStateSpace(double dt, double alpha) const;
+        StateSpace toDiscreteStateSpace(double dt) const;
+        StateSpace toDiscreteStateSpace(double dt, double alpha) const;
 
         Eigen::MatrixXd num, den;
     };

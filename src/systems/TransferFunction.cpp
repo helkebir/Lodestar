@@ -113,13 +113,13 @@ ls::systems::TransferFunction::toStateSpace() const
     return StateSpace(A, B, C, D);
 }
 
-ls::systems::DiscreteStateSpace
+ls::systems::StateSpace
 ls::systems::TransferFunction::toDiscreteStateSpace(double dt) const
 {
     return ls::analysis::BilinearTransformation::c2dBwdDiff(toStateSpace(), dt);
 }
 
-ls::systems::DiscreteStateSpace
+ls::systems::StateSpace
 ls::systems::TransferFunction::toDiscreteStateSpace(double dt,
                                                     double alpha) const
 {
