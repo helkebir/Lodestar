@@ -8,9 +8,9 @@ template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advance()
 {
     if (input != nullptr) {
-        *state = system->A * (*state) + system->B * (*input);
+        *state = system->getA() * (*state) + system->getB() * (*input);
     } else {
-        *state = system->A * (*state);
+        *state = system->getA() * (*state);
     }
 
     time += system->getSamplingPeriod();
@@ -20,7 +20,7 @@ template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advance(
         Eigen::VectorXd *control)
 {
-    *state = system->A * (*state) + system->B * (*control);
+    *state = system->getA() * (*state) + system->getB() * (*control);
 
     time = system->getSamplingPeriod();
 }
@@ -28,7 +28,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advance(
 template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advanceFree()
 {
-    *state = system->A * (*state);
+    *state = system->getA() * (*state);
 
     time += system->getSamplingPeriod();
 }
@@ -36,7 +36,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advanceFree()
 template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advanceForced()
 {
-    *state = system->A * (*state) + system->B * (*input);
+    *state = system->getA() * (*state) + system->getB() * (*input);
 
     time += system->getSamplingPeriod();
 }
@@ -45,7 +45,7 @@ template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advanceForced(
         Eigen::VectorXd *control)
 {
-    *state = system->A * (*state) + system->B * (*control);
+    *state = system->getA() * (*state) + system->getB() * (*control);
 
     time += system->getSamplingPeriod();
 }
@@ -53,10 +53,10 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace>::advanceForced(
 template<>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace>::initialize()
 {
-    state->conservativeResize(system->A.rows());
+    state->conservativeResize(system->getA().rows());
 
     if (input == nullptr)
         input = new Eigen::VectorXd;
 
-    input->conservativeResize(system->B.cols());
+    input->conservativeResize(system->getB().cols());
 }

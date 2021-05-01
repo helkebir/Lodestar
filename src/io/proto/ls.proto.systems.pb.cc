@@ -118,8 +118,10 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ls_2ep
   schemas, file_default_instances, TableStruct_ls_2eproto_2esystems_2eproto::offsets,
   file_level_metadata_ls_2eproto_2esystems_2eproto, file_level_enum_descriptors_ls_2eproto_2esystems_2eproto, file_level_service_descriptors_ls_2eproto_2esystems_2eproto,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_ls_2eproto_2esystems_2eproto_getter() {
-  return &descriptor_table_ls_2eproto_2esystems_2eproto;
+PROTOBUF_ATTRIBUTE_WEAK ::PROTOBUF_NAMESPACE_ID::Metadata
+descriptor_table_ls_2eproto_2esystems_2eproto_metadata_getter(int index) {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_ls_2eproto_2esystems_2eproto);
+  return descriptor_table_ls_2eproto_2esystems_2eproto.file_level_metadata[index];
 }
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -174,19 +176,31 @@ StateSpace::_Internal::d(const StateSpace* msg) {
   return *msg->d_;
 }
 void StateSpace::clear_a() {
-  if (a_ != nullptr) a_->Clear();
+  if (GetArena() == nullptr && a_ != nullptr) {
+    delete a_;
+  }
+  a_ = nullptr;
   _has_bits_[0] &= ~0x00000001u;
 }
 void StateSpace::clear_b() {
-  if (b_ != nullptr) b_->Clear();
+  if (GetArena() == nullptr && b_ != nullptr) {
+    delete b_;
+  }
+  b_ = nullptr;
   _has_bits_[0] &= ~0x00000002u;
 }
 void StateSpace::clear_c() {
-  if (c_ != nullptr) c_->Clear();
+  if (GetArena() == nullptr && c_ != nullptr) {
+    delete c_;
+  }
+  c_ = nullptr;
   _has_bits_[0] &= ~0x00000004u;
 }
 void StateSpace::clear_d() {
-  if (d_ != nullptr) d_->Clear();
+  if (GetArena() == nullptr && d_ != nullptr) {
+    delete d_;
+  }
+  d_ = nullptr;
   _has_bits_[0] &= ~0x00000008u;
 }
 StateSpace::StateSpace(::PROTOBUF_NAMESPACE_ID::Arena* arena)
@@ -265,20 +279,28 @@ void StateSpace::Clear() {
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(a_ != nullptr);
-      a_->Clear();
+      if (GetArena() == nullptr && a_ != nullptr) {
+        delete a_;
+      }
+      a_ = nullptr;
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(b_ != nullptr);
-      b_->Clear();
+      if (GetArena() == nullptr && b_ != nullptr) {
+        delete b_;
+      }
+      b_ = nullptr;
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(c_ != nullptr);
-      c_->Clear();
+      if (GetArena() == nullptr && c_ != nullptr) {
+        delete c_;
+      }
+      c_ = nullptr;
     }
     if (cached_has_bits & 0x00000008u) {
-      GOOGLE_DCHECK(d_ != nullptr);
-      d_->Clear();
+      if (GetArena() == nullptr && d_ != nullptr) {
+        delete d_;
+      }
+      d_ = nullptr;
     }
   }
   if (cached_has_bits & 0x00000030u) {
@@ -296,36 +318,37 @@ const char* StateSpace::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
-      // optional .ls.proto.eigen.MatrixXd A = 1;
+      // .ls.proto.eigen.MatrixXd A = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_a(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional .ls.proto.eigen.MatrixXd B = 2;
+      // .ls.proto.eigen.MatrixXd B = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_b(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional .ls.proto.eigen.MatrixXd C = 3;
+      // .ls.proto.eigen.MatrixXd C = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_c(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional .ls.proto.eigen.MatrixXd D = 4;
+      // .ls.proto.eigen.MatrixXd D = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_d(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional bool isDiscrete = 5;
+      // bool isDiscrete = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
           _Internal::set_has_isdiscrete(&has_bits);
@@ -333,7 +356,7 @@ const char* StateSpace::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional double dt = 6;
+      // double dt = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 49)) {
           _Internal::set_has_dt(&has_bits);
@@ -343,8 +366,7 @@ const char* StateSpace::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         continue;
       default: {
       handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
+        if ((tag & 7) == 4 || tag == 0) {
           ctx->SetLastTag(tag);
           goto success;
         }
@@ -371,7 +393,7 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // optional .ls.proto.eigen.MatrixXd A = 1;
+  // .ls.proto.eigen.MatrixXd A = 1;
   if (_internal_has_a()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -379,7 +401,7 @@ failure:
         1, _Internal::a(this), target, stream);
   }
 
-  // optional .ls.proto.eigen.MatrixXd B = 2;
+  // .ls.proto.eigen.MatrixXd B = 2;
   if (_internal_has_b()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -387,7 +409,7 @@ failure:
         2, _Internal::b(this), target, stream);
   }
 
-  // optional .ls.proto.eigen.MatrixXd C = 3;
+  // .ls.proto.eigen.MatrixXd C = 3;
   if (_internal_has_c()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -395,7 +417,7 @@ failure:
         3, _Internal::c(this), target, stream);
   }
 
-  // optional .ls.proto.eigen.MatrixXd D = 4;
+  // .ls.proto.eigen.MatrixXd D = 4;
   if (_internal_has_d()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -403,13 +425,13 @@ failure:
         4, _Internal::d(this), target, stream);
   }
 
-  // optional bool isDiscrete = 5;
+  // bool isDiscrete = 5;
   if (_internal_has_isdiscrete()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_isdiscrete(), target);
   }
 
-  // optional double dt = 6;
+  // double dt = 6;
   if (_internal_has_dt()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(6, this->_internal_dt(), target);
@@ -433,40 +455,40 @@ size_t StateSpace::ByteSizeLong() const {
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x0000003fu) {
-    // optional .ls.proto.eigen.MatrixXd A = 1;
+    // .ls.proto.eigen.MatrixXd A = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *a_);
     }
 
-    // optional .ls.proto.eigen.MatrixXd B = 2;
+    // .ls.proto.eigen.MatrixXd B = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *b_);
     }
 
-    // optional .ls.proto.eigen.MatrixXd C = 3;
+    // .ls.proto.eigen.MatrixXd C = 3;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *c_);
     }
 
-    // optional .ls.proto.eigen.MatrixXd D = 4;
+    // .ls.proto.eigen.MatrixXd D = 4;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *d_);
     }
 
-    // optional double dt = 6;
+    // double dt = 6;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 8;
     }
 
-    // optional bool isDiscrete = 5;
+    // bool isDiscrete = 5;
     if (cached_has_bits & 0x00000020u) {
       total_size += 1 + 1;
     }
@@ -547,7 +569,7 @@ bool StateSpace::IsInitialized() const {
 
 void StateSpace::InternalSwap(StateSpace* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(StateSpace, isdiscrete_)
@@ -558,10 +580,9 @@ void StateSpace::InternalSwap(StateSpace* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StateSpace::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_ls_2eproto_2esystems_2eproto_getter, &descriptor_table_ls_2eproto_2esystems_2eproto_once,
-      file_level_metadata_ls_2eproto_2esystems_2eproto[0]);
+  return GetMetadataStatic();
 }
+
 
 // ===================================================================
 
@@ -587,11 +608,17 @@ TransferFunction::_Internal::den(const TransferFunction* msg) {
   return *msg->den_;
 }
 void TransferFunction::clear_num() {
-  if (num_ != nullptr) num_->Clear();
+  if (GetArena() == nullptr && num_ != nullptr) {
+    delete num_;
+  }
+  num_ = nullptr;
   _has_bits_[0] &= ~0x00000001u;
 }
 void TransferFunction::clear_den() {
-  if (den_ != nullptr) den_->Clear();
+  if (GetArena() == nullptr && den_ != nullptr) {
+    delete den_;
+  }
+  den_ = nullptr;
   _has_bits_[0] &= ~0x00000002u;
 }
 TransferFunction::TransferFunction(::PROTOBUF_NAMESPACE_ID::Arena* arena)
@@ -655,12 +682,16 @@ void TransferFunction::Clear() {
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(num_ != nullptr);
-      num_->Clear();
+      if (GetArena() == nullptr && num_ != nullptr) {
+        delete num_;
+      }
+      num_ = nullptr;
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(den_ != nullptr);
-      den_->Clear();
+      if (GetArena() == nullptr && den_ != nullptr) {
+        delete den_;
+      }
+      den_ = nullptr;
     }
   }
   _has_bits_.Clear();
@@ -673,15 +704,16 @@ const char* TransferFunction::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
-      // optional .ls.proto.eigen.VectorXd num = 1;
+      // .ls.proto.eigen.VectorXd num = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_num(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional .ls.proto.eigen.VectorXd den = 2;
+      // .ls.proto.eigen.VectorXd den = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_den(), ptr);
@@ -690,8 +722,7 @@ const char* TransferFunction::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
         continue;
       default: {
       handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
+        if ((tag & 7) == 4 || tag == 0) {
           ctx->SetLastTag(tag);
           goto success;
         }
@@ -718,7 +749,7 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // optional .ls.proto.eigen.VectorXd num = 1;
+  // .ls.proto.eigen.VectorXd num = 1;
   if (_internal_has_num()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -726,7 +757,7 @@ failure:
         1, _Internal::num(this), target, stream);
   }
 
-  // optional .ls.proto.eigen.VectorXd den = 2;
+  // .ls.proto.eigen.VectorXd den = 2;
   if (_internal_has_den()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -752,14 +783,14 @@ size_t TransferFunction::ByteSizeLong() const {
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    // optional .ls.proto.eigen.VectorXd num = 1;
+    // .ls.proto.eigen.VectorXd num = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *num_);
     }
 
-    // optional .ls.proto.eigen.VectorXd den = 2;
+    // .ls.proto.eigen.VectorXd den = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -829,7 +860,7 @@ bool TransferFunction::IsInitialized() const {
 
 void TransferFunction::InternalSwap(TransferFunction* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(TransferFunction, den_)
@@ -840,10 +871,9 @@ void TransferFunction::InternalSwap(TransferFunction* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TransferFunction::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
-      &descriptor_table_ls_2eproto_2esystems_2eproto_getter, &descriptor_table_ls_2eproto_2esystems_2eproto_once,
-      file_level_metadata_ls_2eproto_2esystems_2eproto[1]);
+  return GetMetadataStatic();
 }
+
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace systems

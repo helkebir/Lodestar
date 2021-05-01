@@ -12,16 +12,21 @@ ls::analysis::BilinearTransformation::c2d(const systems::StateSpace &lti,
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    auto I = Eigen::MatrixXd::Identity(lti.A.rows(), lti.A.rows());
+    auto ltiA = lti.getA();
+    auto ltiB = lti.getB();
+    auto ltiC = lti.getC();
+    auto ltiD = lti.getD();
 
-    auto IMAC = I - alpha * dt * lti.A;
-    auto IMAC2 = I - (1 - alpha) * dt * lti.A;
+    auto I = Eigen::MatrixXd::Identity(ltiA.rows(), ltiA.rows());
+
+    auto IMAC = I - alpha * dt * ltiA;
+    auto IMAC2 = I - (1 - alpha) * dt * ltiA;
 
     Eigen::MatrixXd AD = IMAC.colPivHouseholderQr().solve(IMAC2);
-    Eigen::MatrixXd BD = IMAC.colPivHouseholderQr().solve(dt * lti.B);
+    Eigen::MatrixXd BD = IMAC.colPivHouseholderQr().solve(dt * ltiB);
     Eigen::MatrixXd CD = IMAC.transpose().colPivHouseholderQr().solve(
-            lti.C.transpose()).transpose();
-    Eigen::MatrixXd DD = lti.D + alpha * (lti.C * BD);
+            ltiC.transpose()).transpose();
+    Eigen::MatrixXd DD = ltiD + alpha * (ltiC * BD);
 
     auto dlti = systems::StateSpace(AD, BD, CD, DD);
     dlti.setSamplingPeriod(dt);
@@ -37,16 +42,21 @@ ls::analysis::BilinearTransformation::d2c(const systems::StateSpace &lti,
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    auto I = Eigen::MatrixXd::Identity(lti.A.rows(), lti.A.rows());
+    auto ltiA = lti.getA();
+    auto ltiB = lti.getB();
+    auto ltiC = lti.getC();
+    auto ltiD = lti.getD();
 
-    auto ATMI = lti.A.transpose() - I;
-    auto ATPI = alpha * dt * lti.A.transpose() + (1 - alpha) * dt * I;
+    auto I = Eigen::MatrixXd::Identity(ltiA.rows(), ltiA.rows());
+
+    auto ATMI = ltiA.transpose() - I;
+    auto ATPI = alpha * dt * ltiA.transpose() + (1 - alpha) * dt * I;
     Eigen::MatrixXd AC = ATPI.colPivHouseholderQr().solve(ATMI).transpose();
 
     auto IMAC = I - alpha * dt * AC;
-    Eigen::MatrixXd BC = IMAC * lti.B / dt;
-    Eigen::MatrixXd CC = lti.C * IMAC;
-    Eigen::MatrixXd DC = lti.D - alpha * (CC * lti.B);
+    Eigen::MatrixXd BC = IMAC * ltiB / dt;
+    Eigen::MatrixXd CC = ltiC * IMAC;
+    Eigen::MatrixXd DC = ltiD - alpha * (CC * ltiB);
 
     auto clti = systems::StateSpace(AC, BC, CC, DC);
 

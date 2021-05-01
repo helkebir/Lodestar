@@ -53,6 +53,7 @@ struct TableStruct_ls_2eproto_2eeigen_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ls_2eproto_2eeigen_2eproto;
+::PROTOBUF_NAMESPACE_ID::Metadata descriptor_table_ls_2eproto_2eeigen_2eproto_metadata_getter(int index);
 namespace ls {
 namespace proto {
 namespace eigen {
@@ -79,7 +80,7 @@ class VectorXd PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ls.proto.eigen.VectorXd) */ {
  public:
   inline VectorXd() : VectorXd(nullptr) {}
-  ~VectorXd() override;
+  virtual ~VectorXd();
   explicit constexpr VectorXd(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   VectorXd(const VectorXd& from);
@@ -105,10 +106,10 @@ class VectorXd PROTOBUF_FINAL :
     return GetDescriptor();
   }
   static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
+    return GetMetadataStatic().descriptor;
   }
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
+    return GetMetadataStatic().reflection;
   }
   static const VectorXd& default_instance() {
     return *internal_default_instance();
@@ -176,6 +177,12 @@ class VectorXd PROTOBUF_FINAL :
   public:
 
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    return ::descriptor_table_ls_2eproto_2eeigen_2eproto_metadata_getter(kIndexInFileMessages);
+  }
+
+  public:
 
   // nested types ----------------------------------------------------
 
@@ -207,7 +214,7 @@ class VectorXd PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
       mutable_coeff();
 
-  // optional int32 size = 2;
+  // int32 size = 2;
   bool has_size() const;
   private:
   bool _internal_has_size() const;
@@ -230,6 +237,7 @@ class VectorXd PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< double > coeff_;
+  mutable std::atomic<int> _coeff_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::int32 size_;
   friend struct ::TableStruct_ls_2eproto_2eeigen_2eproto;
 };
@@ -239,7 +247,7 @@ class MatrixXd PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ls.proto.eigen.MatrixXd) */ {
  public:
   inline MatrixXd() : MatrixXd(nullptr) {}
-  ~MatrixXd() override;
+  virtual ~MatrixXd();
   explicit constexpr MatrixXd(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   MatrixXd(const MatrixXd& from);
@@ -265,10 +273,10 @@ class MatrixXd PROTOBUF_FINAL :
     return GetDescriptor();
   }
   static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
+    return GetMetadataStatic().descriptor;
   }
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
+    return GetMetadataStatic().reflection;
   }
   static const MatrixXd& default_instance() {
     return *internal_default_instance();
@@ -336,6 +344,12 @@ class MatrixXd PROTOBUF_FINAL :
   public:
 
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    return ::descriptor_table_ls_2eproto_2eeigen_2eproto_metadata_getter(kIndexInFileMessages);
+  }
+
+  public:
 
   // nested types ----------------------------------------------------
 
@@ -364,7 +378,7 @@ class MatrixXd PROTOBUF_FINAL :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::eigen::VectorXd >&
       row() const;
 
-  // optional int32 rows = 2;
+  // int32 rows = 2;
   bool has_rows() const;
   private:
   bool _internal_has_rows() const;
@@ -377,7 +391,7 @@ class MatrixXd PROTOBUF_FINAL :
   void _internal_set_rows(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // optional int32 cols = 3;
+  // int32 cols = 3;
   bool has_cols() const;
   private:
   bool _internal_has_cols() const;
@@ -462,7 +476,7 @@ VectorXd::mutable_coeff() {
   return _internal_mutable_coeff();
 }
 
-// optional int32 size = 2;
+// int32 size = 2;
 inline bool VectorXd::_internal_has_size() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -533,7 +547,7 @@ MatrixXd::row() const {
   return row_;
 }
 
-// optional int32 rows = 2;
+// int32 rows = 2;
 inline bool MatrixXd::_internal_has_rows() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -561,7 +575,7 @@ inline void MatrixXd::set_rows(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:ls.proto.eigen.MatrixXd.rows)
 }
 
-// optional int32 cols = 3;
+// int32 cols = 3;
 inline bool MatrixXd::_internal_has_cols() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;

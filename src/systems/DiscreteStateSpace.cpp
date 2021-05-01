@@ -8,17 +8,17 @@ void ls::systems::DiscreteStateSpace::resample(const double dt)
 {
     auto dss = ls::analysis::ZeroOrderHold::c2d(ls::analysis::ZeroOrderHold::d2c(*this, getSamplingPeriod()), dt);
 
-    A = dss.A;
-    B = dss.B;
-    C = dss.C;
-    D = dss.D;
+    setA(dss.getA());
+    setB(dss.getB());
+    setC(dss.getC());
+    setD(dss.getD());
 
     setSamplingPeriod(dt);
 }
 
 bool ls::systems::DiscreteStateSpace::isStable(const double tolerance) const
 {
-    auto eig = A.eigenvalues();
+    auto eig = _A.eigenvalues();
     double tol = (tolerance < 0 ? -tolerance*tolerance : tolerance*tolerance);
 
     for (int i = 0; i < eig.size(); i++) {

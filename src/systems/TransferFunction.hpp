@@ -16,15 +16,27 @@
 namespace ls { namespace systems {
     class TransferFunction : SystemStateless {
     public:
-        TransferFunction() : num(Eigen::MatrixXd::Constant(1, 1, 1)),
-                             den(Eigen::MatrixXd::Constant(1, 1, 1))
+        TransferFunction() : _num(Eigen::MatrixXd::Constant(1, 1, 1)),
+                             _den(Eigen::MatrixXd::Constant(1, 1, 1))
         {}
 
         TransferFunction(const TransferFunction &tf);
 
-        TransferFunction(const Eigen::MatrixXd &_num,
-                         const Eigen::MatrixXd &_den) : num(_num), den(_den)
+        TransferFunction(const Eigen::MatrixXd &num,
+                         const Eigen::MatrixXd &den) : _num(num), _den(den)
         {}
+
+        Eigen::MatrixXd getNum() const;
+
+        const Eigen::MatrixXd& getNumRef();
+
+        void setNum(const Eigen::MatrixXd &num);
+
+        Eigen::MatrixXd getDen() const;
+
+        const Eigen::MatrixXd& getDenRef();
+
+        void setDen(const Eigen::MatrixXd &num);
 
         void normalize();
         TransferFunction normalized() const;
@@ -34,7 +46,8 @@ namespace ls { namespace systems {
         StateSpace toDiscreteStateSpace(double dt) const;
         StateSpace toDiscreteStateSpace(double dt, double alpha) const;
 
-        Eigen::MatrixXd num, den;
+    private:
+        Eigen::MatrixXd _num, _den;
     };
 } }
 

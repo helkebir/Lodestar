@@ -7,10 +7,10 @@
 ls::systems::StateSpace ls::analysis::LinearSystemInverse::inverse(
         ls::systems::StateSpace &lti)
 {
-    Eigen::MatrixXd AINV = lti.A - lti.B * lti.D.inverse() * lti.C;
-    Eigen::MatrixXd BINV = -lti.B * lti.D.inverse();
-    Eigen::MatrixXd CINV = lti.D.inverse() * lti.C;
-    Eigen::MatrixXd DINV = lti.D.inverse();
+    Eigen::MatrixXd AINV = lti.getA() - lti.getB() * lti.getD().inverse() * lti.getC();
+    Eigen::MatrixXd BINV = -lti.getB() * lti.getD().inverse();
+    Eigen::MatrixXd CINV = lti.getD().inverse() * lti.getC();
+    Eigen::MatrixXd DINV = lti.getD().inverse();
 
     auto invlti = systems::StateSpace(AINV, BINV, CINV, DINV);
 

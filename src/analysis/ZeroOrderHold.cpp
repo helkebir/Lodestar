@@ -12,8 +12,8 @@ ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace &lti, double dt)
 
     // Upper exponential matrix
     Eigen::MatrixXd upperEM(lti.stateDim(), lti.stateDim() + lti.inputDim());
-    upperEM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.A;
-    upperEM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.B;
+    upperEM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.getA();
+    upperEM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.getB();
 
     // Lower exponential matrix
     auto lowerEM = Eigen::MatrixXd::Zero(lti.inputDim(),
@@ -35,7 +35,7 @@ ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace &lti, double dt)
     Eigen::MatrixXd BD = EXPM.block(0, lti.stateDim(), lti.stateDim(),
                                     lti.inputDim());
 
-    auto dlti = systems::StateSpace(AD, BD, lti.C, lti.D);
+    auto dlti = systems::StateSpace(AD, BD, lti.getC(), lti.getD());
 
     return dlti;
 }
@@ -47,8 +47,8 @@ ls::analysis::ZeroOrderHold::d2c(const systems::StateSpace &lti, double dt)
 
     // Upper logarith matrix
     Eigen::MatrixXd upperLM(lti.stateDim(), lti.stateDim() + lti.inputDim());
-    upperLM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.A;
-    upperLM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.B;
+    upperLM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.getA();
+    upperLM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.getB();
 
     // Lower logarithm matrix
     Eigen::MatrixXd lowerLM(lti.inputDim(), lti.stateDim() + lti.inputDim());
@@ -73,7 +73,7 @@ ls::analysis::ZeroOrderHold::d2c(const systems::StateSpace &lti, double dt)
     Eigen::MatrixXd BC = LOGM.block(0, lti.stateDim(), lti.stateDim(),
                                     lti.inputDim());
 
-    auto clti = systems::StateSpace(AC, BC, lti.C, lti.D);
+    auto clti = systems::StateSpace(AC, BC, lti.getC(), lti.getD());
 
     return clti;
 }

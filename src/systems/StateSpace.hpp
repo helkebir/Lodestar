@@ -12,17 +12,40 @@ namespace ls {
     namespace systems {
         class StateSpace : public SystemStateless {
         public:
-            StateSpace() : A(Eigen::MatrixXd::Zero(1, 1)),
-                           B(Eigen::MatrixXd::Zero(1, 1)),
-                           C(Eigen::MatrixXd::Zero(1, 1)),
-                           D(Eigen::MatrixXd::Zero(1, 1)),
-                           _dt(-1), _isDiscrete(false)
-            {};
+            StateSpace() : _A(Eigen::MatrixXd::Zero(1, 1)),
+                           _B(Eigen::MatrixXd::Zero(1, 1)),
+                           _C(Eigen::MatrixXd::Zero(1, 1)),
+                           _D(Eigen::MatrixXd::Zero(1, 1)),
+                           _dt(-1), _isDiscrete(false) {};
 
             StateSpace(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B,
                        const Eigen::MatrixXd &C, const Eigen::MatrixXd &D);
 
             StateSpace(const StateSpace &lti);
+
+            Eigen::MatrixXd getA() const;
+
+            const Eigen::MatrixXd& getARef();
+
+            void setA(const Eigen::MatrixXd &A);
+
+            Eigen::MatrixXd getB() const;
+
+            const Eigen::MatrixXd& getBRef();
+
+            void setB(const Eigen::MatrixXd &B);
+
+            Eigen::MatrixXd getC() const;
+
+            const Eigen::MatrixXd& getCRef();
+
+            void setC(const Eigen::MatrixXd &C);
+
+            Eigen::MatrixXd getD() const;
+
+            const Eigen::MatrixXd& getDRef();
+
+            void setD(const Eigen::MatrixXd &D);
 
             void setDiscreteParams(double dt);
 
@@ -34,18 +57,18 @@ namespace ls {
 
             void setSamplingPeriod(double dt);
 
-            int stateDim() const;
+            long stateDim() const;
 
-            int inputDim() const;
+            long inputDim() const;
 
-            int outputDim() const;
+            long outputDim() const;
 
             virtual void append(const StateSpace &ss);
 
             virtual bool isStable(double tolerance = 0) const;
 
-            Eigen::MatrixXd A, B, C, D;
         protected:
+            Eigen::MatrixXd _A, _B, _C, _D;
             double _dt;
             bool _isDiscrete;
         };
