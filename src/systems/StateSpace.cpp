@@ -4,14 +4,14 @@
 
 #include "StateSpace.hpp"
 
-ls::systems::StateSpace::StateSpace(const StateSpace &lti)
+ls::systems::StateSpace::StateSpace(const StateSpace &other)
 {
-    _A = lti.getA();
-    _B = lti.getB();
-    _C = lti.getC();
-    _D = lti.getD();
-    _dt = lti.getSamplingPeriod();
-    _isDiscrete = lti.isDiscrete();
+    _A = other.getA();
+    _B = other.getB();
+    _C = other.getC();
+    _D = other.getD();
+    _dt = other.getSamplingPeriod();
+    _isDiscrete = other.isDiscrete();
 }
 
 ls::systems::StateSpace::StateSpace(const Eigen::MatrixXd &A,
@@ -27,63 +27,58 @@ ls::systems::StateSpace::StateSpace(const Eigen::MatrixXd &A,
     _isDiscrete = false;
 }
 
-Eigen::MatrixXd ls::systems::StateSpace::getA() const {
+Eigen::MatrixXd ls::systems::StateSpace::getA() const
+{
     return _A;
 }
 
-const Eigen::MatrixXd& ls::systems::StateSpace::getARef() {
-    return _A;
-}
-
-void ls::systems::StateSpace::setA(const Eigen::MatrixXd &A) {
+void ls::systems::StateSpace::setA(const Eigen::MatrixXd &A)
+{
     _A = A;
 }
 
-Eigen::MatrixXd ls::systems::StateSpace::getB() const {
+Eigen::MatrixXd ls::systems::StateSpace::getB() const
+{
     return _B;
 }
 
-const Eigen::MatrixXd& ls::systems::StateSpace::getBRef() {
-    return _B;
-}
-
-void ls::systems::StateSpace::setB(const Eigen::MatrixXd &B) {
+void ls::systems::StateSpace::setB(const Eigen::MatrixXd &B)
+{
     _B = B;
 }
 
-Eigen::MatrixXd ls::systems::StateSpace::getC() const {
+Eigen::MatrixXd ls::systems::StateSpace::getC() const
+{
     return _C;
 }
 
-const Eigen::MatrixXd& ls::systems::StateSpace::getCRef() {
-    return _C;
-}
-
-void ls::systems::StateSpace::setC(const Eigen::MatrixXd &C) {
+void ls::systems::StateSpace::setC(const Eigen::MatrixXd &C)
+{
     _C = C;
 }
 
-Eigen::MatrixXd ls::systems::StateSpace::getD() const {
+Eigen::MatrixXd ls::systems::StateSpace::getD() const
+{
     return _D;
 }
 
-const Eigen::MatrixXd& ls::systems::StateSpace::getDRef() {
-    return _D;
-}
-
-void ls::systems::StateSpace::setD(const Eigen::MatrixXd &D) {
+void ls::systems::StateSpace::setD(const Eigen::MatrixXd &D)
+{
     _D = D;
 }
 
-bool ls::systems::StateSpace::isDiscrete() const {
+bool ls::systems::StateSpace::isDiscrete() const
+{
     return _isDiscrete;
 }
 
-double ls::systems::StateSpace::getSamplingPeriod() const {
+double ls::systems::StateSpace::getSamplingPeriod() const
+{
     return _dt;
 }
 
-void ls::systems::StateSpace::setSamplingPeriod(double dt) {
+void ls::systems::StateSpace::setSamplingPeriod(double dt)
+{
     _dt = dt;
 }
 
@@ -130,4 +125,12 @@ bool ls::systems::StateSpace::isStable(const double tolerance) const
     }
 
     return true;
+}
+
+void ls::systems::StateSpace::copyMatrices(const ls::systems::StateSpace &ss)
+{
+    setA(ss.getA());
+    setB(ss.getB());
+    setC(ss.getC());
+    setD(ss.getD());
 }

@@ -5,102 +5,119 @@
 #include "BilinearTransformation.hpp"
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::c2d(const systems::StateSpace &lti,
-                                          double dt,
+ls::analysis::BilinearTransformation::c2d(const Eigen::MatrixXd &A,
+                                          const Eigen::MatrixXd &B,
+                                          const Eigen::MatrixXd &C,
+                                          const Eigen::MatrixXd &D, double dt,
                                           double alpha)
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    auto ltiA = lti.getA();
-    auto ltiB = lti.getB();
-    auto ltiC = lti.getC();
-    auto ltiD = lti.getD();
+    auto I = Eigen::MatrixXd::Identity(A.rows(), A.rows());
 
-    auto I = Eigen::MatrixXd::Identity(ltiA.rows(), ltiA.rows());
-
-    auto IMAC = I - alpha * dt * ltiA;
-    auto IMAC2 = I - (1 - alpha) * dt * ltiA;
+    auto IMAC = I - alpha * dt * A;
+    auto IMAC2 = I - (1 - alpha) * dt * A;
 
     Eigen::MatrixXd AD = IMAC.colPivHouseholderQr().solve(IMAC2);
-    Eigen::MatrixXd BD = IMAC.colPivHouseholderQr().solve(dt * ltiB);
+    Eigen::MatrixXd BD = IMAC.colPivHouseholderQr().solve(dt * B);
     Eigen::MatrixXd CD = IMAC.transpose().colPivHouseholderQr().solve(
-            ltiC.transpose()).transpose();
-    Eigen::MatrixXd DD = ltiD + alpha * (ltiC * BD);
+            C.transpose()).transpose();
+    Eigen::MatrixXd DD = D + alpha * (C * BD);
 
-    auto dlti = systems::StateSpace(AD, BD, CD, DD);
-    dlti.setSamplingPeriod(dt);
+    auto dss = systems::StateSpace(AD, BD, CD, DD);
+    dss.setSamplingPeriod(dt);
 
-    return dlti;
+    return dss;
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::d2c(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::c2d(const systems::StateSpace &ss,
                                           double dt,
+                                          double alpha)
+{
+    return c2d(ss.getA(), ss.getB(), ss.getC(), ss.getD(), dt, alpha);
+}
+
+ls::systems::StateSpace
+ls::analysis::BilinearTransformation::d2c(const Eigen::MatrixXd &A,
+                                          const Eigen::MatrixXd &B,
+                                          const Eigen::MatrixXd &C,
+                                          const Eigen::MatrixXd &D, double dt,
                                           double alpha)
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    auto ltiA = lti.getA();
-    auto ltiB = lti.getB();
-    auto ltiC = lti.getC();
-    auto ltiD = lti.getD();
+    auto I = Eigen::MatrixXd::Identity(A.rows(), A.rows());
 
-    auto I = Eigen::MatrixXd::Identity(ltiA.rows(), ltiA.rows());
-
-    auto ATMI = ltiA.transpose() - I;
-    auto ATPI = alpha * dt * ltiA.transpose() + (1 - alpha) * dt * I;
+    auto ATMI = A.transpose() - I;
+    auto ATPI = alpha * dt * A.transpose() + (1 - alpha) * dt * I;
     Eigen::MatrixXd AC = ATPI.colPivHouseholderQr().solve(ATMI).transpose();
 
     auto IMAC = I - alpha * dt * AC;
-    Eigen::MatrixXd BC = IMAC * ltiB / dt;
-    Eigen::MatrixXd CC = ltiC * IMAC;
-    Eigen::MatrixXd DC = ltiD - alpha * (CC * ltiB);
+    Eigen::MatrixXd BC = IMAC * B / dt;
+    Eigen::MatrixXd CC = C * IMAC;
+    Eigen::MatrixXd DC = D - alpha * (CC * B);
 
-    auto clti = systems::StateSpace(AC, BC, CC, DC);
+    auto css = systems::StateSpace(AC, BC, CC, DC);
 
-    return clti;
+    return css;
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::c2dTustin(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::d2c(const systems::StateSpace &ss,
+                                          double dt,
+                                          double alpha)
+{
+    return d2c(ss.getA(), ss.getB(), ss.getC(), ss.getD(), dt, alpha);
+}
+
+ls::systems::StateSpace
+ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace &ss,
+                                          double alpha)
+{
+    return d2c(ss.getA(), ss.getB(), ss.getC(), ss.getD(), ss.getSamplingPeriod(), alpha);
+}
+
+ls::systems::StateSpace
+ls::analysis::BilinearTransformation::c2dTustin(const systems::StateSpace &ss,
                                                 double dt)
 {
-    return c2d(lti, dt, 0.5);
+    return c2d(ss, dt, 0.5);
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::d2cTustin(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::d2cTustin(const systems::StateSpace &ss,
                                                 double dt)
 {
-    return d2c(lti, dt, 0.5);
+    return d2c(ss, dt, 0.5);
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::c2dEuler(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::c2dEuler(const systems::StateSpace &ss,
                                                double dt)
 {
-    return c2d(lti, dt, 0.0);
+    return c2d(ss, dt, 0.0);
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::d2cEuler(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::d2cEuler(const systems::StateSpace &ss,
                                                double dt)
 {
-    return d2c(lti, dt, 0.0);
+    return d2c(ss, dt, 0.0);
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::c2dBwdDiff(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::c2dBwdDiff(const systems::StateSpace &ss,
                                                  double dt)
 {
-    return c2d(lti, dt, 1.0);
+    return c2d(ss, dt, 1.0);
 }
 
 ls::systems::StateSpace
-ls::analysis::BilinearTransformation::d2cBwdDiff(const systems::StateSpace &lti,
+ls::analysis::BilinearTransformation::d2cBwdDiff(const systems::StateSpace &ss,
                                                  double dt)
 {
-    return d2c(lti, dt, 1.0);
+    return d2c(ss, dt, 1.0);
 }

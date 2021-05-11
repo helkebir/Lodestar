@@ -22,7 +22,6 @@ namespace eigen {
 constexpr VectorXd::VectorXd(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : coeff_()
-  , _coeff_cached_byte_size_()
   , size_(0){}
 struct VectorXdDefaultTypeInternal {
   constexpr VectorXdDefaultTypeInternal()
@@ -101,10 +100,8 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ls_2ep
   schemas, file_default_instances, TableStruct_ls_2eproto_2eeigen_2eproto::offsets,
   file_level_metadata_ls_2eproto_2eeigen_2eproto, file_level_enum_descriptors_ls_2eproto_2eeigen_2eproto, file_level_service_descriptors_ls_2eproto_2eeigen_2eproto,
 };
-PROTOBUF_ATTRIBUTE_WEAK ::PROTOBUF_NAMESPACE_ID::Metadata
-descriptor_table_ls_2eproto_2eeigen_2eproto_metadata_getter(int index) {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_ls_2eproto_2eeigen_2eproto);
-  return descriptor_table_ls_2eproto_2eeigen_2eproto.file_level_metadata[index];
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_ls_2eproto_2eeigen_2eproto_getter() {
+  return &descriptor_table_ls_2eproto_2eeigen_2eproto;
 }
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -181,7 +178,6 @@ const char* VectorXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
     switch (tag >> 3) {
       // repeated double coeff = 1;
       case 1:
@@ -193,7 +189,7 @@ const char* VectorXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
           ptr += sizeof(double);
         } else goto handle_unusual;
         continue;
-      // int32 size = 2;
+      // optional int32 size = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           _Internal::set_has_size(&has_bits);
@@ -203,7 +199,8 @@ const char* VectorXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         continue;
       default: {
       handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
           ctx->SetLastTag(tag);
           goto success;
         }
@@ -235,7 +232,7 @@ failure:
     target = stream->WriteFixedPacked(1, _internal_coeff(), target);
   }
 
-  // int32 size = 2;
+  // optional int32 size = 2;
   if (_internal_has_size()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_size(), target);
@@ -266,13 +263,10 @@ size_t VectorXd::ByteSizeLong() const {
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
             static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
     }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _coeff_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
     total_size += data_size;
   }
 
-  // int32 size = 2;
+  // optional int32 size = 2;
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
@@ -337,16 +331,17 @@ bool VectorXd::IsInitialized() const {
 
 void VectorXd::InternalSwap(VectorXd* other) {
   using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   coeff_.InternalSwap(&other->coeff_);
   swap(size_, other->size_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata VectorXd::GetMetadata() const {
-  return GetMetadataStatic();
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_ls_2eproto_2eeigen_2eproto_getter, &descriptor_table_ls_2eproto_2eeigen_2eproto_once,
+      file_level_metadata_ls_2eproto_2eeigen_2eproto[0]);
 }
-
 
 // ===================================================================
 
@@ -429,7 +424,6 @@ const char* MatrixXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
     switch (tag >> 3) {
       // repeated .ls.proto.eigen.VectorXd row = 1;
       case 1:
@@ -443,7 +437,7 @@ const char* MatrixXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
         } else goto handle_unusual;
         continue;
-      // int32 rows = 2;
+      // optional int32 rows = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           _Internal::set_has_rows(&has_bits);
@@ -451,7 +445,7 @@ const char* MatrixXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int32 cols = 3;
+      // optional int32 cols = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           _Internal::set_has_cols(&has_bits);
@@ -461,7 +455,8 @@ const char* MatrixXd::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         continue;
       default: {
       handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
           ctx->SetLastTag(tag);
           goto success;
         }
@@ -496,13 +491,13 @@ failure:
       InternalWriteMessage(1, this->_internal_row(i), target, stream);
   }
 
-  // int32 rows = 2;
+  // optional int32 rows = 2;
   if (_internal_has_rows()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_rows(), target);
   }
 
-  // int32 cols = 3;
+  // optional int32 cols = 3;
   if (_internal_has_cols()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_cols(), target);
@@ -533,14 +528,14 @@ size_t MatrixXd::ByteSizeLong() const {
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    // int32 rows = 2;
+    // optional int32 rows = 2;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
           this->_internal_rows());
     }
 
-    // int32 cols = 3;
+    // optional int32 cols = 3;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -612,7 +607,7 @@ bool MatrixXd::IsInitialized() const {
 
 void MatrixXd::InternalSwap(MatrixXd* other) {
   using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   row_.InternalSwap(&other->row_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
@@ -624,9 +619,10 @@ void MatrixXd::InternalSwap(MatrixXd* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata MatrixXd::GetMetadata() const {
-  return GetMetadataStatic();
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_ls_2eproto_2eeigen_2eproto_getter, &descriptor_table_ls_2eproto_2eeigen_2eproto_once,
+      file_level_metadata_ls_2eproto_2eeigen_2eproto[1]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace eigen

@@ -4,6 +4,8 @@
 
 #include "EigenProtoIface.hpp"
 
+#ifdef LS_USE_PROTOBUF
+
 void ls::io::EigenProtoIface::MatrixXd::generateProto()
 {
     clearProto();
@@ -46,3 +48,5 @@ void ls::io::EigenProtoIface::VectorXd::clearProto()
     proto->clear_size();
     proto->clear_coeff();
 }
+
+#endif

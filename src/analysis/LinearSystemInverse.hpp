@@ -7,20 +7,28 @@
 
 #include "systems/StateSpace.hpp"
 
-namespace ls { namespace analysis {
-    class LinearSystemInverse {
-    public:
+namespace ls {
+    namespace analysis {
         /**
-         * @brief Generates inverse of a linear time invariant system.
+         * @brief Routines for computing the  inverse of a continuous-time state
+         * space systems.
          *
-         * @param lti Linear time invariant system.
-         *
-         * @return Inverted linear time invariant system.
+         * Corresponds to SLICOT Routine <a href="http://slicot.org/objects/software/shared/doc/AB07ND.html">AB07ND</a>
+         * (<em>Inverse of a given state-space representation</em>).
          */
-        static systems::StateSpace
-        inverse(systems::StateSpace &lti);
-    };
-} }
+        class LinearSystemInverse {
+        public:
+            /**
+             * @brief Generates the inverse of a state space system.
+             *
+             * @param ss State space system.
+             *
+             * @return Inverted state space system.
+             */
+            static systems::StateSpace inverse(systems::StateSpace &ss);
+        };
+    }
+}
 
 
 #endif //LODESTAR_LINEARSYSTEMINVERSE_HPP

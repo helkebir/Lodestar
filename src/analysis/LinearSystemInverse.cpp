@@ -5,12 +5,13 @@
 #include "LinearSystemInverse.hpp"
 
 ls::systems::StateSpace ls::analysis::LinearSystemInverse::inverse(
-        ls::systems::StateSpace &lti)
+        ls::systems::StateSpace &ss)
 {
-    Eigen::MatrixXd AINV = lti.getA() - lti.getB() * lti.getD().inverse() * lti.getC();
-    Eigen::MatrixXd BINV = -lti.getB() * lti.getD().inverse();
-    Eigen::MatrixXd CINV = lti.getD().inverse() * lti.getC();
-    Eigen::MatrixXd DINV = lti.getD().inverse();
+    Eigen::MatrixXd AINV =
+            ss.getA() - ss.getB() * ss.getD().inverse() * ss.getC();
+    Eigen::MatrixXd BINV = -ss.getB() * ss.getD().inverse();
+    Eigen::MatrixXd CINV = ss.getD().inverse() * ss.getC();
+    Eigen::MatrixXd DINV = ss.getD().inverse();
 
     auto invlti = systems::StateSpace(AINV, BINV, CINV, DINV);
 

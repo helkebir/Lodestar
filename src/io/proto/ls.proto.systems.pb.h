@@ -54,7 +54,6 @@ struct TableStruct_ls_2eproto_2esystems_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ls_2eproto_2esystems_2eproto;
-::PROTOBUF_NAMESPACE_ID::Metadata descriptor_table_ls_2eproto_2esystems_2eproto_metadata_getter(int index);
 namespace ls {
 namespace proto {
 namespace systems {
@@ -81,7 +80,7 @@ class StateSpace PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ls.proto.systems.StateSpace) */ {
  public:
   inline StateSpace() : StateSpace(nullptr) {}
-  virtual ~StateSpace();
+  ~StateSpace() override;
   explicit constexpr StateSpace(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   StateSpace(const StateSpace& from);
@@ -107,10 +106,10 @@ class StateSpace PROTOBUF_FINAL :
     return GetDescriptor();
   }
   static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
+    return default_instance().GetMetadata().descriptor;
   }
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
+    return default_instance().GetMetadata().reflection;
   }
   static const StateSpace& default_instance() {
     return *internal_default_instance();
@@ -178,12 +177,6 @@ class StateSpace PROTOBUF_FINAL :
   public:
 
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    return ::descriptor_table_ls_2eproto_2esystems_2eproto_metadata_getter(kIndexInFileMessages);
-  }
-
-  public:
 
   // nested types ----------------------------------------------------
 
@@ -197,14 +190,14 @@ class StateSpace PROTOBUF_FINAL :
     kDtFieldNumber = 6,
     kIsDiscreteFieldNumber = 5,
   };
-  // .ls.proto.eigen.MatrixXd A = 1;
+  // optional .ls.proto.eigen.MatrixXd A = 1;
   bool has_a() const;
   private:
   bool _internal_has_a() const;
   public:
   void clear_a();
   const ::ls::proto::eigen::MatrixXd& a() const;
-  ::ls::proto::eigen::MatrixXd* release_a();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::MatrixXd* release_a();
   ::ls::proto::eigen::MatrixXd* mutable_a();
   void set_allocated_a(::ls::proto::eigen::MatrixXd* a);
   private:
@@ -215,14 +208,14 @@ class StateSpace PROTOBUF_FINAL :
       ::ls::proto::eigen::MatrixXd* a);
   ::ls::proto::eigen::MatrixXd* unsafe_arena_release_a();
 
-  // .ls.proto.eigen.MatrixXd B = 2;
+  // optional .ls.proto.eigen.MatrixXd B = 2;
   bool has_b() const;
   private:
   bool _internal_has_b() const;
   public:
   void clear_b();
   const ::ls::proto::eigen::MatrixXd& b() const;
-  ::ls::proto::eigen::MatrixXd* release_b();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::MatrixXd* release_b();
   ::ls::proto::eigen::MatrixXd* mutable_b();
   void set_allocated_b(::ls::proto::eigen::MatrixXd* b);
   private:
@@ -233,14 +226,14 @@ class StateSpace PROTOBUF_FINAL :
       ::ls::proto::eigen::MatrixXd* b);
   ::ls::proto::eigen::MatrixXd* unsafe_arena_release_b();
 
-  // .ls.proto.eigen.MatrixXd C = 3;
+  // optional .ls.proto.eigen.MatrixXd C = 3;
   bool has_c() const;
   private:
   bool _internal_has_c() const;
   public:
   void clear_c();
   const ::ls::proto::eigen::MatrixXd& c() const;
-  ::ls::proto::eigen::MatrixXd* release_c();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::MatrixXd* release_c();
   ::ls::proto::eigen::MatrixXd* mutable_c();
   void set_allocated_c(::ls::proto::eigen::MatrixXd* c);
   private:
@@ -251,14 +244,14 @@ class StateSpace PROTOBUF_FINAL :
       ::ls::proto::eigen::MatrixXd* c);
   ::ls::proto::eigen::MatrixXd* unsafe_arena_release_c();
 
-  // .ls.proto.eigen.MatrixXd D = 4;
+  // optional .ls.proto.eigen.MatrixXd D = 4;
   bool has_d() const;
   private:
   bool _internal_has_d() const;
   public:
   void clear_d();
   const ::ls::proto::eigen::MatrixXd& d() const;
-  ::ls::proto::eigen::MatrixXd* release_d();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::MatrixXd* release_d();
   ::ls::proto::eigen::MatrixXd* mutable_d();
   void set_allocated_d(::ls::proto::eigen::MatrixXd* d);
   private:
@@ -269,7 +262,7 @@ class StateSpace PROTOBUF_FINAL :
       ::ls::proto::eigen::MatrixXd* d);
   ::ls::proto::eigen::MatrixXd* unsafe_arena_release_d();
 
-  // double dt = 6;
+  // optional double dt = 6;
   bool has_dt() const;
   private:
   bool _internal_has_dt() const;
@@ -282,7 +275,7 @@ class StateSpace PROTOBUF_FINAL :
   void _internal_set_dt(double value);
   public:
 
-  // bool isDiscrete = 5;
+  // optional bool isDiscrete = 5;
   bool has_isdiscrete() const;
   private:
   bool _internal_has_isdiscrete() const;
@@ -318,7 +311,7 @@ class TransferFunction PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ls.proto.systems.TransferFunction) */ {
  public:
   inline TransferFunction() : TransferFunction(nullptr) {}
-  virtual ~TransferFunction();
+  ~TransferFunction() override;
   explicit constexpr TransferFunction(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   TransferFunction(const TransferFunction& from);
@@ -344,10 +337,10 @@ class TransferFunction PROTOBUF_FINAL :
     return GetDescriptor();
   }
   static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
+    return default_instance().GetMetadata().descriptor;
   }
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
+    return default_instance().GetMetadata().reflection;
   }
   static const TransferFunction& default_instance() {
     return *internal_default_instance();
@@ -415,12 +408,6 @@ class TransferFunction PROTOBUF_FINAL :
   public:
 
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    return ::descriptor_table_ls_2eproto_2esystems_2eproto_metadata_getter(kIndexInFileMessages);
-  }
-
-  public:
 
   // nested types ----------------------------------------------------
 
@@ -430,14 +417,14 @@ class TransferFunction PROTOBUF_FINAL :
     kNumFieldNumber = 1,
     kDenFieldNumber = 2,
   };
-  // .ls.proto.eigen.VectorXd num = 1;
+  // optional .ls.proto.eigen.VectorXd num = 1;
   bool has_num() const;
   private:
   bool _internal_has_num() const;
   public:
   void clear_num();
   const ::ls::proto::eigen::VectorXd& num() const;
-  ::ls::proto::eigen::VectorXd* release_num();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::VectorXd* release_num();
   ::ls::proto::eigen::VectorXd* mutable_num();
   void set_allocated_num(::ls::proto::eigen::VectorXd* num);
   private:
@@ -448,14 +435,14 @@ class TransferFunction PROTOBUF_FINAL :
       ::ls::proto::eigen::VectorXd* num);
   ::ls::proto::eigen::VectorXd* unsafe_arena_release_num();
 
-  // .ls.proto.eigen.VectorXd den = 2;
+  // optional .ls.proto.eigen.VectorXd den = 2;
   bool has_den() const;
   private:
   bool _internal_has_den() const;
   public:
   void clear_den();
   const ::ls::proto::eigen::VectorXd& den() const;
-  ::ls::proto::eigen::VectorXd* release_den();
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::ls::proto::eigen::VectorXd* release_den();
   ::ls::proto::eigen::VectorXd* mutable_den();
   void set_allocated_den(::ls::proto::eigen::VectorXd* den);
   private:
@@ -490,7 +477,7 @@ class TransferFunction PROTOBUF_FINAL :
 #endif  // __GNUC__
 // StateSpace
 
-// .ls.proto.eigen.MatrixXd A = 1;
+// optional .ls.proto.eigen.MatrixXd A = 1;
 inline bool StateSpace::_internal_has_a() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || a_ != nullptr);
@@ -569,7 +556,7 @@ inline void StateSpace::set_allocated_a(::ls::proto::eigen::MatrixXd* a) {
   // @@protoc_insertion_point(field_set_allocated:ls.proto.systems.StateSpace.A)
 }
 
-// .ls.proto.eigen.MatrixXd B = 2;
+// optional .ls.proto.eigen.MatrixXd B = 2;
 inline bool StateSpace::_internal_has_b() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || b_ != nullptr);
@@ -648,7 +635,7 @@ inline void StateSpace::set_allocated_b(::ls::proto::eigen::MatrixXd* b) {
   // @@protoc_insertion_point(field_set_allocated:ls.proto.systems.StateSpace.B)
 }
 
-// .ls.proto.eigen.MatrixXd C = 3;
+// optional .ls.proto.eigen.MatrixXd C = 3;
 inline bool StateSpace::_internal_has_c() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   PROTOBUF_ASSUME(!value || c_ != nullptr);
@@ -727,7 +714,7 @@ inline void StateSpace::set_allocated_c(::ls::proto::eigen::MatrixXd* c) {
   // @@protoc_insertion_point(field_set_allocated:ls.proto.systems.StateSpace.C)
 }
 
-// .ls.proto.eigen.MatrixXd D = 4;
+// optional .ls.proto.eigen.MatrixXd D = 4;
 inline bool StateSpace::_internal_has_d() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   PROTOBUF_ASSUME(!value || d_ != nullptr);
@@ -806,7 +793,7 @@ inline void StateSpace::set_allocated_d(::ls::proto::eigen::MatrixXd* d) {
   // @@protoc_insertion_point(field_set_allocated:ls.proto.systems.StateSpace.D)
 }
 
-// bool isDiscrete = 5;
+// optional bool isDiscrete = 5;
 inline bool StateSpace::_internal_has_isdiscrete() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
@@ -834,7 +821,7 @@ inline void StateSpace::set_isdiscrete(bool value) {
   // @@protoc_insertion_point(field_set:ls.proto.systems.StateSpace.isDiscrete)
 }
 
-// double dt = 6;
+// optional double dt = 6;
 inline bool StateSpace::_internal_has_dt() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
@@ -866,7 +853,7 @@ inline void StateSpace::set_dt(double value) {
 
 // TransferFunction
 
-// .ls.proto.eigen.VectorXd num = 1;
+// optional .ls.proto.eigen.VectorXd num = 1;
 inline bool TransferFunction::_internal_has_num() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || num_ != nullptr);
@@ -945,7 +932,7 @@ inline void TransferFunction::set_allocated_num(::ls::proto::eigen::VectorXd* nu
   // @@protoc_insertion_point(field_set_allocated:ls.proto.systems.TransferFunction.num)
 }
 
-// .ls.proto.eigen.VectorXd den = 2;
+// optional .ls.proto.eigen.VectorXd den = 2;
 inline bool TransferFunction::_internal_has_den() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || den_ != nullptr);

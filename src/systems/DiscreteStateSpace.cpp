@@ -6,12 +6,20 @@
 
 void ls::systems::DiscreteStateSpace::resample(const double dt)
 {
-    auto dss = ls::analysis::ZeroOrderHold::c2d(ls::analysis::ZeroOrderHold::d2c(*this, getSamplingPeriod()), dt);
+    auto dss = ls::analysis::ZeroOrderHold::c2d(
+            ls::analysis::ZeroOrderHold::d2c(*this, getSamplingPeriod()), dt);
 
-    setA(dss.getA());
-    setB(dss.getB());
-    setC(dss.getC());
-    setD(dss.getD());
+    copyMatrices(dss);
+
+    setSamplingPeriod(dt);
+}
+
+void ls::systems::DiscreteStateSpace::resampleFast(const double dt)
+{
+    auto dss = ls::analysis::BilinearTransformation::c2dBwdDiff(
+            ls::analysis::BilinearTransformation::d2cBwdDiff(*this, getSamplingPeriod()), dt);
+
+    copyMatrices(dss);
 
     setSamplingPeriod(dt);
 }
@@ -19,10 +27,12 @@ void ls::systems::DiscreteStateSpace::resample(const double dt)
 bool ls::systems::DiscreteStateSpace::isStable(const double tolerance) const
 {
     auto eig = _A.eigenvalues();
-    double tol = (tolerance < 0 ? -tolerance*tolerance : tolerance*tolerance);
+    double tol = (tolerance < 0 ? -tolerance * tolerance : tolerance *
+                                                           tolerance);
 
     for (int i = 0; i < eig.size(); i++) {
-        if (eig(i).real()*eig(i).real() + eig(i).imag()*eig(i).imag() > 1 + tol)
+        if (eig(i).real() * eig(i).real() + eig(i).imag() * eig(i).imag() >
+            1 + tol)
             return false;
     }
 

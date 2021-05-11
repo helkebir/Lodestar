@@ -4,6 +4,8 @@
 
 #include "ProtoWrapper.hpp"
 
+#ifdef LS_USE_PROTOBUF
+
 PROTO_WRAP(Eigen::VectorXd)
 {
     destObj->set_size(obj->size());
@@ -43,3 +45,29 @@ PROTO_WRAP_STATIC(ls::proto::eigen::VectorXd)
         destObj->coeffRef(i) = srcObj->coeff(i);
     }
 }
+
+#ifdef LS_USE_GINAC
+
+PROTO_WRAP(GiNaC::symbol)
+{
+    destObj->set_name(obj->get_name());
+}
+
+PROTO_WRAP_STATIC(GiNaC::symbol)
+{
+    destObj->set_name(srcObj->get_name());
+}
+
+PROTO_WRAP(ls::proto::ginac::symbol)
+{
+    destObj->set_name(obj->name());
+}
+
+PROTO_WRAP_STATIC(ls::proto::ginac::symbol)
+{
+    destObj->set_name(srcObj->name());
+}
+
+#endif // LS_USE_GINAC
+
+#endif // LS_USE_PROTOBUF

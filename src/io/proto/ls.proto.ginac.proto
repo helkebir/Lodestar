@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ls.proto.ginac;
+
+message symbol {
+  optional string name = 1;
+}
+
+message ex {
+  optional bytes archive = 1;
+}
+
+message lst {
+  repeated ex expressions = 1;
+}

@@ -11,6 +11,15 @@
 #include "LodestarErrorNames.hpp"
 #include "aux/UnitLiterals.hpp"
 
+#ifdef LS_USE_GINAC
+
+#include "ginac/ginac.h"
+#include "symbolic/GiNaCNumTrait.hpp"
+
+#include "symbolic/OrdinaryDifferentialEquation.hpp"
+
+#endif
+
 using namespace ls::aux;
 
 template<typename S>
@@ -24,6 +33,164 @@ void quadratic(ls::primitives::Integrator<S> *integrator)
 {
     *integrator->state = integrator->time * integrator->time;
 }
+
+#ifdef LS_USE_GINAC
+GiNaC::matrix
+makeJacobian(const GiNaC::lst &states, const GiNaC::lst &functions)
+{
+    GiNaC::lst cols{};
+    for (GiNaC::lst::const_iterator it = states.begin();
+         it != states.end(); it++) {
+        cols.append(functions.diff(GiNaC::ex_to<GiNaC::symbol>(*it)));
+    }
+
+    GiNaC::matrix mat = GiNaC::ex_to<GiNaC::matrix>(GiNaC::lst_to_matrix(cols));
+
+    return mat.transpose();
+}
+
+Eigen::MatrixXd matrix_to_MatrixXd(const GiNaC::matrix &mat)
+{
+    int n = mat.rows(), m = mat.cols();
+    auto emat = Eigen::MatrixXd(n, m);
+    emat.setZero();
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            emat.coeffRef(i, j) = GiNaC::ex_to<GiNaC::numeric>(
+                    mat(i, j).evalf()).to_double();
+        }
+    }
+
+    return emat;
+}
+
+Eigen::MatrixXd matrix_to_MatrixXd(const GiNaC::ex &ex)
+{
+    GiNaC::matrix mat = GiNaC::ex_to<GiNaC::matrix>(ex);
+    int n = mat.rows(), m = mat.cols();
+    auto emat = Eigen::MatrixXd(n, m);
+    emat.setZero();
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            emat.coeffRef(i, j) = GiNaC::ex_to<GiNaC::numeric>(
+                    mat(i, j).evalf()).to_double();
+        }
+    }
+
+    return emat;
+}
+
+GiNaC::matrix lst_to_vector(const GiNaC::lst &lst) {
+    GiNaC::lst row{{lst}};
+    return GiNaC::ex_to<GiNaC::matrix>(GiNaC::lst_to_matrix(row)).transpose();
+}
+
+void ginacTest()
+{
+    ls::symbolic::OrdinaryDifferentialEquation ode{};
+    ode.setFunctions(GiNaC::lst{ode.getStateSymbol(0)*ode.getStateSymbol(0) + ode.getStateSymbol(0)*ode.getInputSymbol(0)});
+
+    auto exmap = ode.generateExpressionMap(std::vector<double>{2}, std::vector<double>{3});
+
+    std::cout << exmap << std::endl;
+
+    std::cout << ode.getFunctions() << std::endl;
+    std::cout << ode.generateJacobianStates() << std::endl;
+    std::cout << ode.generateJacobianMatrix(ode.generateJacobianStates(), exmap) << std::endl;
+
+    auto jacStates = ode.generateJacobianStates();
+    auto jacInputs = ode.generateJacobianInputs();
+
+    auto ss = ode.linearize(jacStates, jacInputs, std::vector<double>{2}, std::vector<double>{3});
+    std::cout << "Linearize ODE about x=2, u=3:" << std::endl;
+    std::cout << "A" << std::endl << ss.getA() << std::endl;
+    std::cout << "B" << std::endl << ss.getB() << std::endl;
+    std::cout << "C" << std::endl << ss.getC() << std::endl;
+    std::cout << "D" << std::endl << ss.getD() << std::endl;
+
+    ss.copyMatrices(ode.linearize(jacStates, jacInputs, std::vector<double>{3}, std::vector<double>{5}));
+    std::cout << "Linearize ODE about x=3, u=5:" << std::endl;
+    std::cout << "A" << std::endl << ss.getA() << std::endl;
+    std::cout << "B" << std::endl << ss.getB() << std::endl;
+    std::cout << "C" << std::endl << ss.getC() << std::endl;
+    std::cout << "D" << std::endl << ss.getD() << std::endl;
+
+    auto dss = ls::analysis::ZeroOrderHold::c2d(ss, 0.1);
+    std::cout << "Discretized at 0.1 s ZOH" << std::endl;
+    std::cout << "Ad" << std::endl << dss.getA() << std::endl;
+    std::cout << "Bd" << std::endl << dss.getB() << std::endl;
+    std::cout << "Cd" << std::endl << dss.getC() << std::endl;
+    std::cout << "Dd" << std::endl << dss.getD() << std::endl;
+
+    std::cout << std::endl;
+
+    GiNaC::symbol x("x"), y("y"), u("u");
+
+    GiNaC::lst states{x, y};
+    GiNaC::lst inputs{u};
+    GiNaC::lst functions{x * x, y * x + u/2};
+    GiNaC::lst mat_lst{{GiNaC::lst{x * x, y * x}}};
+    GiNaC::ex poly;
+
+    for (int i = 1; i < 4; i++) {
+        poly += GiNaC::pow(x, i) + GiNaC::pow(y, i) +
+                GiNaC::pow(x, i) * GiNaC::pow(y, i);
+    }
+
+
+
+//    std::cout << GiNaC::latex;
+    GiNaC::exmap m;
+    m[x] = 2;
+    m[y] = 2;
+    m[u] = 0;
+
+//    std::cout << lst_to_vector(functions).series(x==1,3).evalm();
+    GiNaC::symtab table;
+    table["x"] = x;
+    table["y"] = y;
+    table["u"] = u;
+    GiNaC::parser reader(table);
+    GiNaC::ex funcs = reader("{x * x, y * x + u/2}");
+    std::cout << GiNaC::ex_to<GiNaC::lst>(funcs) << std::endl;
+    std::cout << makeJacobian(states, functions) << std::endl;
+    std::cout << makeJacobian(states, functions).subs(m) << std::endl;
+    std::cout << matrix_to_MatrixXd(makeJacobian(states, functions).subs(m)) << std::endl;
+    std::cout << makeJacobian(inputs, functions) << std::endl;
+    std::cout << matrix_to_MatrixXd(makeJacobian(inputs, functions).subs(m)) << std::endl;
+
+    std::cout << std::endl;
+
+    std::cout << mat_lst << std::endl;
+    GiNaC::matrix mat = GiNaC::ex_to<GiNaC::matrix>(
+            GiNaC::lst_to_matrix(mat_lst));
+    mat = mat.transpose();
+    std::cout << mat(0, 0) << std::endl;
+    std::cout << mat << std::endl;
+    std::cout << mat.diff(GiNaC::ex_to<GiNaC::symbol>(states[0])) << std::endl;
+    std::cout << mat(0, 0) << "; " << mat(1, 0) << std::endl;
+
+    //    std::cout << GiNaC::latex;
+    std::cout << poly << std::endl;
+    std::cout << "Deriv wrt x, x=2, y=2 : "
+              << poly.diff(x).subs(GiNaC::lst{x == 2, y == 2}) << std::endl;
+
+    GiNaC::matrix M = {{poly, poly.diff(x)}};
+    std::cout << M << std::endl;
+    GiNaC::matrix Mx = GiNaC::ex_to<GiNaC::matrix>(M.diff(x));
+    std::cout << M.add(Mx) << std::endl;
+
+    Eigen::Matrix<GiNaC::ex, Eigen::Dynamic, Eigen::Dynamic> A{};
+    A.resize(2, 1);
+    //    A.conservativeResize(2,1);
+    A(0, 0) = poly;
+    A(1, 0) = poly.diff(x).subs(GiNaC::lst{x == 2, y == 2});
+
+    std::cout << A << std::endl;
+}
+#endif
 
 int main()
 {
@@ -65,7 +232,8 @@ int main()
 
     auto lti = ls::systems::StateSpace(A, B, C, D);
 
-    std::cout << "isStable: " << (lti.isStable() ? "true" : "false") << std::endl;
+    std::cout << "isStable: " << (lti.isStable() ? "true" : "false")
+              << std::endl;
 
     auto dlti = ls::analysis::ZeroOrderHold::c2d(lti, 0.1);
     std::cout << "ZOH (0.1)" << std::endl;
@@ -123,7 +291,8 @@ int main()
     std::cout << "Cc " << std::endl << dlti.getC() << std::endl;
     std::cout << "Dc " << std::endl << dlti.getD() << std::endl << std::endl;
 
-    std::cout << "isStable: " << (dlti.isStable() ? "true" : "false") << std::endl;
+    std::cout << "isStable: " << (dlti.isStable() ? "true" : "false")
+              << std::endl;
 
     Eigen::VectorXd num(3), den(3);
     //    num << 1,2,3;
@@ -134,6 +303,14 @@ int main()
     std::cout << "outer " << num * den.transpose() << std::endl;
 
     auto tf = ls::systems::TransferFunction(num, den);
+
+#ifdef LS_USE_GINAC
+    std::cout << "tf to ex" << std::endl;
+    std::cout << GiNaC::latex;
+    GiNaC::Digits = 6;
+    std::cout << tf.getExpression(GiNaC::symbol("s")) << std::endl;
+    std::cout << GiNaC::dflt;
+#endif
 
     ls::systems::StateSpace ss;
 
@@ -165,33 +342,33 @@ int main()
 
     auto dsys = ls::systems::StateSpace();
     auto Atmp = dsys.getA();
-    Atmp.resize(4,4);
-    Atmp << 0.9599,  0.0401, -0.4861,  0.0139,
-              0.0401,  0.9599, -0.0139,  0.4861,
-              0.1566, -0.1565,  0.9321, -0.0678,
-              0.1566, -0.1565, -0.0679,  0.9322;
+    Atmp.resize(4, 4);
+    Atmp << 0.9599, 0.0401, -0.4861, 0.0139,
+            0.0401, 0.9599, -0.0139, 0.4861,
+            0.1566, -0.1565, 0.9321, -0.0678,
+            0.1566, -0.1565, -0.0679, 0.9322;
     dsys.setA(Atmp);
 
     auto Btmp = dsys.getB();
-    Btmp.resize(4,2);
-    Btmp << -0.1049,  0.0017,
-              -0.0017,  0.1049,
-               0.4148, -0.0118,
-              -0.0118,  0.4148;
+    Btmp.resize(4, 2);
+    Btmp << -0.1049, 0.0017,
+            -0.0017, 0.1049,
+            0.4148, -0.0118,
+            -0.0118, 0.4148;
     dsys.setB(Btmp);
 
-//    dsys.C.setOnes(4,4);
-//
-//    dsys.D.setZero(4,2);
+    //    dsys.C.setOnes(4,4);
+    //
+    //    dsys.D.setZero(4,2);
 
     auto Ctmp = dsys.getC();
     Ctmp.resize(2, 4);
-    Ctmp <<  0.5,   0.5,   0,     0,
-              -2.113, 2.113, 0.375, 0.375;
+    Ctmp << 0.5, 0.5, 0, 0,
+            -2.113, 2.113, 0.375, 0.375;
     dsys.setC(Ctmp);
 
     auto Dtmp = dsys.getD();
-    Dtmp.resize(2,2);
+    Dtmp.resize(2, 2);
     Dtmp.setIdentity();
     dsys.setD(Dtmp);
 
@@ -199,23 +376,28 @@ int main()
     dfullsys.state->setZero(4);
     (*dfullsys.state) << 100, 100, 0, 100;
 
-//    std::cout << "test " << dsys.A * (*dfullsys.state) << std::endl;
-//    auto csys = ls::analysis::ZeroOrderHold::d2c(dsys, 0.05);
-//    auto csysinv = ls::analysis::LinearSystemInverse::inverse(csys);
-//    auto dsysinv = ls::analysis::ZeroOrderHold::c2d(csysinv, 0.05);
-//    dsysinv.setDiscreteParams(-dsys.getSamplingPeriod());
+    //    std::cout << "test " << dsys.A * (*dfullsys.state) << std::endl;
+    //    auto csys = ls::analysis::ZeroOrderHold::d2c(dsys, 0.05);
+    //    auto csysinv = ls::analysis::LinearSystemInverse::inverse(csys);
+    //    auto dsysinv = ls::analysis::ZeroOrderHold::c2d(csysinv, 0.05);
+    //    dsysinv.setDiscreteParams(-dsys.getSamplingPeriod());
 
-//    std::cout << "dsysinv" << std::endl;
-//    std::cout << "Dinv" << dsys.D.inverse() << std::endl;
-//    std::cout << "Ad " << std::endl << dsysinv.A << std::endl;
-//    std::cout << "Bd " << std::endl << dsysinv.B << std::endl;
-//    std::cout << "Cd " << std::endl << dsysinv.C << std::endl;
-//    std::cout << "Dd " << std::endl << dsysinv.D << std::endl << std::endl;
+    //    std::cout << "dsysinv" << std::endl;
+    //    std::cout << "Dinv" << dsys.D.inverse() << std::endl;
+    //    std::cout << "Ad " << std::endl << dsysinv.A << std::endl;
+    //    std::cout << "Bd " << std::endl << dsysinv.B << std::endl;
+    //    std::cout << "Cd " << std::endl << dsysinv.C << std::endl;
+    //    std::cout << "Dd " << std::endl << dsysinv.D << std::endl << std::endl;
 
     for (int i = 0; i < 10; i++) {
-        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state << std::endl;
+        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state
+                  << std::endl;
         dfullsys.advanceFree();
     }
+
+    #ifdef LS_USE_GINAC
+    ginacTest();
+    #endif
 
     return 0;
 }

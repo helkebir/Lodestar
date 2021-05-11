@@ -5,6 +5,8 @@
 #ifndef LODESTAR_PROTOWRAPPER_HPP
 #define LODESTAR_PROTOWRAPPER_HPP
 
+#ifdef LS_USE_PROTOBUF
+
 #include "ProtoTypeTrait.hpp"
 
 #define PROTO_WRAP(TYPE) template<> void ls::io::ProtoWrapper<TYPE>::wrap(typename ProtoTypeTrait<TYPE>::type *destObj)
@@ -28,5 +30,7 @@ namespace ls { namespace io {
         T *obj;
     };
 } }
+
+#endif // LS_USE_PROTOBUF
 
 #endif //LODESTAR_PROTOWRAPPER_HPP

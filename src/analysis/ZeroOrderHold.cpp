@@ -6,74 +6,88 @@
 #include "unsupported/Eigen/MatrixFunctions"
 
 ls::systems::StateSpace
-ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace &lti, double dt)
+ls::analysis::ZeroOrderHold::c2d(const Eigen::MatrixXd &A,
+                                 const Eigen::MatrixXd &B,
+                                 const Eigen::MatrixXd &C,
+                                 const Eigen::MatrixXd &D, double dt)
 {
     dt = abs(dt);
 
+    const long n = A.rows();
+    const long m = B.cols();
+
     // Upper exponential matrix
-    Eigen::MatrixXd upperEM(lti.stateDim(), lti.stateDim() + lti.inputDim());
-    upperEM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.getA();
-    upperEM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.getB();
+    Eigen::MatrixXd upperEM(n, n + m);
+    upperEM.block(0, 0, n, n) << A;
+    upperEM.block(0, n, n, m) << B;
 
     // Lower exponential matrix
-    auto lowerEM = Eigen::MatrixXd::Zero(lti.inputDim(),
-                                         lti.stateDim() + lti.inputDim());
+    auto lowerEM = Eigen::MatrixXd::Zero(m, n + m);
 
     // Stacked exponential matrix
-    Eigen::MatrixXd EM(lti.stateDim() + lti.inputDim(), lti.stateDim() + lti.inputDim());
-    EM.block(0, 0, lti.stateDim(), lti.stateDim() + lti.inputDim())
-            << upperEM;
-    EM.block(lti.stateDim(), 0, lti.inputDim(),
-             lti.stateDim() + lti.inputDim()) << lowerEM;
+    Eigen::MatrixXd EM(n + m, n + m);
+    EM.block(0, 0, n, n + m) << upperEM;
+    EM.block(n, 0, m, n + m) << lowerEM;
 
     // Matrix exponential
     Eigen::MatrixXd EXPM;
-    EXPM = (EM * dt).exp().block(0, 0, lti.stateDim(),
-                                 lti.stateDim() + lti.inputDim());
+    EXPM = (EM * dt).exp().block(0, 0, n, n + m);
 
-    Eigen::MatrixXd AD = EXPM.block(0, 0, lti.stateDim(), lti.stateDim());
-    Eigen::MatrixXd BD = EXPM.block(0, lti.stateDim(), lti.stateDim(),
-                                    lti.inputDim());
+    Eigen::MatrixXd AD = EXPM.block(0, 0, n, n);
+    Eigen::MatrixXd BD = EXPM.block(0, n, n, m);
 
-    auto dlti = systems::StateSpace(AD, BD, lti.getC(), lti.getD());
+    auto dss = systems::StateSpace(AD, BD, C, D);
 
-    return dlti;
+    return dss;
 }
 
 ls::systems::StateSpace
-ls::analysis::ZeroOrderHold::d2c(const systems::StateSpace &lti, double dt)
+ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace &ss, double dt)
+{
+    return c2d(ss.getA(), ss.getB(), ss.getC(), ss.getD(), dt);
+}
+
+ls::systems::StateSpace
+ls::analysis::ZeroOrderHold::d2c(const Eigen::MatrixXd &A,
+                                 const Eigen::MatrixXd &B,
+                                 const Eigen::MatrixXd &C,
+                                 const Eigen::MatrixXd &D, double dt)
 {
     dt = abs(dt);
 
+    const long n = A.rows();
+    const long m = B.cols();
+
     // Upper logarith matrix
-    Eigen::MatrixXd upperLM(lti.stateDim(), lti.stateDim() + lti.inputDim());
-    upperLM.block(0, 0, lti.stateDim(), lti.stateDim()) << lti.getA();
-    upperLM.block(0, lti.stateDim(), lti.stateDim(), lti.inputDim()) << lti.getB();
+    Eigen::MatrixXd upperLM(n, n + m);
+    upperLM.block(0, 0, n, n) << A;
+    upperLM.block(0, n, n, m) << B;
 
     // Lower logarithm matrix
-    Eigen::MatrixXd lowerLM(lti.inputDim(), lti.stateDim() + lti.inputDim());
-    lowerLM.block(0, 0, lti.inputDim(), lti.stateDim())
-            << Eigen::MatrixXd::Zero(lti.inputDim(), lti.stateDim());
-    lowerLM.block(0, lti.stateDim(), lti.inputDim(), lti.inputDim())
-            << Eigen::MatrixXd::Identity(lti.inputDim(), lti.inputDim());
+    Eigen::MatrixXd lowerLM(m, n + m);
+    lowerLM.block(0, 0, m, n) << Eigen::MatrixXd::Zero(m, n);
+    lowerLM.block(0, n, m, m) << Eigen::MatrixXd::Identity(m, m);
 
     // Stacked logarithm matrix
-    Eigen::MatrixXd LM(lti.stateDim() + lti.inputDim(), lti.stateDim() + lti.inputDim());
-    LM.block(0, 0, lti.stateDim(), lti.stateDim() + lti.inputDim())
-            << upperLM;
-    LM.block(lti.stateDim(), 0, lti.inputDim(),
-             lti.stateDim() + lti.inputDim()) << lowerLM;
+    Eigen::MatrixXd LM(n + m,
+                       n + m);
+    LM.block(0, 0, n, n + m) << upperLM;
+    LM.block(n, 0, m, n + m) << lowerLM;
 
     // Matrix logarithm
     Eigen::MatrixXd LOGM;
-    LOGM = LM.log().block(0, 0, lti.stateDim(),
-                          lti.stateDim() + lti.inputDim()) / dt;
+    LOGM = LM.log().block(0, 0, n, n + m) / dt;
 
-    Eigen::MatrixXd AC = LOGM.block(0, 0, lti.stateDim(), lti.stateDim());
-    Eigen::MatrixXd BC = LOGM.block(0, lti.stateDim(), lti.stateDim(),
-                                    lti.inputDim());
+    Eigen::MatrixXd AC = LOGM.block(0, 0, n, n);
+    Eigen::MatrixXd BC = LOGM.block(0, n, n, m);
 
-    auto clti = systems::StateSpace(AC, BC, lti.getC(), lti.getD());
+    auto css = systems::StateSpace(AC, BC, C, D);
 
-    return clti;
+    return css;
+}
+
+ls::systems::StateSpace
+ls::analysis::ZeroOrderHold::d2c(const systems::StateSpace &ss, double dt)
+{
+    return d2c(ss.getA(), ss.getB(), ss.getC(), ss.getD(), dt);
 }

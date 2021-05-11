@@ -5,12 +5,14 @@
 #include "TransferFunction.hpp"
 
 ls::systems::TransferFunction::TransferFunction(
-        const ls::systems::TransferFunction &tf) {
-    _num = tf.getNum();
-    _den = tf.getDen();
+        const ls::systems::TransferFunction &other)
+{
+    _num = other.getNum();
+    _den = other.getDen();
 }
 
-void ls::systems::TransferFunction::normalize() {
+void ls::systems::TransferFunction::normalizeInPlace()
+{
     /*if (den.isZero()) {
         // TODO: Throw error; denominator must at least have one nonzero element.
     }*/
@@ -32,7 +34,8 @@ void ls::systems::TransferFunction::normalize() {
         if (leadingZeros == _num.cols())
             leadingZeros--;
 
-        _num = _num.block(0, leadingZeros, _num.rows(), _num.cols() - leadingZeros);
+        _num = _num.block(0, leadingZeros, _num.rows(),
+                          _num.cols() - leadingZeros);
     }
 
     // Squeeze first dimension if singular.
@@ -40,15 +43,17 @@ void ls::systems::TransferFunction::normalize() {
         _num = _num.block(0, 0, 1, _num.cols()).transpose();
 }
 
-ls::systems::TransferFunction ls::systems::TransferFunction::normalized() const {
+ls::systems::TransferFunction ls::systems::TransferFunction::normalized() const
+{
     auto tf = TransferFunction(*this);
-    tf.normalize();
+    tf.normalizeInPlace();
 
     return tf;
 }
 
 ls::systems::StateSpace
-ls::systems::TransferFunction::toStateSpace() const {
+ls::systems::TransferFunction::toStateSpace() const
+{
     auto tf = normalized();
 
     int M = tf._num.rows();
@@ -83,7 +88,8 @@ ls::systems::TransferFunction::toStateSpace() const {
         D = Eigen::MatrixXd::Zero(1, 1);
 
     if (K == 1) {
-        D = Eigen::Map<Eigen::MatrixXd>(D.data(), tf.getNum().rows(), tf.getNum().cols());
+        D = Eigen::Map<Eigen::MatrixXd>(D.data(), tf.getNum().rows(),
+                                        tf.getNum().cols());
 
         return StateSpace(Eigen::MatrixXd::Zero(1, 1),
                           Eigen::MatrixXd::Zero(1, D.cols()),
@@ -112,39 +118,114 @@ ls::systems::TransferFunction::toStateSpace() const {
 }
 
 ls::systems::StateSpace
-ls::systems::TransferFunction::toDiscreteStateSpace(double dt) const {
+ls::systems::TransferFunction::toDiscreteStateSpace(double dt) const
+{
     return ls::analysis::BilinearTransformation::c2dBwdDiff(toStateSpace(), dt);
 }
 
 ls::systems::StateSpace
 ls::systems::TransferFunction::toDiscreteStateSpace(double dt,
-                                                    double alpha) const {
-    auto ss = ls::analysis::BilinearTransformation::c2d(toStateSpace(), dt, alpha);
+                                                    double alpha) const
+{
+    auto ss = ls::analysis::BilinearTransformation::c2d(toStateSpace(), dt,
+                                                        alpha);
     ss.setDiscreteParams(dt);
 
     return ss;
 }
 
-Eigen::MatrixXd ls::systems::TransferFunction::getNum() const {
+Eigen::MatrixXd ls::systems::TransferFunction::getNum() const
+{
     return _num;
 }
 
-const Eigen::MatrixXd &ls::systems::TransferFunction::getNumRef() {
-    return _num;
-}
-
-void ls::systems::TransferFunction::setNum(const Eigen::MatrixXd &num) {
+void ls::systems::TransferFunction::setNum(const Eigen::MatrixXd &num)
+{
     _num = num;
 }
 
-Eigen::MatrixXd ls::systems::TransferFunction::getDen() const {
+long ls::systems::TransferFunction::getNumDegree() const
+{
+    const long n = _num.rows() - 1;
+    return (n < 0 ? 0 : n);
+}
+
+Eigen::MatrixXd ls::systems::TransferFunction::getDen() const
+{
     return _den;
 }
 
-const Eigen::MatrixXd &ls::systems::TransferFunction::getDenRef() {
-    return _den;
-}
-
-void ls::systems::TransferFunction::setDen(const Eigen::MatrixXd &den) {
+void ls::systems::TransferFunction::setDen(const Eigen::MatrixXd &den)
+{
     _den = den;
 }
+
+long ls::systems::TransferFunction::getDenDegree() const
+{
+    const long d = _den.rows() - 1;
+    return (d < 0 ? 0 : d);
+}
+
+#ifdef LS_USE_GINAC
+
+GiNaC::ex ls::systems::TransferFunction::getNumExpression(
+        const GiNaC::ex &symbol) const
+{
+    GiNaC::ex num;
+
+    const long n = getNumDegree();
+
+    for (int i = 0; i < n + 1; i++) {
+        num += _num(i, 0) * GiNaC::pow(symbol, n - i);
+    }
+
+    return num;
+}
+
+GiNaC::ex ls::systems::TransferFunction::getDenExpression(
+        const GiNaC::ex &symbol) const
+{
+    GiNaC::ex den;
+
+    const long d = getNumDegree();
+
+    for (int i = 0; i < d + 1; i++) {
+        den += _den(i, 0) * GiNaC::pow(symbol, d - i);
+    }
+
+    return den;
+}
+
+GiNaC::ex ls::systems::TransferFunction::getExpression(
+        const GiNaC::ex &symbol) const
+{
+    return getNumExpression(symbol) / getDenExpression(symbol);
+}
+
+ls::systems::TransferFunction::TransferFunction(const GiNaC::ex &tf,
+                                                const GiNaC::ex &symbol)
+{
+    GiNaC::lst numer_denom = GiNaC::ex_to<GiNaC::lst>(
+            tf.normal().numer_denom());
+    GiNaC::ex num, den;
+    num = numer_denom.op(0);
+    den = numer_denom.op(1);
+
+    const long n = num.degree(symbol);
+    const long d = den.degree(symbol);
+
+    _num = Eigen::MatrixXd::Zero(n, 1);
+    _den = Eigen::MatrixXd::Zero(d, 1);
+
+    for (int i = 0; i < n; i++) {
+        _num(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
+                num.coeff(symbol, n - i)).to_double();
+    }
+
+    for (int i = 0; i < d; i++) {
+        _den(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
+                den.coeff(symbol, d - i)).to_double();
+    }
+}
+
+#endif
