@@ -11,7 +11,7 @@
 
 #define PROTO_WRAP(TYPE) template<> void ls::io::ProtoWrapper<TYPE>::wrap(typename ProtoTypeTrait<TYPE>::type *destObj)
 
-#define PROTO_WRAP_STATIC(TYPE) template<> void ls::io::ProtoWrapper<TYPE>::wrap(typename ProtoTypeTrait<TYPE>::type *destObj, const TYPE *srcObj)
+#define PROTO_WRAP_STATIC(TYPE) template<> void ls::io::ProtoWrapper<TYPE>::wrap(typename ProtoTypeTrait<TYPE>::type *destObj, const TYPE *obj)
 
 namespace ls { namespace io {
     template<typename T>

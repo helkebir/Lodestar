@@ -8,6 +8,7 @@ message symbol {
 
 message ex {
   optional bytes archive = 1;
+  repeated symbol symbols = 2;
 }
 
 message lst {

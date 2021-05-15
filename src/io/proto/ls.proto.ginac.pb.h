@@ -327,8 +327,27 @@ class ex PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kSymbolsFieldNumber = 2,
     kArchiveFieldNumber = 1,
   };
+  // repeated .ls.proto.ginac.symbol symbols = 2;
+  int symbols_size() const;
+  private:
+  int _internal_symbols_size() const;
+  public:
+  void clear_symbols();
+  ::ls::proto::ginac::symbol* mutable_symbols(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::ginac::symbol >*
+      mutable_symbols();
+  private:
+  const ::ls::proto::ginac::symbol& _internal_symbols(int index) const;
+  ::ls::proto::ginac::symbol* _internal_add_symbols();
+  public:
+  const ::ls::proto::ginac::symbol& symbols(int index) const;
+  ::ls::proto::ginac::symbol* add_symbols();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::ginac::symbol >&
+      symbols() const;
+
   // optional bytes archive = 1;
   bool has_archive() const;
   private:
@@ -356,6 +375,7 @@ class ex PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::ginac::symbol > symbols_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr archive_;
   friend struct ::TableStruct_ls_2eproto_2eginac_2eproto;
 };
@@ -626,6 +646,45 @@ inline void ex::set_allocated_archive(std::string* archive) {
   archive_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), archive,
       GetArena());
   // @@protoc_insertion_point(field_set_allocated:ls.proto.ginac.ex.archive)
+}
+
+// repeated .ls.proto.ginac.symbol symbols = 2;
+inline int ex::_internal_symbols_size() const {
+  return symbols_.size();
+}
+inline int ex::symbols_size() const {
+  return _internal_symbols_size();
+}
+inline void ex::clear_symbols() {
+  symbols_.Clear();
+}
+inline ::ls::proto::ginac::symbol* ex::mutable_symbols(int index) {
+  // @@protoc_insertion_point(field_mutable:ls.proto.ginac.ex.symbols)
+  return symbols_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::ginac::symbol >*
+ex::mutable_symbols() {
+  // @@protoc_insertion_point(field_mutable_list:ls.proto.ginac.ex.symbols)
+  return &symbols_;
+}
+inline const ::ls::proto::ginac::symbol& ex::_internal_symbols(int index) const {
+  return symbols_.Get(index);
+}
+inline const ::ls::proto::ginac::symbol& ex::symbols(int index) const {
+  // @@protoc_insertion_point(field_get:ls.proto.ginac.ex.symbols)
+  return _internal_symbols(index);
+}
+inline ::ls::proto::ginac::symbol* ex::_internal_add_symbols() {
+  return symbols_.Add();
+}
+inline ::ls::proto::ginac::symbol* ex::add_symbols() {
+  // @@protoc_insertion_point(field_add:ls.proto.ginac.ex.symbols)
+  return _internal_add_symbols();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ls::proto::ginac::symbol >&
+ex::symbols() const {
+  // @@protoc_insertion_point(field_list:ls.proto.ginac.ex.symbols)
+  return symbols_;
 }
 
 // -------------------------------------------------------------------

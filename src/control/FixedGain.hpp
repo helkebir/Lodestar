@@ -7,14 +7,16 @@
 
 #include "Eigen/Dense"
 
-namespace ls { namespace control {
-    class FixedGain {
-    public:
-        FixedGain() : gain(new Eigen::MatrixXd)
-        {}
+namespace ls {
+    namespace control {
+        class FixedGain {
+        public:
+            FixedGain() : gain(new Eigen::MatrixXd)
+            {}
 
-        Eigen::MatrixXd *gain;
-    };
-} }
+            Eigen::MatrixXd *gain;
+        };
+    }
+}
 
 #endif //LODESTAR_FIXEDGAIN_HPP

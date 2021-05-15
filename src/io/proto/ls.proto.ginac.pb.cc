@@ -33,7 +33,8 @@ struct symbolDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT symbolDefaultTypeInternal _symbol_default_instance_;
 constexpr ex::ex(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : archive_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+  : symbols_()
+  , archive_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct exDefaultTypeInternal {
   constexpr exDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -76,7 +77,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ls_2eproto_2eginac_2eproto::of
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::ls::proto::ginac::ex, archive_),
+  PROTOBUF_FIELD_OFFSET(::ls::proto::ginac::ex, symbols_),
   0,
+  ~0u,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ls::proto::ginac::lst, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -86,8 +89,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_ls_2eproto_2eginac_2eproto::of
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 6, sizeof(::ls::proto::ginac::symbol)},
-  { 7, 13, sizeof(::ls::proto::ginac::ex)},
-  { 14, -1, sizeof(::ls::proto::ginac::lst)},
+  { 7, 14, sizeof(::ls::proto::ginac::ex)},
+  { 16, -1, sizeof(::ls::proto::ginac::lst)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -98,14 +101,15 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_ls_2eproto_2eginac_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\024ls.proto.ginac.proto\022\016ls.proto.ginac\"$"
-  "\n\006symbol\022\021\n\004name\030\001 \001(\tH\000\210\001\001B\007\n\005_name\"&\n\002"
-  "ex\022\024\n\007archive\030\001 \001(\014H\000\210\001\001B\n\n\010_archive\".\n\003"
-  "lst\022\'\n\013expressions\030\001 \003(\0132\022.ls.proto.gina"
-  "c.exb\006proto3"
+  "\n\006symbol\022\021\n\004name\030\001 \001(\tH\000\210\001\001B\007\n\005_name\"O\n\002"
+  "ex\022\024\n\007archive\030\001 \001(\014H\000\210\001\001\022\'\n\007symbols\030\002 \003("
+  "\0132\026.ls.proto.ginac.symbolB\n\n\010_archive\".\n"
+  "\003lst\022\'\n\013expressions\030\001 \003(\0132\022.ls.proto.gin"
+  "ac.exb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_ls_2eproto_2eginac_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_ls_2eproto_2eginac_2eproto = {
-  false, false, 172, descriptor_table_protodef_ls_2eproto_2eginac_2eproto, "ls.proto.ginac.proto", 
+  false, false, 213, descriptor_table_protodef_ls_2eproto_2eginac_2eproto, "ls.proto.ginac.proto", 
   &descriptor_table_ls_2eproto_2eginac_2eproto_once, nullptr, 0, 3,
   schemas, file_default_instances, TableStruct_ls_2eproto_2eginac_2eproto::offsets,
   file_level_metadata_ls_2eproto_2eginac_2eproto, file_level_enum_descriptors_ls_2eproto_2eginac_2eproto, file_level_service_descriptors_ls_2eproto_2eginac_2eproto,
@@ -345,14 +349,16 @@ class ex::_Internal {
 };
 
 ex::ex(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
+  symbols_(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:ls.proto.ginac.ex)
 }
 ex::ex(const ex& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+      _has_bits_(from._has_bits_),
+      symbols_(from.symbols_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   archive_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (from._internal_has_archive()) {
@@ -393,6 +399,7 @@ void ex::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  symbols_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     archive_.ClearNonDefaultToEmpty();
@@ -414,6 +421,18 @@ const char* ex::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::interna
           auto str = _internal_mutable_archive();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .ls.proto.ginac.symbol symbols = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_symbols(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else goto handle_unusual;
         continue;
       default: {
@@ -452,6 +471,14 @@ failure:
         1, this->_internal_archive(), target);
   }
 
+  // repeated .ls.proto.ginac.symbol symbols = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_symbols_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, this->_internal_symbols(i), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -467,6 +494,13 @@ size_t ex::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated .ls.proto.ginac.symbol symbols = 2;
+  total_size += 1UL * this->_internal_symbols_size();
+  for (const auto& msg : this->symbols_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
 
   // optional bytes archive = 1;
   cached_has_bits = _has_bits_[0];
@@ -507,6 +541,7 @@ void ex::MergeFrom(const ex& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  symbols_.MergeFrom(from.symbols_);
   if (from._internal_has_archive()) {
     _internal_set_archive(from._internal_archive());
   }
@@ -534,6 +569,7 @@ void ex::InternalSwap(ex* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
+  symbols_.InternalSwap(&other->symbols_);
   archive_.Swap(&other->archive_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 

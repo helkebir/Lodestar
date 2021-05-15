@@ -143,7 +143,7 @@ namespace ls {
 #ifdef LS_USE_GINAC
 
             /**
-             * @breif Constructs a transfer function from the given symbolic
+             * @brief Constructs a transfer function from the given symbolic
              * expression.
              *
              * @param tf Transfer function expression.
@@ -178,6 +178,16 @@ namespace ls {
              * @return GiNaC expression of the transfer function.
              */
             GiNaC::ex getExpression(const GiNaC::ex &symbol) const;
+
+            /**
+             * @brief Copies transfer function coefficients from the given
+             * symbolic expression.
+             *
+             * @param tf Transfer function expression.
+             * @param symbol Symbol used for the independent variable.
+             */
+            void
+            copyFromExpression(const GiNaC::ex &tf, const GiNaC::ex &symbol);
 
 #endif
 

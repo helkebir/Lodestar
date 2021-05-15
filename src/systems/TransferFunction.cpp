@@ -168,6 +168,12 @@ long ls::systems::TransferFunction::getDenDegree() const
 
 #ifdef LS_USE_GINAC
 
+ls::systems::TransferFunction::TransferFunction(const GiNaC::ex &tf,
+                                                const GiNaC::ex &symbol)
+{
+    copyFromExpression(tf, symbol);
+}
+
 GiNaC::ex ls::systems::TransferFunction::getNumExpression(
         const GiNaC::ex &symbol) const
 {
@@ -202,8 +208,8 @@ GiNaC::ex ls::systems::TransferFunction::getExpression(
     return getNumExpression(symbol) / getDenExpression(symbol);
 }
 
-ls::systems::TransferFunction::TransferFunction(const GiNaC::ex &tf,
-                                                const GiNaC::ex &symbol)
+void ls::systems::TransferFunction::copyFromExpression(const GiNaC::ex &tf,
+                                                       const GiNaC::ex &symbol)
 {
     GiNaC::lst numer_denom = GiNaC::ex_to<GiNaC::lst>(
             tf.normal().numer_denom());
@@ -211,20 +217,20 @@ ls::systems::TransferFunction::TransferFunction(const GiNaC::ex &tf,
     num = numer_denom.op(0);
     den = numer_denom.op(1);
 
-    const long n = num.degree(symbol);
-    const long d = den.degree(symbol);
+    const long n = num.degree(symbol)+1;
+    const long d = den.degree(symbol)+1;
 
     _num = Eigen::MatrixXd::Zero(n, 1);
     _den = Eigen::MatrixXd::Zero(d, 1);
 
     for (int i = 0; i < n; i++) {
         _num(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
-                num.coeff(symbol, n - i)).to_double();
+                num.coeff(symbol, n - i - 1)).to_double();
     }
 
     for (int i = 0; i < d; i++) {
         _den(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
-                den.coeff(symbol, d - i)).to_double();
+                den.coeff(symbol, d - i - 1)).to_double();
     }
 }
 

@@ -89,8 +89,39 @@ GiNaC::matrix lst_to_vector(const GiNaC::lst &lst) {
 
 void ginacTest()
 {
+    GiNaC::symbol z("z");
+    GiNaC::symbol w("w");
+    GiNaC::symbol v("v");
+    GiNaC::exmap xmap;
+    xmap[z] = 2;
+    std::cout << "5 <= 6 : " << (bool) GiNaC::relational(5, 6, GiNaC::relational::operators::less_or_equal) << std::endl;
+    std::cout << "z <= z+2 : " << (bool) GiNaC::relational(z, z+2, GiNaC::relational::operators::less_or_equal) << std::endl;
+    std::cout << "z^2 <= z^3 : " << (bool) GiNaC::ex_to<GiNaC::relational>(GiNaC::relational(GiNaC::pow(z, 2), GiNaC::pow(z, 3), GiNaC::relational::operators::less_or_equal).subs(xmap)) << std::endl;
+    std::cout << GiNaC::exp(z).series(z==0, 3) << std::endl;
+
+    GiNaC::exset xset;
+    GiNaC::ex xpression = (w - z + GiNaC::cos(z+2) - z*z);
+    std::cout << xpression << std::endl;
+    std::cout << xpression.find(GiNaC::cos(GiNaC::wild(0)), xset) << std::endl;
+//    std::cout << xpression.find((z - w + GiNaC::wildcard(1)), xset) << std::endl;
+//    std::cout << xpression.find((w - z + GiNaC::wildcard(2)), xset) << std::endl;
+    std::cout << xset << std::endl;
+    xmap.clear();
+    for (const auto &ex : xset)
+        xmap[ex] = 1;
+
+    xpression = GiNaC::expand(xpression).subs(xmap);
+    xpression = xpression.subs(GiNaC::lst{GiNaC::wildcard(0) + w - z == GiNaC::wildcard(0) + v});
+    xpression = xpression.subs(GiNaC::lst{GiNaC::wildcard(0) + GiNaC::pow(w - z, GiNaC::wildcard(1)) == GiNaC::wildcard(0) + GiNaC::pow(v, GiNaC::wildcard(1))});
+    std::cout << xpression << std::endl;
+
     ls::symbolic::OrdinaryDifferentialEquation ode{};
     ode.setFunctions(GiNaC::lst{ode.getStateSymbol(0)*ode.getStateSymbol(0) + ode.getStateSymbol(0)*ode.getInputSymbol(0)});
+
+    std::cout << lst_to_vector(ode.getFunctions())(0,0) << std::endl;
+    std::cout << GiNaC::series_to_poly(ode.getFunctions().op(0).series(ode.getStateSymbol(0)==0, 2)) << std::endl;
+    std::cout << GiNaC::series_to_poly(lst_to_vector(ode.getFunctions()).series(ode.getStateSymbol(0)==0, 3).evalm()) << std::endl;
+
 
     auto exmap = ode.generateExpressionMap(std::vector<double>{2}, std::vector<double>{3});
 
@@ -305,10 +336,23 @@ int main()
     auto tf = ls::systems::TransferFunction(num, den);
 
 #ifdef LS_USE_GINAC
+    auto s = GiNaC::symbol("s");
+    GiNaC::archive arxiv;
+    arxiv.archive_ex(tf.getExpression(s), "tf");
+    std::cout << "Archived tf:" << std::endl;
+    std::cout << sizeof arxiv << std::endl;
+
     std::cout << "tf to ex" << std::endl;
-    std::cout << GiNaC::latex;
-    GiNaC::Digits = 6;
-    std::cout << tf.getExpression(GiNaC::symbol("s")) << std::endl;
+//    std::cout << GiNaC::latex;
+//    GiNaC::Digits = 6;
+    std::cout << tf.getExpression(s) << std::endl;
+    auto tf2 = ls::systems::TransferFunction(tf.getExpression(s), s);
+    std::cout << tf2.getExpression(s) << std::endl;
+    if ((bool) (tf.getExpression(s) == tf2.getExpression(s))) {
+        std::cout << "Expressions are equal." << std::endl;
+    } else
+        std::cout << (bool) (tf.getExpression(s) == tf2.getExpression(s)) << std::endl;
+
     std::cout << GiNaC::dflt;
 #endif
 

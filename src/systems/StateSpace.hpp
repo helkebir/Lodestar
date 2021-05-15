@@ -15,10 +15,10 @@ namespace ls {
             /**
              * @brief Default constructor.
              */
-            StateSpace() : _A(Eigen::MatrixXd::Zero(1, 1)),
-                           _B(Eigen::MatrixXd::Zero(1, 1)),
-                           _C(Eigen::MatrixXd::Zero(1, 1)),
-                           _D(Eigen::MatrixXd::Zero(1, 1)),
+            StateSpace() : _A(Eigen::MatrixXd()),
+                           _B(Eigen::MatrixXd()),
+                           _C(Eigen::MatrixXd()),
+                           _D(Eigen::MatrixXd()),
                            _dt(-1), _isDiscrete(false)
             {};
 
