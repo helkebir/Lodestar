@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "primitives/integrators/IntegratorNewton.hpp"
+#include "analysis/LinearSystemInverse.hpp"
 //#include "tests/analysis/LinearSystemInverse_test.hpp"
 #include "analysis/ZeroOrderHold.hpp"
 #include "analysis/BilinearTransformation.hpp"
@@ -39,8 +40,7 @@ GiNaC::matrix
 makeJacobian(const GiNaC::lst &states, const GiNaC::lst &functions)
 {
     GiNaC::lst cols{};
-    for (GiNaC::lst::const_iterator it = states.begin();
-         it != states.end(); it++) {
+    for (auto it = states.begin(); it != states.end(); it++) {
         cols.append(functions.diff(GiNaC::ex_to<GiNaC::symbol>(*it)));
     }
 
@@ -285,6 +285,18 @@ int main()
 
     auto lti = ls::systems::StateSpace<>(A, B, C, D);
     auto fixedLTI = ls::systems::StateSpace<double, 3, 2, 2>(A, B, C, D);
+    ls::systems::StateSpace<double, 3, 2, 2> fixedDTLI;
+
+    auto * memstruct = new ls::analysis::BilinearTransformation::mallocStructC2D<double, 3, 2, 2>;
+    ls::analysis::BilinearTransformation::c2d(&fixedLTI, 0.1, 0.5, &fixedDTLI, memstruct);
+
+    std::cout << "Ad " << std::endl << *fixedDTLI.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *fixedDTLI.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *fixedDTLI.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *fixedDTLI.getD() << std::endl << std::endl;
+    std::cout << "State dim. " << fixedDTLI.stateDim() << std::endl;
+    std::cout << "Input dim. " << fixedDTLI.inputDim() << std::endl;
+    std::cout << "Output dim. " << fixedDTLI.outputDim() << std::endl;
 
     std::cout << "isStable: " << (lti.isStable() ? "true" : "false")
               << std::endl;
@@ -439,28 +451,28 @@ int main()
     Dtmp.setIdentity();
     dsys.setD(Dtmp);
 
-//    ls::systems::DiscreteSystem<ls::systems::StateSpace<double, -1, -1, -1>> dfullsys(&dsys);
-//    dfullsys.state->setZero(4);
-//    (*dfullsys.state) << 100, 100, 0, 100;
+    ls::systems::DiscreteSystem<ls::systems::StateSpace<double, -1, -1, -1>> dfullsys(&dsys);
+    dfullsys.state->setZero(4, 1);
+    (*dfullsys.state) << 100, 100, 0, 100;
 
-    //    std::cout << "test " << dsys.A * (*dfullsys.state) << std::endl;
-    //    auto csys = ls::analysis::ZeroOrderHold::d2c(dsys, 0.05);
-    //    auto csysinv = ls::analysis::LinearSystemInverse::inverse(csys);
-    //    auto dsysinv = ls::analysis::ZeroOrderHold::c2d(csysinv, 0.05);
-    //    dsysinv.setDiscreteParams(-dsys.getSamplingPeriod());
+//    std::cout << "test " << *dsys.getA() * (*dfullsys.state) << std::endl;
+//    auto csys = ls::analysis::ZeroOrderHold::d2c(dsys, 0.05);
+//    auto csysinv = ls::analysis::LinearSystemInverse::inverse(csys);
+//    auto dsysinv = ls::analysis::ZeroOrderHold::c2d(csysinv, 0.05);
+//    dsysinv.setDiscreteParams(-dsys.getSamplingPeriod());
+//
+//    std::cout << "dsysinv" << std::endl;
+//    std::cout << "Dinv" << dsys.getD()->inverse() << std::endl;
+//    std::cout << "Ad " << std::endl << *dsysinv.getA() << std::endl;
+//    std::cout << "Bd " << std::endl << *dsysinv.getB() << std::endl;
+//    std::cout << "Cd " << std::endl << *dsysinv.getC() << std::endl;
+//    std::cout << "Dd " << std::endl << *dsysinv.getD() << std::endl << std::endl;
 
-    //    std::cout << "dsysinv" << std::endl;
-    //    std::cout << "Dinv" << dsys.D.inverse() << std::endl;
-    //    std::cout << "Ad " << std::endl << dsysinv.A << std::endl;
-    //    std::cout << "Bd " << std::endl << dsysinv.B << std::endl;
-    //    std::cout << "Cd " << std::endl << dsysinv.C << std::endl;
-    //    std::cout << "Dd " << std::endl << dsysinv.D << std::endl << std::endl;
-
-//    for (int i = 0; i < 10; i++) {
-//        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state
-//                  << std::endl;
-//        dfullsys.advanceFree();
-//    }
+    for (int i = 0; i < 10; i++) {
+        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state
+                  << std::endl;
+        dfullsys.advanceFree();
+    }
 
     #ifdef LS_USE_GINAC
     ginacTest();

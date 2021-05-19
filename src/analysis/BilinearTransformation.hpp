@@ -11,21 +11,6 @@
 
 namespace ls {
     namespace analysis {
-        template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
-        struct mallocStructC2D {
-            Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH;
-            Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH2;
-            Eigen::Matrix<TScalar, TStateDim, TStateDim> I;
-        };
-
-        template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
-        struct mallocStructD2C {
-            Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH;
-            Eigen::Matrix<TScalar, TStateDim, TStateDim> IMAC;
-            Eigen::Matrix<TScalar, TStateDim, TStateDim> I;
-        };
-
-
         /**
          * @brief Routines for converting a state space system from continuous-
          * to discrete-time and vice versa.
@@ -35,6 +20,20 @@ namespace ls {
          */
         class BilinearTransformation {
         public:
+            template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
+            struct mallocStructC2D {
+                Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH;
+                Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH2;
+                Eigen::Matrix<TScalar, TStateDim, TStateDim> I;
+            };
+
+            template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
+            struct mallocStructD2C {
+                Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>> HH;
+                Eigen::Matrix<TScalar, TStateDim, TStateDim> IMAC;
+                Eigen::Matrix<TScalar, TStateDim, TStateDim> I;
+            };
+
             /**
              * @brief Generates generalized bilinear transform of a
              * continuous-time state space system.
@@ -261,7 +260,7 @@ void
 ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          ls::analysis::mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
                                           LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
@@ -285,7 +284,7 @@ void
 ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          ls::analysis::mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
                                           LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
@@ -309,7 +308,7 @@ void
 ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          ls::analysis::mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
                                           LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
@@ -332,7 +331,7 @@ void
 ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          ls::analysis::mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
                                           LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;

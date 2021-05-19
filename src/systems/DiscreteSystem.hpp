@@ -47,6 +47,7 @@ namespace ls {
 
         template <typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
         class DiscreteSystem<StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>> {
+        public:
             typedef StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> TDSystem;
             typedef Eigen::Matrix<TScalar, TStateDim, LS_STATIC_UNLESS_DYNAMIC_VAL(TStateDim, 1)> TDStateVector;
             typedef Eigen::Matrix<TScalar, TInputDim, LS_STATIC_UNLESS_DYNAMIC_VAL(TInputDim, 1)> TDInputVector;
@@ -59,9 +60,21 @@ namespace ls {
                                        input(nullptr), time(0)
             {}
 
-            void initialize(LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+            IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, void)
+            initialize() {
+                state->conservativeResize(system->getA().rows());
 
-            void initialize(LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+                if (input == nullptr)
+                    input = new Eigen::VectorXd;
+
+                input->conservativeResize(system->getB().cols());
+            }
+
+            IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, void)
+            initialize() {
+                // NOTE: No action since no memory may be allocated.
+                return;
+            }
 
             void advance();
 
@@ -86,9 +99,9 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advance()
 {
     if (input != nullptr) {
-        *state = system->getA() * (*state) + system->getB() * (*input);
+        *state = (*system->getA()) * (*state) + (*system->getB()) * (*input);
     } else {
-        *state = system->getA() * (*state);
+        *state = (*system->getA()) * (*state);
     }
 
     time += system->getSamplingPeriod();
@@ -98,7 +111,7 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advance(
         Eigen::Matrix<TScalar, TInputDim, constexprMax2(-1, TInputDim, 1)> *control)
 {
-    *state = system->getA() * (*state) + system->getB() * (*control);
+    *state = (*system->getA()) * (*state) + (*system->getB()) * (*control);
 
     time = system->getSamplingPeriod();
 }
@@ -106,7 +119,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TIn
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advanceFree()
 {
-    *state = system->getA() * (*state);
+    *state = (*system->getA()) * (*state);
 
     time += system->getSamplingPeriod();
 }
@@ -114,7 +127,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TIn
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advanceForced()
 {
-    *state = system->getA() * (*state) + system->getB() * (*input);
+    *state = (*system->getA()) * (*state) + (*system->getB()) * (*input);
 
     time += system->getSamplingPeriod();
 }
@@ -123,31 +136,9 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advanceForced(
         Eigen::Matrix<TScalar, TInputDim, constexprMax2(-1, TInputDim, 1)> *control)
 {
-    *state = system->getA() * (*state) + system->getB() * (*control);
+    *state = (*system->getA()) * (*state) + (*system->getB()) * (*control);
 
     time += system->getSamplingPeriod();
 }
-
-template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::initialize(
-        LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
-{
-    state->conservativeResize(system->getA().rows());
-
-    if (input == nullptr)
-        input = new Eigen::VectorXd;
-
-    input->conservativeResize(system->getB().cols());
-}
-
-template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::initialize(
-        LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
-{
-    // NOTE: No action since no memory may be allocated.
-    return;
-}
-
-
 
 #endif //LODESTAR_DISCRETESYSTEM_HPP

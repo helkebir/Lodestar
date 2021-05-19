@@ -80,20 +80,4 @@ ls::analysis::LinearSystemInverse::inverse(const ls::systems::StateSpace<TScalar
     inverse(&ss, out);
 }
 
-ls::systems::StateSpace<> ls::analysis::LinearSystemInverse::inverse(const ls::systems::StateSpace<> *ss)
-{
-    auto out = ls::systems::StateSpace<>();
-    inverse(ss, &out);
-
-    return out;
-}
-
-ls::systems::StateSpace<> ls::analysis::LinearSystemInverse::inverse(const ls::systems::StateSpace<> &ss)
-{
-    auto out = ls::systems::StateSpace<>();
-    inverse(ss, &out);
-
-    return out;
-}
-
 #endif //LODESTAR_LINEARSYSTEMINVERSE_HPP
