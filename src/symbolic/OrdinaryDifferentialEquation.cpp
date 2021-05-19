@@ -270,18 +270,18 @@ ls::symbolic::OrdinaryDifferentialEquation::generateJacobianMatrix(
     return matrixToMatrixXd(jacobian.subs(exmap));
 }
 
-ls::systems::StateSpace ls::symbolic::OrdinaryDifferentialEquation::linearize(
+ls::systems::StateSpace<> ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const GiNaC::exmap &exmap) const
 {
     auto A = generateJacobianMatrixStates(exmap);
     auto B = generateJacobianMatrixInputs(exmap);
+    Eigen::MatrixXd C = Eigen::MatrixXd::Identity(A.rows(), A.rows());
+    Eigen::MatrixXd D = Eigen::MatrixXd::Zero(A.rows(), B.rows());
 
-    return ls::systems::StateSpace(A, B, Eigen::MatrixXd::Identity(A.rows(),
-                                                                   A.rows()),
-                                   Eigen::MatrixXd::Zero(A.rows(), B.rows()));
+    return ls::systems::StateSpace<>(A, B, C, D);
 }
 
-ls::systems::StateSpace
+ls::systems::StateSpace<>
 ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const std::vector<double> &states,
         const std::vector<double> &inputs) const
@@ -290,7 +290,7 @@ ls::symbolic::OrdinaryDifferentialEquation::linearize(
     return linearize(exmap);
 }
 
-ls::systems::StateSpace
+ls::systems::StateSpace<>
 ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const double t,
         const std::vector<double> &states,
@@ -300,19 +300,19 @@ ls::symbolic::OrdinaryDifferentialEquation::linearize(
     return linearize(exmap);
 }
 
-ls::systems::StateSpace ls::symbolic::OrdinaryDifferentialEquation::linearize(
+ls::systems::StateSpace<> ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const GiNaC::matrix &jacobianStates,
         const GiNaC::matrix &jacobianInputs, const GiNaC::exmap &exmap) const
 {
-    auto A = generateJacobianMatrix(jacobianStates, exmap);
-    auto B = generateJacobianMatrix(jacobianInputs, exmap);
+    Eigen::MatrixXd A = generateJacobianMatrix(jacobianStates, exmap);
+    Eigen::MatrixXd B = generateJacobianMatrix(jacobianInputs, exmap);
+    Eigen::MatrixXd C = Eigen::MatrixXd::Identity(A.rows(), A.rows());
+    Eigen::MatrixXd D = Eigen::MatrixXd::Zero(A.rows(), B.rows());
 
-    return ls::systems::StateSpace(A, B, Eigen::MatrixXd::Identity(A.rows(),
-                                                                   A.rows()),
-                                   Eigen::MatrixXd::Zero(A.rows(), B.rows()));
+    return ls::systems::StateSpace<>(A, B, C, D);
 }
 
-ls::systems::StateSpace ls::symbolic::OrdinaryDifferentialEquation::linearize(
+ls::systems::StateSpace<> ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const GiNaC::matrix &jacobianStates,
         const GiNaC::matrix &jacobianInputs, const std::vector<double> &states,
         const std::vector<double> &inputs) const
@@ -321,7 +321,7 @@ ls::systems::StateSpace ls::symbolic::OrdinaryDifferentialEquation::linearize(
     return linearize(jacobianStates, jacobianInputs, exmap);
 }
 
-ls::systems::StateSpace ls::symbolic::OrdinaryDifferentialEquation::linearize(
+ls::systems::StateSpace<> ls::symbolic::OrdinaryDifferentialEquation::linearize(
         const GiNaC::matrix &jacobianStates,
         const GiNaC::matrix &jacobianInputs, const double t,
         const std::vector<double> &states,

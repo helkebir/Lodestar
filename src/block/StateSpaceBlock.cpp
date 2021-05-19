@@ -10,7 +10,7 @@ ls::block::StateSpaceBlock<Eigen::MatrixXd, Eigen::MatrixXd>::process(
         Eigen::MatrixXd &input)
 {
     if (_content->isDiscrete()) {
-        auto A = _content->getA();
+        auto A = *_content->getA();
         *_output = A * input;
 
         return *_output;
@@ -27,7 +27,7 @@ ls::block::StateSpaceBlock<Eigen::MatrixXd, Eigen::MatrixXd>::processConst(
         const Eigen::MatrixXd &input) const
 {
     if (_content->isDiscrete()) {
-        auto A = _content->getA();
+        auto A = *_content->getA();
         Eigen::MatrixXd output = A * input;
 
         return output;
@@ -43,7 +43,7 @@ Eigen::MatrixXd
 ls::block::StateSpaceBlock<Eigen::MatrixXd, Eigen::MatrixXd>::processConst() const
 {
     if (_content->isDiscrete()) {
-        auto A = _content->getA();
+        auto A = *_content->getA();
         Eigen::MatrixXd output = A * (*_input);
 
         return output;

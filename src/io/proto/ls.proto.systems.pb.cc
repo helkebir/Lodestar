@@ -239,7 +239,7 @@ StateSpace::~StateSpace() {
 }
 
 void StateSpace::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete a_;
   if (this != internal_default_instance()) delete b_;
   if (this != internal_default_instance()) delete c_;
@@ -631,7 +631,7 @@ TransferFunction::~TransferFunction() {
 }
 
 void TransferFunction::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete num_;
   if (this != internal_default_instance()) delete den_;
 }

@@ -51,7 +51,7 @@ ls::systems::TransferFunction ls::systems::TransferFunction::normalized() const
     return tf;
 }
 
-ls::systems::StateSpace
+ls::systems::StateSpace<>
 ls::systems::TransferFunction::toStateSpace() const
 {
     auto tf = normalized();
@@ -62,13 +62,13 @@ ls::systems::TransferFunction::toStateSpace() const
     if (M > K) {
         throw LODESTAR_ERROR::ERROR_IMPROPER_TRANSFER_FUNC;
 
-        return StateSpace();
+        return StateSpace<>();
         // TODO: Throw error; improper transfer function.
     }
 
     if (M == 0 || K == 0) {
         // Null system.
-        return StateSpace();
+        return StateSpace<>();
     }
 
     if (K > M) {
@@ -91,7 +91,7 @@ ls::systems::TransferFunction::toStateSpace() const
         D = Eigen::Map<Eigen::MatrixXd>(D.data(), tf.getNum().rows(),
                                         tf.getNum().cols());
 
-        return StateSpace(Eigen::MatrixXd::Zero(1, 1),
+        return StateSpace<>(Eigen::MatrixXd::Zero(1, 1),
                           Eigen::MatrixXd::Zero(1, D.cols()),
                           Eigen::MatrixXd::Zero(D.rows(), 1), D);
     }
@@ -114,16 +114,16 @@ ls::systems::TransferFunction::toStateSpace() const
 
     D = Eigen::Map<Eigen::MatrixXd>(D.data(), C.rows(), B.cols());
 
-    return StateSpace(A, B, C, D);
+    return StateSpace<>(A, B, C, D);
 }
 
-ls::systems::StateSpace
+ls::systems::StateSpace<>
 ls::systems::TransferFunction::toDiscreteStateSpace(double dt) const
 {
     return ls::analysis::BilinearTransformation::c2dBwdDiff(toStateSpace(), dt);
 }
 
-ls::systems::StateSpace
+ls::systems::StateSpace<>
 ls::systems::TransferFunction::toDiscreteStateSpace(double dt,
                                                     double alpha) const
 {

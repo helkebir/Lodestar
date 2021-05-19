@@ -197,7 +197,7 @@ OrdinaryDifferentialEquation::~OrdinaryDifferentialEquation() {
 }
 
 void OrdinaryDifferentialEquation::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete functions_;
   if (this != internal_default_instance()) delete states_;
   if (this != internal_default_instance()) delete inputs_;

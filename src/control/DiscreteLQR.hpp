@@ -20,7 +20,7 @@ namespace ls {
                             const Eigen::MatrixXd &R);
 
             static Eigen::MatrixXd
-            infiniteHorizon(const systems::StateSpace &sys,
+            infiniteHorizon(const systems::StateSpace<> &sys,
                             const Eigen::MatrixXd &Q,
                             const Eigen::MatrixXd &R);
 
@@ -32,7 +32,7 @@ namespace ls {
                           unsigned int N = 5);
 
             static Eigen::MatrixXd
-            finiteHorizon(const systems::StateSpace &sys,
+            finiteHorizon(const systems::StateSpace<> &sys,
                           const Eigen::MatrixXd &Q,
                           const Eigen::MatrixXd &R,
                           unsigned int N = 5);

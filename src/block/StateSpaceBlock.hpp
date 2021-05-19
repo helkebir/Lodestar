@@ -12,7 +12,7 @@
 namespace ls {
     namespace block {
         template<typename InputType, typename OutputType>
-        class StateSpaceBlock : Block<systems::StateSpace, InputType, OutputType> {
+        class StateSpaceBlock : Block<systems::StateSpace<>, InputType, OutputType> {
         public:
             StateSpaceBlock() : _input(new InputType), _output(new OutputType)
             {}

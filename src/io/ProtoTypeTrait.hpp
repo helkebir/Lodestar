@@ -47,7 +47,7 @@ namespace ls {
 
         PROTO_TYPE_TRAIT_BOTH(Eigen::MatrixXd, ls::proto::eigen::MatrixXd);
 
-        PROTO_TYPE_TRAIT_BOTH(ls::systems::StateSpace,
+        PROTO_TYPE_TRAIT_BOTH(ls::systems::StateSpace<>,
                               ls::proto::systems::StateSpace);
 
         PROTO_TYPE_TRAIT_BOTH(ls::systems::TransferFunction,

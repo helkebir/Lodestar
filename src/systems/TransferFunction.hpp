@@ -112,7 +112,7 @@ namespace ls {
              *
              * @return State space object.
              */
-            StateSpace toStateSpace() const;
+            StateSpace<> toStateSpace() const;
 
             /**
              * @brief Converts transfer function to discrete-time state space
@@ -125,7 +125,7 @@ namespace ls {
              * @param dt Sampling period.
              * @return Discrete-time state space system.
              */
-            StateSpace toDiscreteStateSpace(double dt) const;
+            StateSpace<> toDiscreteStateSpace(double dt) const;
 
             /**
              * @brief Convert transfer function to discrete-time state space
@@ -138,7 +138,7 @@ namespace ls {
              * @param alpha Generalized bilinear transform parameter.
              * @return Discrete-time state space system.
              */
-            StateSpace toDiscreteStateSpace(double dt, double alpha) const;
+            StateSpace<> toDiscreteStateSpace(double dt, double alpha) const;
 
 #ifdef LS_USE_GINAC
 

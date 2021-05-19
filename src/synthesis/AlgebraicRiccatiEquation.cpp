@@ -10,7 +10,7 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
                                                    const Eigen::MatrixXd &Q,
                                                    const Eigen::MatrixXd &R)
 {
-    int m, n;
+    long m, n;
     m = B.rows();
     n = B.cols();
 
@@ -67,12 +67,12 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
 }
 
 Eigen::MatrixXd ls::synthesis::AlgebraicRiccatiEquation::solveDARE(
-        const ls::systems::StateSpace &sys, const Eigen::MatrixXd &Q,
+        const ls::systems::StateSpace<> &sys, const Eigen::MatrixXd &Q,
         const Eigen::MatrixXd &R)
 {
     Eigen::MatrixXd A, B;
-    A = sys.getA();
-    B = sys.getB();
+    A = *sys.getA();
+    B = *sys.getB();
 
     return solveDARE(A, B, Q, R);
 }

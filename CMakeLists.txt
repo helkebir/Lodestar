@@ -3,6 +3,9 @@ project(Lodestar)
 
 set(CMAKE_CXX_STANDARD 11)
 
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+#include("${CMAKE_SOURCE_DIR}/cmake/modules/FindProtobuf.cmake")
+
 option(WITH_GINAC "Use GiNaC" ON)
 option(WITH_PROTOBUF "Use Protocol Buffers" ON)
 option(MAKE_STATIC_LIB "Make static library" OFF)
@@ -37,12 +40,25 @@ if (WITH_PROTOBUF)
     find_package(Protobuf REQUIRED)
     include_directories(${Protobuf_INCLUDE_DIRS})
 
-    SET(PROTOBUF_INCLUDES src/io/proto/ls.proto.eigen.pb.cc src/io/proto/ls.proto.eigen.pb.h src/io/proto/ls.proto.systems.pb.cc src/io/proto/ls.proto.systems.pb.h src/io/proto/ls.proto.ginac.pb.cc src/io/proto/ls.proto.ginac.pb.h src/io/proto/ls.proto.symbolic.pb.cc src/io/proto/ls.proto.symbolic.pb.h src/block/StateSpaceBlock.cpp src/block/StateSpaceBlock.hpp)
+#    FindProtobuf("${PROJECT_SOURCE_DIR}/src/io/proto")
+
+#    file(GLOB PROTOBUF_DEFINITION_FILES "*.proto")
+#    set(PROTOBUF_INPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/io/proto")
+#    set(PROTOBUF_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/io/proto")
+#    foreach(file ${PROTOBUF_DEFINITION_FILES})
+#        set(PROTOBUF_ARGUMENTS "protoc –proto_path=\"${PROTOBUF_INPUT_DIRECTORY}\" –cpp_out=\"${PROTOBUF_OUTPUT_DIRECTORY}\" \"${file}\"")
+#        execute_process(COMMAND ${PROTOBUF_OUTPUT_DIRECTORY}
+#                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+#                RESULT_VARIABLE PROTOBUF_RESULT
+#                OUTPUT_VARIABLE PROTOBUF_OUTPUT_VARIABLE)
+#    endforeach()
+
+    file(GLOB PROTOBUF_INCLUDES "src/io/proto/*.pb.cc" "src/io/proto/*.hpp")
 else()
     UNSET(PROTOBUF_INCLUDES)
 endif()
 
-add_executable(Lodestar main.cpp src/primitives/Integrator.hpp src/primitives/integrators/IntegratorNewton.hpp src/analysis/BilinearTransformation.cpp src/analysis/BilinearTransformation.hpp src/systems/SystemStateless.hpp src/systems/StateSpace.cpp src/systems/StateSpace.hpp src/analysis/ZeroOrderHold.cpp src/analysis/ZeroOrderHold.hpp src/analysis/LinearSystemInverse.cpp src/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.hpp src/systems/TransferFunction.cpp src/systems/TransferFunction.hpp src/LodestarErrors.hpp src/LodestarErrorNames.hpp src/io/EigenProtoIface.cpp src/io/EigenProtoIface.hpp src/io/ProtoIfaceABC.hpp src/aux/UnitLiterals.hpp src/systems/DiscreteStateSpace.cpp src/systems/DiscreteStateSpace.hpp src/systems/DiscreteSystem.cpp src/systems/DiscreteSystem.hpp src/io/ProtoWrapper.cpp src/io/ProtoWrapper.hpp src/control/FixedGain.cpp src/control/FixedGain.hpp src/io/ProtoTypeTrait.hpp src/systems/SystemStateful.hpp src/symbolic/GiNaCNumTrait.hpp src/symbolic/OrdinaryDifferentialEquation.cpp src/symbolic/OrdinaryDifferentialEquation.hpp src/control/DiscreteLQR.cpp src/control/DiscreteLQR.hpp src/synthesis/AlgebraicRiccatiEquation.cpp src/synthesis/AlgebraicRiccatiEquation.hpp src/filter/DiscreteLQE.cpp src/filter/DiscreteLQE.hpp src/io/GiNaCProtoIface.cpp src/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} src/block/Block.hpp src/block/StateSpaceBlock.cpp src/block/StateSpaceBlock.hpp)
+add_executable(Lodestar main.cpp src/primitives/Integrator.hpp src/primitives/integrators/IntegratorNewton.hpp src/analysis/BilinearTransformation.cpp src/analysis/BilinearTransformation.hpp src/systems/SystemStateless.hpp src/systems/StateSpace.cpp src/systems/StateSpace.hpp src/analysis/ZeroOrderHold.cpp src/analysis/ZeroOrderHold.hpp src/analysis/LinearSystemInverse.cpp src/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.hpp src/systems/TransferFunction.cpp src/systems/TransferFunction.hpp src/LodestarErrors.hpp src/LodestarErrorNames.hpp src/io/EigenProtoIface.cpp src/io/EigenProtoIface.hpp src/io/ProtoIfaceABC.hpp src/aux/UnitLiterals.hpp src/systems/DiscreteStateSpace.cpp src/systems/DiscreteStateSpace.hpp src/systems/DiscreteSystem.cpp src/systems/DiscreteSystem.hpp src/io/ProtoWrapper.cpp src/io/ProtoWrapper.hpp src/control/FixedGain.cpp src/control/FixedGain.hpp src/io/ProtoTypeTrait.hpp src/systems/SystemStateful.hpp src/symbolic/GiNaCNumTrait.hpp src/symbolic/OrdinaryDifferentialEquation.cpp src/symbolic/OrdinaryDifferentialEquation.hpp src/control/DiscreteLQR.cpp src/control/DiscreteLQR.hpp src/synthesis/AlgebraicRiccatiEquation.cpp src/synthesis/AlgebraicRiccatiEquation.hpp src/filter/DiscreteLQE.cpp src/filter/DiscreteLQE.hpp src/io/GiNaCProtoIface.cpp src/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} src/block/Block.hpp src/block/StateSpaceBlock.cpp src/block/StateSpaceBlock.hpp src/aux/CompileTimeQualifiers.hpp)
 
 if (WITH_PROTOBUF)
     target_link_libraries(Lodestar ${Protobuf_LIBRARIES})

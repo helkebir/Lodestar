@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "primitives/integrators/IntegratorNewton.hpp"
-#include "tests/analysis/LinearSystemInverse_test.hpp"
+//#include "tests/analysis/LinearSystemInverse_test.hpp"
 #include "analysis/ZeroOrderHold.hpp"
 #include "analysis/BilinearTransformation.hpp"
 #include "systems/TransferFunction.hpp"
@@ -136,24 +136,25 @@ void ginacTest()
 
     auto ss = ode.linearize(jacStates, jacInputs, std::vector<double>{2}, std::vector<double>{3});
     std::cout << "Linearize ODE about x=2, u=3:" << std::endl;
-    std::cout << "A" << std::endl << ss.getA() << std::endl;
-    std::cout << "B" << std::endl << ss.getB() << std::endl;
-    std::cout << "C" << std::endl << ss.getC() << std::endl;
-    std::cout << "D" << std::endl << ss.getD() << std::endl;
+    std::cout << "A" << std::endl << *ss.getA() << std::endl;
+    std::cout << "B" << std::endl << *ss.getB() << std::endl;
+    std::cout << "C" << std::endl << *ss.getC() << std::endl;
+    std::cout << "D" << std::endl << *ss.getD() << std::endl;
 
-    ss.copyMatrices(ode.linearize(jacStates, jacInputs, std::vector<double>{3}, std::vector<double>{5}));
-    std::cout << "Linearize ODE about x=3, u=5:" << std::endl;
-    std::cout << "A" << std::endl << ss.getA() << std::endl;
-    std::cout << "B" << std::endl << ss.getB() << std::endl;
-    std::cout << "C" << std::endl << ss.getC() << std::endl;
-    std::cout << "D" << std::endl << ss.getD() << std::endl;
+//    // FIXME: Fix casting problem here.
+//    ss.copyMatrices(ode.linearize(jacStates, jacInputs, std::vector<double>{3}, std::vector<double>{5}));
+//    std::cout << "Linearize ODE about x=3, u=5:" << std::endl;
+//    std::cout << "A" << std::endl << *ss.getA() << std::endl;
+//    std::cout << "B" << std::endl << *ss.getB() << std::endl;
+//    std::cout << "C" << std::endl << *ss.getC() << std::endl;
+//    std::cout << "D" << std::endl << *ss.getD() << std::endl;
 
     auto dss = ls::analysis::ZeroOrderHold::c2d(ss, 0.1);
     std::cout << "Discretized at 0.1 s ZOH" << std::endl;
-    std::cout << "Ad" << std::endl << dss.getA() << std::endl;
-    std::cout << "Bd" << std::endl << dss.getB() << std::endl;
-    std::cout << "Cd" << std::endl << dss.getC() << std::endl;
-    std::cout << "Dd" << std::endl << dss.getD() << std::endl;
+    std::cout << "Ad" << std::endl << *dss.getA() << std::endl;
+    std::cout << "Bd" << std::endl << *dss.getB() << std::endl;
+    std::cout << "Cd" << std::endl << *dss.getC() << std::endl;
+    std::cout << "Dd" << std::endl << *dss.getD() << std::endl;
 
     std::cout << std::endl;
 
@@ -223,6 +224,27 @@ void ginacTest()
 }
 #endif
 
+//int main() {
+//    Eigen::MatrixXd A(3, 3), B(3, 2), C(2, 3), D(2, 2);
+//    A << 1, 2, 0,
+//            4, -1, 0,
+//            0, 0, 1;
+//
+//    B << 1, 0,
+//            0, 1,
+//            1, 0;
+//
+//    C << 0, 1, -1,
+//            0, 0, 1;
+//
+//    D << 4, 0,
+//            0, 1;
+//
+//    auto lti = ls::systems::StateSpace<>(A, B, C, D);
+//
+//    return 0;
+//}
+
 int main()
 {
     double state = 0;
@@ -240,11 +262,11 @@ int main()
 
     std::cout << "integral " << (*integrator).integral << std::endl;
 
-    auto ilti = linearSystemInverseExample();
-    std::cout << "Ai " << std::endl << ilti.getA() << std::endl;
-    std::cout << "Bi " << std::endl << ilti.getB() << std::endl;
-    std::cout << "Ci " << std::endl << ilti.getC() << std::endl;
-    std::cout << "Di " << std::endl << ilti.getD() << std::endl << std::endl;
+//    auto ilti = linearSystemInverseExample();
+//    std::cout << "Ai " << std::endl << ilti.getA() << std::endl;
+//    std::cout << "Bi " << std::endl << ilti.getB() << std::endl;
+//    std::cout << "Ci " << std::endl << ilti.getC() << std::endl;
+//    std::cout << "Di " << std::endl << ilti.getD() << std::endl << std::endl;
 
     Eigen::MatrixXd A(3, 3), B(3, 2), C(2, 3), D(2, 2);
     A << 1, 2, 0,
@@ -261,66 +283,67 @@ int main()
     D << 4, 0,
             0, 1;
 
-    auto lti = ls::systems::StateSpace(A, B, C, D);
+    auto lti = ls::systems::StateSpace<>(A, B, C, D);
+    auto fixedLTI = ls::systems::StateSpace<double, 3, 2, 2>(A, B, C, D);
 
     std::cout << "isStable: " << (lti.isStable() ? "true" : "false")
               << std::endl;
 
     auto dlti = ls::analysis::ZeroOrderHold::c2d(lti, 0.1);
     std::cout << "ZOH (0.1)" << std::endl;
-    std::cout << "Ad " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bd " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cd " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dd " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ad " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::ZeroOrderHold::d2c(dlti, 0.1);
     std::cout << "ZOH inv. (0.1)" << std::endl;
-    std::cout << "Ac " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bc " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cc " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dc " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ac " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bc " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cc " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dc " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::c2dTustin(lti, 0.1);
     std::cout << "Tustin (0.1)" << std::endl;
-    std::cout << "Ad " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bd " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cd " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dd " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ad " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::d2cTustin(dlti, 0.1);
     std::cout << "Tustin inv. (0.1)" << std::endl;
-    std::cout << "Ac " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bc " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cc " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dc " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ac " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bc " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cc " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dc " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::c2dEuler(lti, 0.1);
     std::cout << "Euler (0.1)" << std::endl;
-    std::cout << "Ad " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bd " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cd " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dd " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ad " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::d2cEuler(dlti, 0.1);
     std::cout << "Euler inv. (0.1)" << std::endl;
-    std::cout << "Ac " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bc " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cc " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dc " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ac " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bc " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cc " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dc " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::c2dBwdDiff(lti, 0.1);
     std::cout << "Bwd Diff (0.1)" << std::endl;
-    std::cout << "Ad " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bd " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cd " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dd " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ad " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     dlti = ls::analysis::BilinearTransformation::d2cBwdDiff(dlti, 0.1);
     std::cout << "Bwd Diff inv. (0.1)" << std::endl;
-    std::cout << "Ac " << std::endl << dlti.getA() << std::endl;
-    std::cout << "Bc " << std::endl << dlti.getB() << std::endl;
-    std::cout << "Cc " << std::endl << dlti.getC() << std::endl;
-    std::cout << "Dc " << std::endl << dlti.getD() << std::endl << std::endl;
+    std::cout << "Ac " << std::endl << *dlti.getA() << std::endl;
+    std::cout << "Bc " << std::endl << *dlti.getB() << std::endl;
+    std::cout << "Cc " << std::endl << *dlti.getC() << std::endl;
+    std::cout << "Dc " << std::endl << *dlti.getD() << std::endl << std::endl;
 
     std::cout << "isStable: " << (dlti.isStable() ? "true" : "false")
               << std::endl;
@@ -356,7 +379,7 @@ int main()
     std::cout << GiNaC::dflt;
 #endif
 
-    ls::systems::StateSpace ss;
+    ls::systems::StateSpace<> ss;
 
     try {
         ss = tf.toStateSpace();
@@ -366,26 +389,26 @@ int main()
     }
 
     std::cout << "tf to ss" << std::endl;
-    std::cout << "A " << std::endl << ss.getA() << std::endl;
-    std::cout << "B " << std::endl << ss.getB() << std::endl;
-    std::cout << "C " << std::endl << ss.getC() << std::endl;
-    std::cout << "D " << std::endl << ss.getD() << std::endl << std::endl;
+    std::cout << "A " << std::endl << *ss.getA() << std::endl;
+    std::cout << "B " << std::endl << *ss.getB() << std::endl;
+    std::cout << "C " << std::endl << *ss.getC() << std::endl;
+    std::cout << "D " << std::endl << *ss.getD() << std::endl << std::endl;
 
     auto dss = tf.toDiscreteStateSpace(0.1);
 
     std::cout << "tf to discr. ss (0.1)" << std::endl;
-    std::cout << "Ad " << std::endl << dss.getA() << std::endl;
-    std::cout << "Bd " << std::endl << dss.getB() << std::endl;
-    std::cout << "Cd " << std::endl << dss.getC() << std::endl;
-    std::cout << "Dd " << std::endl << dss.getD() << std::endl << std::endl;
+    std::cout << "Ad " << std::endl << *dss.getA() << std::endl;
+    std::cout << "Bd " << std::endl << *dss.getB() << std::endl;
+    std::cout << "Cd " << std::endl << *dss.getC() << std::endl;
+    std::cout << "Dd " << std::endl << *dss.getD() << std::endl << std::endl;
 
     std::cout << "25 Hz " << 25_Hz << std::endl;
     std::cout << "25 us " << 25_us << std::endl;
 
     std::cout << "45 deg " << 45_deg << std::endl;
 
-    auto dsys = ls::systems::StateSpace();
-    auto Atmp = dsys.getA();
+    auto dsys = ls::systems::StateSpace<>();
+    auto Atmp = *dsys.getA();
     Atmp.resize(4, 4);
     Atmp << 0.9599, 0.0401, -0.4861, 0.0139,
             0.0401, 0.9599, -0.0139, 0.4861,
@@ -393,7 +416,7 @@ int main()
             0.1566, -0.1565, -0.0679, 0.9322;
     dsys.setA(Atmp);
 
-    auto Btmp = dsys.getB();
+    auto Btmp = *dsys.getB();
     Btmp.resize(4, 2);
     Btmp << -0.1049, 0.0017,
             -0.0017, 0.1049,
@@ -405,20 +428,20 @@ int main()
     //
     //    dsys.D.setZero(4,2);
 
-    auto Ctmp = dsys.getC();
+    auto Ctmp = *dsys.getC();
     Ctmp.resize(2, 4);
     Ctmp << 0.5, 0.5, 0, 0,
             -2.113, 2.113, 0.375, 0.375;
     dsys.setC(Ctmp);
 
-    auto Dtmp = dsys.getD();
+    auto Dtmp = *dsys.getD();
     Dtmp.resize(2, 2);
     Dtmp.setIdentity();
     dsys.setD(Dtmp);
 
-    ls::systems::DiscreteSystem<ls::systems::StateSpace> dfullsys(&dsys);
-    dfullsys.state->setZero(4);
-    (*dfullsys.state) << 100, 100, 0, 100;
+//    ls::systems::DiscreteSystem<ls::systems::StateSpace<double, -1, -1, -1>> dfullsys(&dsys);
+//    dfullsys.state->setZero(4);
+//    (*dfullsys.state) << 100, 100, 0, 100;
 
     //    std::cout << "test " << dsys.A * (*dfullsys.state) << std::endl;
     //    auto csys = ls::analysis::ZeroOrderHold::d2c(dsys, 0.05);
@@ -433,11 +456,11 @@ int main()
     //    std::cout << "Cd " << std::endl << dsysinv.C << std::endl;
     //    std::cout << "Dd " << std::endl << dsysinv.D << std::endl << std::endl;
 
-    for (int i = 0; i < 10; i++) {
-        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state
-                  << std::endl;
-        dfullsys.advanceFree();
-    }
+//    for (int i = 0; i < 10; i++) {
+//        std::cout << "Time " << i << ": " << std::endl << *dfullsys.state
+//                  << std::endl;
+//        dfullsys.advanceFree();
+//    }
 
     #ifdef LS_USE_GINAC
     ginacTest();

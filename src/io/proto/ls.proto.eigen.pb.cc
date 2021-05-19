@@ -147,7 +147,7 @@ VectorXd::~VectorXd() {
 }
 
 void VectorXd::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void VectorXd::ArenaDtor(void* object) {
@@ -388,7 +388,7 @@ MatrixXd::~MatrixXd() {
 }
 
 void MatrixXd::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void MatrixXd::ArenaDtor(void* object) {

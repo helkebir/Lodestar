@@ -108,25 +108,25 @@ namespace ls {
             Eigen::MatrixXd
             generateJacobianMatrixInputs(const GiNaC::exmap &exmap) const;
 
-            systems::StateSpace linearize(const GiNaC::exmap &exmap) const;
+            systems::StateSpace<> linearize(const GiNaC::exmap &exmap) const;
 
-            systems::StateSpace linearize(const std::vector<double> &states,
+            systems::StateSpace<> linearize(const std::vector<double> &states,
                                           const std::vector<double> &inputs) const;
 
-            systems::StateSpace linearize(double t,
+            systems::StateSpace<> linearize(double t,
                                           const std::vector<double> &states,
                                           const std::vector<double> &inputs) const;
 
-            systems::StateSpace linearize(const GiNaC::matrix &jacobianStates,
+            systems::StateSpace<> linearize(const GiNaC::matrix &jacobianStates,
                                           const GiNaC::matrix &jacobianInputs,
                                           const GiNaC::exmap &exmap) const;
 
-            systems::StateSpace linearize(const GiNaC::matrix &jacobianStates,
+            systems::StateSpace<> linearize(const GiNaC::matrix &jacobianStates,
                                           const GiNaC::matrix &jacobianInputs,
                                           const std::vector<double> &states,
                                           const std::vector<double> &inputs) const;
 
-            systems::StateSpace linearize(const GiNaC::matrix &jacobianStates,
+            systems::StateSpace<> linearize(const GiNaC::matrix &jacobianStates,
                                           const GiNaC::matrix &jacobianInputs,
                                           double t,
                                           const std::vector<double> &states,

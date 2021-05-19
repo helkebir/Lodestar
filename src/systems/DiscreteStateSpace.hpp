@@ -11,16 +11,18 @@
 
 namespace ls {
     namespace systems {
-        class DiscreteStateSpace : public StateSpace {
+        template <typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
+        class DiscreteStateSpace : public StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> {
         public:
+            typedef StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> Base;
             /**
              * @brief Default constructor.
              *
              * Sets sampling time to 1.
              */
-            DiscreteStateSpace() : StateSpace()
+            DiscreteStateSpace() : StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>()
             {
-                setDiscreteParams(1);
+                Base::setDiscreteParams(1);
             }
 
             /**
@@ -29,9 +31,9 @@ namespace ls {
              *
              * @param dt Sampling period.
              */
-            DiscreteStateSpace(double dt) : StateSpace()
+            DiscreteStateSpace(double dt) : StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>()
             {
-                setDiscreteParams(dt);
+                Base::setDiscreteParams(dt);
             }
 
             /**
@@ -49,9 +51,9 @@ namespace ls {
                                const Eigen::MatrixXd &B,
                                const Eigen::MatrixXd &C,
                                const Eigen::MatrixXd &D)
-                    : StateSpace(A, B, C, D)
+                    : StateSpace<>(A, B, C, D)
             {
-                setDiscreteParams(1);
+                Base::setDiscreteParams(1);
             }
 
             /**
@@ -69,9 +71,9 @@ namespace ls {
                                const Eigen::MatrixXd &C,
                                const Eigen::MatrixXd &D,
                                double dt)
-                    : StateSpace(A, B, C, D)
+                    : StateSpace<>(A, B, C, D)
             {
-                setDiscreteParams(dt);
+                Base::setDiscreteParams(dt);
             }
 
             /**
@@ -80,7 +82,7 @@ namespace ls {
              * @param other Discrete state space object to copy.
              */
             DiscreteStateSpace(const DiscreteStateSpace &other) :
-                    StateSpace(other)
+                    StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>(other)
             {
                 setDiscreteParams(other._dt, other._isDiscrete);
             }
@@ -103,9 +105,47 @@ namespace ls {
              */
             void resampleFast(double dt);
 
-            bool isStable(double tolerance = 0) const override;
+            bool isStable(double tolerance = 0) const;
         };
     }
+}
+
+template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
+void ls::systems::DiscreteStateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::resample(const double dt)
+{
+    auto dss = ls::analysis::ZeroOrderHold::c2d(
+            ls::analysis::ZeroOrderHold::d2c(*this, Base::getSamplingPeriod()), dt);
+
+    copyMatrices(dss);
+
+    Base::setSamplingPeriod(dt);
+}
+
+template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
+void ls::systems::DiscreteStateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::resampleFast(const double dt)
+{
+    auto dss = ls::analysis::BilinearTransformation::c2dBwdDiff(
+            ls::analysis::BilinearTransformation::d2cBwdDiff(*this, Base::getSamplingPeriod()), dt);
+
+    copyMatrices(dss);
+
+    Base::setSamplingPeriod(dt);
+}
+
+template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
+bool ls::systems::DiscreteStateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::isStable(const double tolerance) const
+{
+    auto eig = Base::_A->eigenvalues();
+    double tol = (tolerance < 0 ? -tolerance * tolerance : tolerance *
+                                                           tolerance);
+
+    for (int i = 0; i < eig.size(); i++) {
+        if (eig(i).real() * eig(i).real() + eig(i).imag() * eig(i).imag() >
+            1 + tol)
+            return false;
+    }
+
+    return true;
 }
 
 #endif //LODESTAR_DISCRETESTATESPACE_HPP
