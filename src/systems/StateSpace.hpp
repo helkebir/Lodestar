@@ -22,17 +22,17 @@ namespace ls {
             /**
              * @brief Default constructor.
              */
-            StateSpace() : _A(new TDStateMatrix),
-                           _B(new TDInputMatrix),
-                           _C(new TDOutputMatrix),
-                           _D(new TDFeedforwardMatrix),
-                           _dt(-1), _isDiscrete(false)
+            StateSpace() : A_(new TDStateMatrix),
+                           B_(new TDInputMatrix),
+                           C_(new TDOutputMatrix),
+                           D_(new TDFeedforwardMatrix),
+                           dt_(-1), isDiscrete_(false)
             {};
 
             /**
              * @brief Construct a state space system with the given matrices.
              *
-             * @note State space systems are assumed to be in continuous time by
+             * @note TState space systems are assumed to be in continuous time by
              * default.
              *
              * @param A Pointer to state matrix.
@@ -46,10 +46,10 @@ namespace ls {
             /**
              * @brief Construct a state space system with the given matrices.
              *
-             * @note State space systems are assumed to be in continuous time by
+             * @note TState space systems are assumed to be in continuous time by
              * default.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -64,14 +64,14 @@ namespace ls {
             /**
              * @brief Copy constructor.
              *
-             * @param other State space object to copy.
+             * @param other TState space object to copy.
              */
             StateSpace(const StateSpace &other);
 
             /**
              * @brief Gets the state matrix.
              *
-             * @return State matrix.
+             * @return TState matrix.
              */
             const TDStateMatrix *getA() const;
 
@@ -82,17 +82,17 @@ namespace ls {
              */
             void setA(TDStateMatrix *A);
 
-            template <typename Derived>
+            template<typename Derived>
             void setA(Eigen::EigenBase<Derived> *A);
 
             /**
              * @brief Sets the state matrix.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              */
             void setA(const TDStateMatrix &A);
 
-            template <typename Derived>
+            template<typename Derived>
             void setA(const Eigen::EigenBase<Derived> &A);
 
             /**
@@ -109,7 +109,7 @@ namespace ls {
              */
             void setB(TDInputMatrix *B);
 
-            template <typename Derived>
+            template<typename Derived>
             void setB(Eigen::EigenBase<Derived> *B);
 
             /**
@@ -119,7 +119,7 @@ namespace ls {
              */
             void setB(const TDInputMatrix &B);
 
-            template <typename Derived>
+            template<typename Derived>
             void setB(const Eigen::EigenBase<Derived> &B);
 
             /**
@@ -136,7 +136,7 @@ namespace ls {
              */
             void setC(TDOutputMatrix *C);
 
-            template <typename Derived>
+            template<typename Derived>
             void setC(Eigen::EigenBase<Derived> *C);
 
             /**
@@ -146,7 +146,7 @@ namespace ls {
              */
             void setC(const TDOutputMatrix &C);
 
-            template <typename Derived>
+            template<typename Derived>
             void setC(const Eigen::EigenBase<Derived> &C);
 
             /**
@@ -163,7 +163,7 @@ namespace ls {
              */
             void setD(TDFeedforwardMatrix *D);
 
-            template <typename Derived>
+            template<typename Derived>
             void setD(Eigen::EigenBase<Derived> *D);
 
             /**
@@ -173,14 +173,14 @@ namespace ls {
              */
             void setD(const TDFeedforwardMatrix &D);
 
-            template <typename Derived>
+            template<typename Derived>
             void setD(const Eigen::EigenBase<Derived> &D);
 
             /**
              * @brief Copies matrices from one state space object to the current
              * instance.
              *
-             * @param ss State space object to copy matrices from.
+             * @param ss TState space object to copy matrices from.
              */
             void copyMatrices(const StateSpace &other);
 
@@ -224,15 +224,17 @@ namespace ls {
             /**
              * @brief Returns the state dimension.
              *
-             * @return State dimension.
+             * @return TState dimension.
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            stateDim() const {
-                return _A->rows();
+            stateDim() const
+            {
+                return A_->rows();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            stateDim() const {
+            stateDim() const
+            {
                 return TStateDim;
             }
 
@@ -242,12 +244,14 @@ namespace ls {
              * @return Input dimension.
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            inputDim() const {
-                return _B->cols();
+            inputDim() const
+            {
+                return B_->cols();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            inputDim() const {
+            inputDim() const
+            {
                 return TInputDim;
             }
 
@@ -257,12 +261,14 @@ namespace ls {
              * @return Output dimension
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            outputDim() const {
-                return _C->rows();
+            outputDim() const
+            {
+                return C_->rows();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            outputDim() const {
+            outputDim() const
+            {
                 return TOutputDim;
             }
 
@@ -272,7 +278,7 @@ namespace ls {
              * If the discrete time parameters do not match the current system,
              * the input system is altered to match the current system.
              *
-             * @param ss State space system to append.
+             * @param ss TState space system to append.
              */
             template<int TStateDim2, int TOutputDim2>
             void append(const StateSpace<TScalar, TStateDim2, TOutputDim, TOutputDim2> &ss);
@@ -290,12 +296,12 @@ namespace ls {
             bool isStable(double tolerance = 0) const;
 
         protected:
-            TDStateMatrix *_A; /// State matrix.
-            TDInputMatrix *_B; /// Input matrix.
-            TDOutputMatrix *_C; /// Output matrix.
-            TDFeedforwardMatrix *_D; /// Feedforward matrix.
-            double _dt; /// Sampling period.
-            bool _isDiscrete; /// Discrete flag.
+            TDStateMatrix *A_; /// TState matrix.
+            TDInputMatrix *B_; /// Input matrix.
+            TDOutputMatrix *C_; /// Output matrix.
+            TDFeedforwardMatrix *D_; /// Feedforward matrix.
+            double dt_; /// Sampling period.
+            bool isDiscrete_; /// Discrete flag.
         };
     }
 }
@@ -304,12 +310,12 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::StateSpace(
         const StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &other)
 {
-    *_A = *other.getA();
-    *_B = *other.getB();
-    *_C = *other.getC();
-    *_D = *other.getD();
-    _dt = other.getSamplingPeriod();
-    _isDiscrete = other.isDiscrete();
+    *A_ = *other.getA();
+    *B_ = *other.getB();
+    *C_ = *other.getC();
+    *D_ = *other.getD();
+    dt_ = other.getSamplingPeriod();
+    isDiscrete_ = other.isDiscrete();
 }
 
 
@@ -318,26 +324,26 @@ ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::StateSpace(
         TDStateMatrix *A, TDInputMatrix *B,
         TDOutputMatrix *C, TDOutputMatrix *D)
 {
-    _A = A;
-    _B = B;
-    _C = C;
-    _D = D;
-    _dt = -1;
-    _isDiscrete = false;
+    A_ = A;
+    B_ = B;
+    C_ = C;
+    D_ = D;
+    dt_ = -1;
+    isDiscrete_ = false;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::StateSpace(
         const TDStateMatrix &A, const TDInputMatrix &B,
-        const TDOutputMatrix &C, const TDOutputMatrix &D) : _A(new TDStateMatrix(A)), _B(new TDInputMatrix(B)),
-                                                            _C(new TDOutputMatrix(C)), _D(new TDFeedforwardMatrix(D))
+        const TDOutputMatrix &C, const TDOutputMatrix &D) : A_(new TDStateMatrix(A)), B_(new TDInputMatrix(B)),
+                                                            C_(new TDOutputMatrix(C)), D_(new TDFeedforwardMatrix(D))
 {
-//    *_A = A;
-//    *_B = B;
-//    *_C = C;
-//    *_D = D;
-    _dt = -1;
-    _isDiscrete = false;
+//    *A_ = A;
+//    *B_ = B;
+//    *C_ = C;
+//    *D_ = D;
+    dt_ = -1;
+    isDiscrete_ = false;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
@@ -346,183 +352,183 @@ ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::StateSpace(c
                                                                                const Eigen::EigenBase<DerivedB> &B,
                                                                                const Eigen::EigenBase<DerivedC> &C,
                                                                                const Eigen::EigenBase<DerivedD> &D):
-        _A(new TDStateMatrix(A)),
-        _B(new TDInputMatrix(B)),
-        _C(new TDOutputMatrix(C)),
-        _D(new TDFeedforwardMatrix(D))
+        A_(new TDStateMatrix(A)),
+        B_(new TDInputMatrix(B)),
+        C_(new TDOutputMatrix(C)),
+        D_(new TDFeedforwardMatrix(D))
 {
-    _dt = -1;
-    _isDiscrete = false;
+    dt_ = -1;
+    isDiscrete_ = false;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 const typename ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::TDStateMatrix *
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::getA() const
 {
-    return _A;
+    return A_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setA(TDStateMatrix *A)
 {
-    _A = A;
+    A_ = A;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setA(Eigen::EigenBase<Derived> *A)
 {
-    _A = A;
+    A_ = A;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setA(
         const TDStateMatrix &A)
 {
-    *_A = A;
+    *A_ = A;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setA(const Eigen::EigenBase<Derived> &A)
 {
-    *_A = A;
+    *A_ = A;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 const typename ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::TDInputMatrix *
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::getB() const
 {
-    return _B;
+    return B_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setB(TDInputMatrix *B)
 {
-    _B = B;
+    B_ = B;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setB(Eigen::EigenBase<Derived> *B)
 {
-    _B = B;
+    B_ = B;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setB(
         const TDInputMatrix &B)
 {
-    *_B = B;
+    *B_ = B;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setB(const Eigen::EigenBase<Derived> &B)
 {
-    *_B = B;
+    *B_ = B;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 const typename ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::TDOutputMatrix *
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::getC() const
 {
-    return _C;
+    return C_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setC(TDOutputMatrix *C)
 {
-    _C = C;
+    C_ = C;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setC(Eigen::EigenBase<Derived> *C)
 {
-    _C = C;
+    C_ = C;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setC(
         const TDOutputMatrix &C)
 {
-    *_C = C;
+    *C_ = C;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setC(const Eigen::EigenBase<Derived> &C)
 {
-    *_C = C;
+    *C_ = C;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 const typename ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::TDFeedforwardMatrix *
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::getD() const
 {
-    return _D;
+    return D_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setD(
         TDFeedforwardMatrix *D)
 {
-    _D = D;
+    D_ = D;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setD(Eigen::EigenBase<Derived> *D)
 {
-    _D = D;
+    D_ = D;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setD(
         const TDFeedforwardMatrix &D)
 {
-    *_D = D;
+    *D_ = D;
 }
 
 template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
 template<typename Derived>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setD(const Eigen::EigenBase<Derived> &D)
 {
-    *_D = D;
+    *D_ = D;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 bool ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::isDiscrete() const
 {
-    return _isDiscrete;
+    return isDiscrete_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 double ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::getSamplingPeriod() const
 {
-    return _dt;
+    return dt_;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setSamplingPeriod(double dt)
 {
-    _dt = dt;
+    dt_ = dt;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setDiscreteParams(double dt)
 {
-    _dt = dt;
-    _isDiscrete = true;
+    dt_ = dt;
+    isDiscrete_ = true;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::setDiscreteParams(double dt, bool discrete)
 {
-    _dt = dt;
-    _isDiscrete = discrete;
+    dt_ = dt;
+    isDiscrete_ = discrete;
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -536,7 +542,7 @@ void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::append(
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 bool ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::isStable(const double tolerance) const
 {
-    auto eig = _A->eigenvalues();
+    auto eig = A_->eigenvalues();
 
     for (int i = 0; i < eig.size(); i++) {
         if (eig(i).real() > tolerance)

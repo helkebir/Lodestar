@@ -11,32 +11,32 @@ ls::symbolic::OrdinaryDifferentialEquation::generateExpressionMap() const
 {
     GiNaC::exmap m;
 
-    for (const auto &state : _states)
+    for (const auto &state : states_)
         m[GiNaC::ex_to<GiNaC::symbol>(state)] = 0;
 
-    for (const auto &input : _inputs)
+    for (const auto &input : inputs_)
         m[GiNaC::ex_to<GiNaC::symbol>(input)] = 0;
 
-    m[_time] = 0;
+    m[time_] = 0;
 
     return m;
 }
 
 inline void ls::symbolic::OrdinaryDifferentialEquation::makeSymbolMap()
 {
-    _symbolMap.clear();
+    symbolMap_.clear();
 
-    for (const auto &state : _states) {
+    for (const auto &state : states_) {
         GiNaC::symbol x = GiNaC::ex_to<GiNaC::symbol>(state);
-        _symbolMap[x.get_name()] = x;
+        symbolMap_[x.get_name()] = x;
     }
 
-    for (const auto &input : _inputs) {
+    for (const auto &input : inputs_) {
         GiNaC::symbol u = GiNaC::ex_to<GiNaC::symbol>(input);
-        _symbolMap[u.get_name()] = u;
+        symbolMap_[u.get_name()] = u;
     }
 
-    _symbolMap[_time.get_name()] = _time;
+    symbolMap_[time_.get_name()] = time_;
 }
 
 GiNaC::symbol
@@ -46,7 +46,7 @@ ls::symbolic::OrdinaryDifferentialEquation::getSymbol(
     GiNaC::relational r;
 
 
-    return _symbolMap.at(symbolName);
+    return symbolMap_.at(symbolName);
 }
 
 GiNaC::exmap
@@ -64,25 +64,25 @@ ls::symbolic::OrdinaryDifferentialEquation::generateExpressionMap(
 const GiNaC::lst &
 ls::symbolic::OrdinaryDifferentialEquation::getFunctions() const
 {
-    return _functions;
+    return functions_;
 }
 
 void ls::symbolic::OrdinaryDifferentialEquation::setFunctions(
         const GiNaC::lst &functions)
 {
-    _functions = functions;
+    functions_ = functions;
 }
 
 const GiNaC::lst &
 ls::symbolic::OrdinaryDifferentialEquation::getStates() const
 {
-    return _states;
+    return states_;
 }
 
 void ls::symbolic::OrdinaryDifferentialEquation::setStates(
         const GiNaC::lst &states)
 {
-    _states = states;
+    states_ = states;
 
     makeSymbolMap();
 }
@@ -90,13 +90,13 @@ void ls::symbolic::OrdinaryDifferentialEquation::setStates(
 const GiNaC::lst &
 ls::symbolic::OrdinaryDifferentialEquation::getInputs() const
 {
-    return _inputs;
+    return inputs_;
 }
 
 void ls::symbolic::OrdinaryDifferentialEquation::setInputs(
         const GiNaC::lst &inputs)
 {
-    _inputs = inputs;
+    inputs_ = inputs;
 
     makeSymbolMap();
 }
@@ -105,12 +105,12 @@ Eigen::MatrixXd
 ls::symbolic::OrdinaryDifferentialEquation::evalf(
         const GiNaC::exmap &m) const
 {
-    const int n = _functions.nops();
+    const int n = functions_.nops();
 
     Eigen::MatrixXd mat = Eigen::MatrixXd::Zero(n, 1);
 
     int i = 0;
-    for (const auto &it : _functions) {
+    for (const auto &it : functions_) {
         mat(i, 1) = GiNaC::ex_to<GiNaC::numeric>(
                 it.subs(m).evalf()).to_double();
         i++;
@@ -124,8 +124,8 @@ ls::symbolic::OrdinaryDifferentialEquation::generateExpressionMap(
         const std::vector<double> &states,
         const std::vector<double> &inputs) const
 {
-    int n = states.size() > _states.nops() ? _states.nops() : states.size();
-    int m = inputs.size() > _inputs.nops() ? _inputs.nops() : inputs.size();
+    int n = states.size() > states_.nops() ? states_.nops() : states.size();
+    int m = inputs.size() > inputs_.nops() ? inputs_.nops() : inputs.size();
 
     std::vector<GiNaC::relational> relationals(n + m);
 
@@ -156,19 +156,19 @@ ls::symbolic::OrdinaryDifferentialEquation::generateExpressionMap(
 GiNaC::symbol ls::symbolic::OrdinaryDifferentialEquation::getStateSymbol(
         const unsigned int i) const
 {
-    return GiNaC::ex_to<GiNaC::symbol>(_states.op(i));
+    return GiNaC::ex_to<GiNaC::symbol>(states_.op(i));
 }
 
 GiNaC::symbol ls::symbolic::OrdinaryDifferentialEquation::getInputSymbol(
         const unsigned int i) const
 {
-    return GiNaC::ex_to<GiNaC::symbol>(_inputs.op(i));
+    return GiNaC::ex_to<GiNaC::symbol>(inputs_.op(i));
 }
 
 GiNaC::symbol
 ls::symbolic::OrdinaryDifferentialEquation::getTimeSymbol() const
 {
-    return _time;
+    return time_;
 }
 
 Eigen::MatrixXd ls::symbolic::OrdinaryDifferentialEquation::evalf(
@@ -196,7 +196,7 @@ ls::symbolic::OrdinaryDifferentialEquation::generateJacobian(
 {
     GiNaC::lst cols{};
     for (const auto &variable : variables)
-        cols.append(_functions.diff(GiNaC::ex_to<GiNaC::symbol>(variable)));
+        cols.append(functions_.diff(GiNaC::ex_to<GiNaC::symbol>(variable)));
 
     GiNaC::matrix mat = GiNaC::ex_to<GiNaC::matrix>(GiNaC::lst_to_matrix(cols));
 
@@ -206,13 +206,13 @@ ls::symbolic::OrdinaryDifferentialEquation::generateJacobian(
 GiNaC::matrix
 ls::symbolic::OrdinaryDifferentialEquation::generateJacobianStates() const
 {
-    return generateJacobian(_states);
+    return generateJacobian(states_);
 }
 
 GiNaC::matrix
 ls::symbolic::OrdinaryDifferentialEquation::generateJacobianInputs() const
 {
-    return generateJacobian(_inputs);
+    return generateJacobian(inputs_);
 }
 
 Eigen::MatrixXd
@@ -329,6 +329,236 @@ ls::systems::StateSpace<> ls::symbolic::OrdinaryDifferentialEquation::linearize(
 {
     GiNaC::exmap exmap = generateExpressionMap(t, states, inputs);
     return linearize(jacobianStates, jacobianInputs, exmap);
+}
+
+std::string ls::symbolic::OrdinaryDifferentialEquation::generateJacobianStatesCppFunc(const std::string &functionName, const bool dynamicType) const
+{
+    return generateMatrixCppFunc(generateJacobianStates(), functionName, dynamicType);
+}
+
+std::string ls::symbolic::OrdinaryDifferentialEquation::generateJacobianInputsCppFunc(const std::string &functionName,
+                                                                                      const bool dynamicType) const
+{
+    return generateMatrixCppFunc(generateJacobianInputs(), functionName, dynamicType);
+}
+
+std::string ls::symbolic::OrdinaryDifferentialEquation::generateMatrixCppFunc(const GiNaC::matrix &ginacMatrix, const std::string &functionName, const bool dynamicType) const
+{
+    std::string cppFunc;
+
+    std::deque<std::string> argSymbols;
+    for (const auto &x: states_)
+        argSymbols.push_back(GiNaC::ex_to<GiNaC::symbol>(x).get_name());
+
+    for (const auto &u: inputs_)
+        argSymbols.push_back(GiNaC::ex_to<GiNaC::symbol>(u).get_name());
+
+    argSymbols.push_back(GiNaC::ex_to<GiNaC::symbol>(time_).get_name());
+
+    // Generate function argument list with const-qualified doubles.
+    std::string argList;
+    argList += "const double " + argSymbols.front();
+    argSymbols.pop_front();
+
+    while (!argSymbols.empty()) {
+        argList += ", const double " + argSymbols.front();
+        argSymbols.pop_front();
+    }
+
+    std::string matrixType;
+    std::string matrixArgs;
+    std::stringstream matrixStream;
+    matrixStream << GiNaC::csrc;
+
+    const unsigned int n = ginacMatrix.rows();
+    const unsigned int m = ginacMatrix.cols();
+
+    // Populate matrix arguments in human-readable format (i.e., with line breaks).
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int j = 0; j < m; j++) {
+            if ((i == n-1) && (j == m-1))
+                matrixStream << ginacMatrix(i, j) << ";";
+            else
+                matrixStream << ginacMatrix(i, j) << ", ";
+        }
+
+        if (i == n - 1)
+            matrixStream << "\n";
+        else
+            matrixStream << "\n           ";
+    }
+
+    matrixArgs = matrixStream.str();
+
+    if (dynamicType)
+        matrixType = "Eigen::MatrixXd";
+    else
+        matrixType = "Eigen::Matrix<double, " + std::to_string(n) + ", " + std::to_string(m) + ">";
+
+    cppFunc += matrixType + " " + functionName + "(" + argList + ") {\n";
+    cppFunc += "    " + matrixType + " mat" + (dynamicType ? "(" + std::to_string(n) + ", " + std::to_string(m) + ")" : "") + ";\n";
+    cppFunc += "    mat << " + matrixArgs + "\n";
+    cppFunc += "    return mat;\n";
+    cppFunc += "}\n";
+
+    return cppFunc;
+}
+
+std::string
+ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(const GiNaC::matrix &ginacMatrix,
+                                                                            const std::string &functionName,
+                                                                            const bool dynamicType) const
+{
+    std::string cppFunc;
+
+    const unsigned int n = ginacMatrix.rows();
+    const unsigned int m = ginacMatrix.cols();
+
+    // Generate function argument list with const-qualified double arrays.
+    std::string argList = "const double (&x)[" + std::to_string(states_.nops()) + "], const double (&u)[" + std::to_string(inputs_.nops()) + "], const double t";
+
+    std::string matrixType;
+    std::string matrixArgs;
+    std::stringstream matrixStream;
+    matrixStream << GiNaC::csrc;
+
+    // Populate matrix arguments in human-readable format (i.e., with line breaks).
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int j = 0; j < m; j++) {
+            if ((i == n-1) && (j == m-1))
+                matrixStream << ginacMatrix(i, j) << ";";
+            else
+                matrixStream << ginacMatrix(i, j) << ", ";
+        }
+
+        if (i == n - 1)
+            matrixStream << "\n";
+        else
+            matrixStream << "\n           ";
+    }
+
+    // Replace symbols by array elements.
+    matrixArgs = matrixStream.str();
+    std::string src, dest;
+    unsigned int i = 0;
+    for (const auto &x: states_) {
+        src = GiNaC::ex_to<GiNaC::symbol>(x).get_name();
+        dest = "STATES[" + std::to_string(i) + "]";
+        replaceStringAll(matrixArgs, src, dest);
+
+        i++;
+    }
+
+    i = 0;
+    for (const auto &u: inputs_) {
+        src = GiNaC::ex_to<GiNaC::symbol>(u).get_name();
+        dest = "INPUTS[" + std::to_string(i) + "]";
+        replaceStringAll(matrixArgs, src, dest);
+
+        i++;
+    }
+
+    {
+        src = GiNaC::ex_to<GiNaC::symbol>(time_).get_name();
+        dest = "TIME";
+        replaceStringAll(matrixArgs, src, dest);
+    }
+
+    // Replace all-caps with more compact symbols.
+    {
+        src = "STATES";
+        dest = "x";
+        replaceStringAll(matrixArgs, src, dest);
+    }
+
+    {
+        src = "INPUTS";
+        dest = "u";
+        replaceStringAll(matrixArgs, src, dest);
+    }
+
+    {
+        src = "TIME";
+        dest = "t";
+        replaceStringAll(matrixArgs, src, dest);
+    }
+
+
+    if (dynamicType)
+        matrixType = "Eigen::MatrixXd";
+    else
+        matrixType = "Eigen::Matrix<double, " + std::to_string(n) + ", " + std::to_string(m) + ">";
+
+    cppFunc += matrixType + " " + functionName + "(" + argList + ") {\n";
+    cppFunc += "    " + matrixType + " mat" + (dynamicType ? "(" + std::to_string(n) + ", " + std::to_string(m) + ")" : "") + ";\n";
+    cppFunc += "    mat << " + matrixArgs + "\n";
+    cppFunc += "    return mat;\n";
+    cppFunc += "}\n";
+
+    return cppFunc;
+}
+
+std::string
+ls::symbolic::OrdinaryDifferentialEquation::generateJacobianStatesArrayInputCppFunc(const std::string &functionName,
+                                                                                    const bool dynamicType) const
+{
+    return generateMatrixArrayInputCppFunc(generateJacobianStates(), functionName, dynamicType);
+}
+
+std::string
+ls::symbolic::OrdinaryDifferentialEquation::generateJacobianInputsArrayInputCppFunc(const std::string &functionName,
+                                                                                    const bool dynamicType) const
+{
+    return generateMatrixArrayInputCppFunc(generateJacobianInputs(), functionName, dynamicType);
+}
+
+inline void ls::symbolic::OrdinaryDifferentialEquation::replaceString(std::string &str, const std::string &source, const std::string &dest)
+{
+    size_t start = str.find(source);
+    if(start == std::string::npos)
+        return;
+
+    str.replace(start, source.length(), dest);
+}
+
+inline void ls::symbolic::OrdinaryDifferentialEquation::replaceStringAll(std::string &str, const std::string &source, const std::string &dest)
+{
+    if (source.empty())
+        return;
+
+    std::size_t start = 0;
+    while((start = str.find(source, start)) != std::string::npos) {
+        str.replace(start, source.length(), dest);
+        start += dest.length();
+    }
+}
+
+std::string ls::symbolic::OrdinaryDifferentialEquation::stripWhiteSpace(std::string &str)
+{
+    std::string res = str;
+
+    // Forward pass
+    for (std::size_t i = 0; i < res.size(); i++) {
+        if (res[i] == ' ')
+            replaceString(res, " ", "");
+        else
+            break;
+    }
+
+    // Backward pass
+    std::size_t start = res.size();
+    while (res[start] == ' ')
+        start--;
+
+
+    for (std::size_t i = start; i < res.size(); i++) {
+        if (res[i] == ' ')
+            replaceString(res, " ", "");
+        else
+            break;
+    }
+
+    return res;
 }
 
 #endif

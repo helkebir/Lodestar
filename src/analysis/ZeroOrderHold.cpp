@@ -39,7 +39,7 @@ ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace<> *ss, double dt)
     const long m = ss->inputDim();
 
     systems::StateSpace<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic> out;
-    auto * memstruct = new mallocStruct<>;
+    auto *memstruct = new mallocStruct<>;
     memstruct->upperXM.resize(n, n + m);
     memstruct->upperXM.setZero();
 
@@ -65,7 +65,7 @@ ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> *ss, double dt)
     const long m = ss->inputDim();
 
     systems::StateSpace<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic> out;
-    auto * memstruct = new mallocStruct<>;
+    auto *memstruct = new mallocStruct<>;
     memstruct->upperXM.resize(n, n + m);
     memstruct->upperXM.setZero();
 

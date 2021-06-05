@@ -31,7 +31,7 @@ namespace ls {
             /**
              * @brief Generates the inverse of a state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param out Output of inverted state space system.
              */
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -51,7 +51,7 @@ namespace ls {
             /**
              * @brief Generates the inverse of a state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              *
              * @return Inverted state space system.
              */

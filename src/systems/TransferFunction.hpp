@@ -28,8 +28,8 @@ namespace ls {
             /**
              * @brief Default constructor.
              */
-            TransferFunction() : _num(Eigen::MatrixXd::Ones(1, 1)),
-                                 _den(Eigen::MatrixXd::Ones(1, 1))
+            TransferFunction() : num_(Eigen::MatrixXd::Ones(1, 1)),
+                                 den_(Eigen::MatrixXd::Ones(1, 1))
             {}
 
             /**
@@ -50,7 +50,7 @@ namespace ls {
              * @param den Denominator coefficients.
              */
             TransferFunction(const Eigen::MatrixXd &num,
-                             const Eigen::MatrixXd &den) : _num(num), _den(den)
+                             const Eigen::MatrixXd &den) : num_(num), den_(den)
             {}
 
             /**
@@ -110,7 +110,7 @@ namespace ls {
             /**
              * @brief Converts transfer function to state space object.
              *
-             * @return State space object.
+             * @return TState space object.
              */
             StateSpace<> toStateSpace() const;
 
@@ -192,8 +192,8 @@ namespace ls {
 #endif
 
         private:
-            Eigen::MatrixXd _num, /// Numerator coefficients.
-            _den; /// Denominator coefficients.
+            Eigen::MatrixXd num_, /// Numerator coefficients.
+            den_; /// Denominator coefficients.
         };
     }
 }

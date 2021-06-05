@@ -38,7 +38,7 @@ namespace ls {
              * @brief Generates generalized bilinear transform of a
              * continuous-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -77,7 +77,7 @@ namespace ls {
              * @brief Generates generalized bilinear transform of a
              * continuous-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              * @param alpha Generalized bilinear transformation parameter; default
              * parameter corresponds to backward differencing transform.
@@ -88,22 +88,24 @@ namespace ls {
             c2d(const systems::StateSpace<> &ss, double dt, double alpha = 1);
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
-                            systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
-                            LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+            static void
+            c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
+                systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
+                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
-                            systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
-                            LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+            static void
+            c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
+                systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
+                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
              * @brief Generates generalized bilinear transform of a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              * @param alpha Generalized bilinear transformation parameter; default
              * parameter corresponds to backward differencing transform.
@@ -115,16 +117,18 @@ namespace ls {
                 double alpha = 1);
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
-                            systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
-                            LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+            static void
+            d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
+                systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
+                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
-                            systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
-                            LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
+            static void
+            d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
+                systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
+                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
              * @brief Generates generalized bilinear transform of a
@@ -133,7 +137,7 @@ namespace ls {
              * This method retrieves the sampling period from the state space
              * object.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param alpha Generalized bilinear transformation parameter; default
              * parameter corresponds to backward differencing transform.
              *
@@ -146,7 +150,7 @@ namespace ls {
              * @brief Generates generalized bilinear transform of a
              * discrete-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -184,7 +188,7 @@ namespace ls {
              * @brief Generates Tustin transform of a continuous-time state
              * space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed discrete-time state space system.
@@ -196,7 +200,7 @@ namespace ls {
              * @brief Generates Tustin transform of a discrete-time state space
              * system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed continuous-time state space system.
@@ -208,7 +212,7 @@ namespace ls {
              * @brief Generates Euler transform of a continuous-time state space
              * system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed discrete-time state space system.
@@ -220,7 +224,7 @@ namespace ls {
              * @brief Generates Euler transform of a discrete-time state space
              * system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed continuous-time state space system.
@@ -232,7 +236,7 @@ namespace ls {
              * @brief Generates backward differencing transform of a
              * continuous-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed discrete-time state space system.
@@ -244,7 +248,7 @@ namespace ls {
              * @brief Generates backward differencing transform of a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Transformed continuous-time state space system.

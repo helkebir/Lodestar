@@ -7,39 +7,41 @@
 
 #include "../Integrator.hpp"
 
-namespace ls { namespace primitives {
-    template<typename State>
-    class IntegratorNewton : public Integrator<State> {
-    public:
-        typedef Integrator<State> Base;
-        using Base::samplingPeriod;
-        using Base::time;
-        using Base::state;
-        using Base::integral;
+namespace ls {
+    namespace primitives {
+        template<typename TState>
+        class IntegratorNewton : public Integrator<TState> {
+        public:
+            typedef Integrator<TState> Base;
+            using Base::samplingPeriod;
+            using Base::time;
+            using Base::state;
+            using Base::integral;
 
-        IntegratorNewton();
+            IntegratorNewton();
 
-        explicit IntegratorNewton(double _samplingPeriod);
+            explicit IntegratorNewton(double _samplingPeriod);
 
-        explicit IntegratorNewton(State *_state);
+            explicit IntegratorNewton(TState *_state);
 
-        explicit IntegratorNewton(double _samplingPeriod, State *_state);
+            explicit IntegratorNewton(double _samplingPeriod, TState *_state);
 
-        void updateState();
+            void updateState();
 
-        void updateState(double _samplingPeriod);
+            void updateState(double _samplingPeriod);
 
-        void updateState(State *_state);
+            void updateState(TState *_state);
 
-        void updateState(double _samplingPeriod, State *_state);
+            void updateState(double _samplingPeriod, TState *_state);
 
-        double updateTime();
+            double updateTime();
 
-        double updateTime(double _samplingPeriod);
+            double updateTime(double _samplingPeriod);
 
-        State getIntegral();
-    };
-} }
+            TState getIntegral();
+        };
+    }
+}
 
 template<typename State>
 inline ls::primitives::IntegratorNewton<State>::IntegratorNewton()

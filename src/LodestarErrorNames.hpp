@@ -8,7 +8,8 @@
 #include "LodestarErrors.hpp"
 #include <string>
 
-std::string LODESTAR_ERROR_NAME(LODESTAR_ERROR err) {
+std::string LODESTAR_ERROR_NAME(LODESTAR_ERROR err)
+{
     switch (err) {
         case ERROR_NONE:
             return "ERROR_NONE";

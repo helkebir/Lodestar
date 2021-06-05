@@ -48,7 +48,8 @@ PROTO_WRAP_STATIC(ls::proto::eigen::VectorXd)
 
 #ifdef LS_USE_GINAC
 
-PROTO_WRAP(ls::io::GiNaCExPair) {
+PROTO_WRAP(ls::io::GiNaCExPair)
+{
     // Register objects by name
     for (const auto &symbol : obj->second) {
         auto symbolObj = destObj->add_symbols();
@@ -65,7 +66,8 @@ PROTO_WRAP(ls::io::GiNaCExPair) {
     destObj->set_archive(stream.str());
 }
 
-PROTO_WRAP_STATIC(ls::io::GiNaCExPair) {
+PROTO_WRAP_STATIC(ls::io::GiNaCExPair)
+{
     // Register objects by name
     for (const auto &symbol : obj->second) {
         auto symbolObj = destObj->add_symbols();
@@ -82,7 +84,8 @@ PROTO_WRAP_STATIC(ls::io::GiNaCExPair) {
     destObj->set_archive(stream.str());
 }
 
-PROTO_WRAP(ls::io::ProtoExPair) {
+PROTO_WRAP(ls::io::ProtoExPair)
+{
     // Append symbols to symbol list.
     GiNaC::symtab symtab = obj->second;
     GiNaC::lst sym_lst;
@@ -106,7 +109,8 @@ PROTO_WRAP(ls::io::ProtoExPair) {
     *destObj = archive.unarchive_ex(sym_lst, 0u);
 }
 
-PROTO_WRAP_STATIC(ls::io::ProtoExPair) {
+PROTO_WRAP_STATIC(ls::io::ProtoExPair)
+{
     // Append symbols to symbol list.
     GiNaC::symtab symtab = obj->second;
     GiNaC::lst sym_lst;
@@ -130,7 +134,8 @@ PROTO_WRAP_STATIC(ls::io::ProtoExPair) {
     *destObj = archive.unarchive_ex(sym_lst, 0u);
 }
 
-PROTO_WRAP(ls::proto::ginac::ex) {
+PROTO_WRAP(ls::proto::ginac::ex)
+{
     // Retrieve symbols.
     GiNaC::lst sym_lst;
     for (const auto &symb : obj->symbols())
@@ -143,7 +148,8 @@ PROTO_WRAP(ls::proto::ginac::ex) {
     *destObj = archive.unarchive_ex(sym_lst, 0u);
 }
 
-PROTO_WRAP_STATIC(ls::proto::ginac::ex) {
+PROTO_WRAP_STATIC(ls::proto::ginac::ex)
+{
     // Retrieve symbols.
     GiNaC::lst sym_lst;
     for (const auto &symb : obj->symbols())

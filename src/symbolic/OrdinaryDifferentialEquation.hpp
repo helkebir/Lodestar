@@ -8,18 +8,22 @@
 #ifdef LS_USE_GINAC
 
 #include "Eigen/Dense"
-#include "systems/StateSpace.hpp"
 #include "ginac/ginac.h"
+
+#include "systems/StateSpace.hpp"
+
+#include <string>
+#include <deque>
 
 namespace ls {
     namespace symbolic {
         class OrdinaryDifferentialEquation {
         public:
             OrdinaryDifferentialEquation() :
-                    _functions(GiNaC::lst{GiNaC::ex(0)}),
-                    _states(GiNaC::lst{GiNaC::symbol("x")}),
-                    _inputs(GiNaC::lst{GiNaC::symbol("u")}),
-                    _time(GiNaC::symbol("t"))
+                    functions_(GiNaC::lst{GiNaC::ex(0)}),
+                    states_(GiNaC::lst{GiNaC::symbol("x")}),
+                    inputs_(GiNaC::lst{GiNaC::symbol("u")}),
+                    time_(GiNaC::symbol("t"))
             {
                 makeSymbolMap();
             }
@@ -27,10 +31,10 @@ namespace ls {
             OrdinaryDifferentialEquation(const GiNaC::lst &functions,
                                          const GiNaC::lst &states,
                                          const GiNaC::lst &inputs) :
-                    _functions(functions),
-                    _states(states),
-                    _inputs(inputs),
-                    _time(GiNaC::symbol("t"))
+                    functions_(functions),
+                    states_(states),
+                    inputs_(inputs),
+                    time_(GiNaC::symbol("t"))
             {
                 makeSymbolMap();
             }
@@ -39,10 +43,10 @@ namespace ls {
                                          const GiNaC::lst &states,
                                          const GiNaC::lst &inputs,
                                          const GiNaC::symbol &time) :
-                    _functions(functions),
-                    _states(states),
-                    _inputs(inputs),
-                    _time(time)
+                    functions_(functions),
+                    states_(states),
+                    inputs_(inputs),
+                    time_(time)
             {
                 makeSymbolMap();
             }
@@ -93,7 +97,15 @@ namespace ls {
 
             GiNaC::matrix generateJacobianStates() const;
 
+            std::string generateJacobianStatesCppFunc(const std::string &functionName, const bool dynamicType = false) const;
+
+            std::string generateJacobianStatesArrayInputCppFunc(const std::string &functionName, const bool dynamicType = false) const;
+
             GiNaC::matrix generateJacobianInputs() const;
+
+            std::string generateJacobianInputsCppFunc(const std::string &functionName, const bool dynamicType = false) const;
+
+            std::string generateJacobianInputsArrayInputCppFunc(const std::string &functionName, const bool dynamicType = false) const;
 
             Eigen::MatrixXd generateJacobianMatrix(const GiNaC::lst &variables,
                                                    const GiNaC::exmap &exmap) const;
@@ -107,6 +119,10 @@ namespace ls {
 
             Eigen::MatrixXd
             generateJacobianMatrixInputs(const GiNaC::exmap &exmap) const;
+
+            std::string generateMatrixCppFunc(const GiNaC::matrix &ginacMatrix, const std::string &functionName, const bool dynamicType = false) const;
+
+            std::string generateMatrixArrayInputCppFunc(const GiNaC::matrix &ginacMatrix, const std::string &functionName, const bool dynamicType = false) const;
 
             systems::StateSpace<> linearize(const GiNaC::exmap &exmap) const;
 
@@ -136,15 +152,19 @@ namespace ls {
 
             static Eigen::MatrixXd matrixToMatrixXd(const GiNaC::ex &ex);
 
-        private:
-            GiNaC::lst _functions;
-            GiNaC::symbol _time;
-            GiNaC::lst _states;
-            GiNaC::lst _inputs;
+        protected:
+            GiNaC::lst functions_;
+            GiNaC::symbol time_;
+            GiNaC::lst states_;
+            GiNaC::lst inputs_;
 
-            std::map<std::string, GiNaC::symbol> _symbolMap;
+            std::map<std::string, GiNaC::symbol> symbolMap_;
 
             void makeSymbolMap();
+
+            static void replaceString(std::string &str, const std::string &source, const std::string &dest);
+            static void replaceStringAll(std::string &str, const std::string &source, const std::string &dest);
+            static std::string stripWhiteSpace(std::string &str);
         };
     }
 }

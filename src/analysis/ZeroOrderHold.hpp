@@ -22,7 +22,8 @@ namespace ls {
             struct mallocStruct {
                 Eigen::Matrix<TScalar, TStateDim, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> upperXM;
                 Eigen::Matrix<TScalar, TInputDim, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> lowerXM;
-                Eigen::Matrix<TScalar, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim), LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> XM;
+                Eigen::Matrix<TScalar, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim), LS_STATIC_UNLESS_DYNAMIC(
+                        TStateDim + TInputDim)> XM;
                 Eigen::Matrix<TScalar, TStateDim, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> XXM;
             };
 
@@ -30,7 +31,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -46,7 +47,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -74,7 +75,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Zero-order hold discrete-time state space system.
@@ -97,7 +98,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -113,7 +114,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -129,7 +130,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -141,7 +142,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -153,7 +154,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -168,7 +169,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss State space system.
+             * @param ss TState space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -206,6 +207,8 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
 
     out->setA(memstruct->XXM.block(0, 0, n, n));
     out->setB(memstruct->XXM.block(0, n, n, m));
+    out->setC(Eigen::MatrixXd::Identity(n, n));
+    out->setD(Eigen::MatrixXd::Zero(n, m));
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -272,7 +275,8 @@ void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TSt
     memstruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
 
     memstruct->lowerXM.setZero();
-    memstruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim) << Eigen::Matrix<TScalar, TInputDim, TInputDim>::Identity();
+    memstruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim)
+            << Eigen::Matrix<TScalar, TInputDim, TInputDim>::Identity();
 
     memstruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memstruct->upperXM;
     memstruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memstruct->lowerXM;

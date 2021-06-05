@@ -36,13 +36,13 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
         // https://github.com/scipy/scipy/blob/v1.6.3/scipy/linalg/_solvers.py#L529-L734
     }
 
-    Eigen::MatrixXd hhQ = H.block(0, 2*m, 2*m + n, n).fullPivHouseholderQr().matrixQ();
+    Eigen::MatrixXd hhQ = H.block(0, 2 * m, 2 * m + n, n).fullPivHouseholderQr().matrixQ();
 
     Eigen::MatrixXd hhQtemp = hhQ.block(0, n, hhQ.rows(), hhQ.cols() - n).conjugate().transpose();
-    H = hhQtemp * H.block(0, 0, 2*m + n, 2*m);
-    J = hhQtemp * J.block(0, 0, 2*m + n, 2*m);
+    H = hhQtemp * H.block(0, 0, 2 * m + n, 2 * m);
+    J = hhQtemp * J.block(0, 0, 2 * m + n, 2 * m);
 
-    Eigen::RealQZ<Eigen::MatrixXd> QZ(2*m + n);
+    Eigen::RealQZ<Eigen::MatrixXd> QZ(2 * m + n);
     QZ.compute(H, J);
 
     Eigen::MatrixXd Z = QZ.matrixZ();
@@ -63,7 +63,7 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
 
     // TODO: Add deviation from symmetry check.
 
-    return (X + X.conjugate().transpose())/2;
+    return (X + X.conjugate().transpose()) / 2;
 }
 
 Eigen::MatrixXd ls::synthesis::AlgebraicRiccatiEquation::solveDARE(

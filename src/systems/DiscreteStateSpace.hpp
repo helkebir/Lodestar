@@ -11,10 +11,11 @@
 
 namespace ls {
     namespace systems {
-        template <typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
+        template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
         class DiscreteStateSpace : public StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> {
         public:
             typedef StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> Base;
+
             /**
              * @brief Default constructor.
              *
@@ -42,7 +43,7 @@ namespace ls {
              *
              * The sampling period is set to 1.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -60,7 +61,7 @@ namespace ls {
              * @brief Constructs a discrete state space system with the given
              * matrices.
              *
-             * @param A State matrix.
+             * @param A TState matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -84,7 +85,7 @@ namespace ls {
             DiscreteStateSpace(const DiscreteStateSpace &other) :
                     StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>(other)
             {
-                setDiscreteParams(other._dt, other._isDiscrete);
+                setDiscreteParams(other.dt_, other.isDiscrete_);
             }
 
             /**
@@ -135,13 +136,12 @@ void ls::systems::DiscreteStateSpace<TScalar, TStateDim, TInputDim, TOutputDim>:
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 bool ls::systems::DiscreteStateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::isStable(const double tolerance) const
 {
-    auto eig = Base::_A->eigenvalues();
+    auto eig = Base::A_->eigenvalues();
     double tol = (tolerance < 0 ? -tolerance * tolerance : tolerance *
                                                            tolerance);
 
     for (int i = 0; i < eig.size(); i++) {
-        if (eig(i).real() * eig(i).real() + eig(i).imag() * eig(i).imag() >
-            1 + tol)
+        if (eig(i).real() * eig(i).real() + eig(i).imag() * eig(i).imag() > 1 + tol)
             return false;
     }
 

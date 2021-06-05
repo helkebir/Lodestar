@@ -12,8 +12,12 @@ namespace ls {
     namespace synthesis {
         class AlgebraicRiccatiEquation {
         public:
-            static Eigen::MatrixXd solveDARE(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q, const Eigen::MatrixXd &R);
-            static Eigen::MatrixXd solveDARE(const systems::StateSpace<> &sys, const Eigen::MatrixXd &Q, const Eigen::MatrixXd &R);
+            static Eigen::MatrixXd
+            solveDARE(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q,
+                      const Eigen::MatrixXd &R);
+
+            static Eigen::MatrixXd
+            solveDARE(const systems::StateSpace<> &sys, const Eigen::MatrixXd &Q, const Eigen::MatrixXd &R);
         };
     }
 }

@@ -13,23 +13,25 @@
 
 #define PROTO_WRAP_STATIC(TYPE) template<> void ls::io::ProtoWrapper<TYPE>::wrap(typename ProtoTypeTrait<TYPE>::type *destObj, const TYPE *obj)
 
-namespace ls { namespace io {
-    template<typename T>
-    class ProtoWrapper {
-    public:
-        ProtoWrapper() : obj(nullptr)
-        {}
+namespace ls {
+    namespace io {
+        template<typename T>
+        class ProtoWrapper {
+        public:
+            ProtoWrapper() : obj(nullptr)
+            {}
 
-        explicit ProtoWrapper(T *_obj) : obj(_obj)
-        {}
+            explicit ProtoWrapper(T *_obj) : obj(_obj)
+            {}
 
-        void wrap(typename ProtoTypeTrait<T>::type *protoObj);
+            void wrap(typename ProtoTypeTrait<T>::type *protoObj);
 
-        static void wrap(typename ProtoTypeTrait<T>::type *protoObj, const T *obj);
+            static void wrap(typename ProtoTypeTrait<T>::type *protoObj, const T *obj);
 
-        T *obj;
-    };
-} }
+            T *obj;
+        };
+    }
+}
 
 #endif // LS_USE_PROTOBUF
 

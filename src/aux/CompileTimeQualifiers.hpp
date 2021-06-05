@@ -1,5 +1,5 @@
 //
-// Created by helkebir on 5/17/21.
+// Created by Hamza El-Kebir on 5/17/21.
 //
 
 #ifndef LODESTAR_COMPILETIMEQUALIFIERS_HPP
@@ -29,23 +29,26 @@
 //
 //#define LS_IS_STATIC(TSTATE, TINPUT, TOUTPUT) typename std::enable_if<((TSTATE >= 0) && (TINPUT >= 0) && (TOUTPUT >= 0))>::type*
 
-template <class T>
-constexpr T &constexprMin(T a, T b) {
+template<class T>
+constexpr T &Kmin(T a, T b)
+{
     return (a > b ? b : a);
 }
 
-template <class T>
-constexpr T &constexprMax(const T &a, const T &b) {
+template<class T>
+constexpr T &Kmax(const T &a, const T &b)
+{
     return (int &) (a > b ? a : b);
 }
 
-template <class T>
-constexpr T constexprMax2(const T a, const T b, const T c) {
+template<class T>
+constexpr T Kmax2(const T a, const T b, const T c)
+{
     return (a >= b ? a : c);
 }
 
-#define LS_STATIC_UNLESS_DYNAMIC(DIM) constexprMax(-1, DIM)
+#define LS_STATIC_UNLESS_DYNAMIC(DIM) Kmax(-1, DIM)
 
-#define LS_STATIC_UNLESS_DYNAMIC_VAL(DIM, VAL) constexprMax2(-1, DIM, VAL)
+#define LS_STATIC_UNLESS_DYNAMIC_VAL(DIM, VAL) Kmax2(-1, DIM, VAL)
 
 #endif //LODESTAR_COMPILETIMEQUALIFIERS_HPP

@@ -109,7 +109,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TIn
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advance(
-        Eigen::Matrix<TScalar, TInputDim, constexprMax2(-1, TInputDim, 1)> *control)
+        Eigen::Matrix<TScalar, TInputDim, Kmax2(-1, TInputDim, 1)> *control)
 {
     *state = (*system->getA()) * (*state) + (*system->getB()) * (*control);
 
@@ -134,7 +134,7 @@ void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TIn
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::systems::DiscreteSystem<ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>>::advanceForced(
-        Eigen::Matrix<TScalar, TInputDim, constexprMax2(-1, TInputDim, 1)> *control)
+        Eigen::Matrix<TScalar, TInputDim, Kmax2(-1, TInputDim, 1)> *control)
 {
     *state = (*system->getA()) * (*state) + (*system->getB()) * (*control);
 

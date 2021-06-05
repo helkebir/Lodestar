@@ -7,8 +7,8 @@
 ls::systems::TransferFunction::TransferFunction(
         const ls::systems::TransferFunction &other)
 {
-    _num = other.getNum();
-    _den = other.getDen();
+    num_ = other.getNum();
+    den_ = other.getDen();
 }
 
 void ls::systems::TransferFunction::normalizeInPlace()
@@ -17,13 +17,13 @@ void ls::systems::TransferFunction::normalizeInPlace()
         // TODO: Throw error; denominator must at least have one nonzero element.
     }*/
 
-    _num = _num / _den(0, 0);
-    _den = _den / _den(0, 0);
+    num_ = num_ / den_(0, 0);
+    den_ = den_ / den_(0, 0);
 
     // Cont zero numerator columns.
     int leadingZeros = 0;
-    for (int i = 0; i < _num.cols(); i++) {
-        if (_num.col(i).isZero())
+    for (int i = 0; i < num_.cols(); i++) {
+        if (num_.col(i).isZero())
             leadingZeros++;
         else
             break;
@@ -31,16 +31,16 @@ void ls::systems::TransferFunction::normalizeInPlace()
 
     // Trim leading zeros.
     if (leadingZeros > 0) {
-        if (leadingZeros == _num.cols())
+        if (leadingZeros == num_.cols())
             leadingZeros--;
 
-        _num = _num.block(0, leadingZeros, _num.rows(),
-                          _num.cols() - leadingZeros);
+        num_ = num_.block(0, leadingZeros, num_.rows(),
+                          num_.cols() - leadingZeros);
     }
 
     // Squeeze first dimension if singular.
-    if (_num.rows() == 1)
-        _num = _num.block(0, 0, 1, _num.cols()).transpose();
+    if (num_.rows() == 1)
+        num_ = num_.block(0, 0, 1, num_.cols()).transpose();
 }
 
 ls::systems::TransferFunction ls::systems::TransferFunction::normalized() const
@@ -56,8 +56,8 @@ ls::systems::TransferFunction::toStateSpace() const
 {
     auto tf = normalized();
 
-    int M = tf._num.rows();
-    int K = tf._den.rows();
+    int M = tf.num_.rows();
+    int K = tf.den_.rows();
 
     if (M > K) {
         throw LODESTAR_ERROR::ERROR_IMPROPER_TRANSFER_FUNC;
@@ -136,34 +136,42 @@ ls::systems::TransferFunction::toDiscreteStateSpace(double dt,
 
 Eigen::MatrixXd ls::systems::TransferFunction::getNum() const
 {
-    return _num;
+    return num_;
 }
 
 void ls::systems::TransferFunction::setNum(const Eigen::MatrixXd &num)
 {
-    _num = num;
+    num_ = num;
 }
 
 long ls::systems::TransferFunction::getNumDegree() const
 {
-    const long n = _num.rows() - 1;
-    return (n < 0 ? 0 : n);
+    long n = num_.rows() - 1;
+    while ((num_(n, 0) == 0) && (n > 0)) {
+        n--;
+    }
+
+    return n;
 }
 
 Eigen::MatrixXd ls::systems::TransferFunction::getDen() const
 {
-    return _den;
+    return den_;
 }
 
 void ls::systems::TransferFunction::setDen(const Eigen::MatrixXd &den)
 {
-    _den = den;
+    den_ = den;
 }
 
 long ls::systems::TransferFunction::getDenDegree() const
 {
-    const long d = _den.rows() - 1;
-    return (d < 0 ? 0 : d);
+    long d = den_.rows() - 1;
+    while ((den_(d, 0) == 0) && (d > 0)) {
+        d--;
+    }
+
+    return d;
 }
 
 #ifdef LS_USE_GINAC
@@ -182,7 +190,7 @@ GiNaC::ex ls::systems::TransferFunction::getNumExpression(
     const long n = getNumDegree();
 
     for (int i = 0; i < n + 1; i++) {
-        num += _num(i, 0) * GiNaC::pow(symbol, n - i);
+        num += num_(i, 0) * GiNaC::pow(symbol, n - i);
     }
 
     return num;
@@ -196,7 +204,7 @@ GiNaC::ex ls::systems::TransferFunction::getDenExpression(
     const long d = getNumDegree();
 
     for (int i = 0; i < d + 1; i++) {
-        den += _den(i, 0) * GiNaC::pow(symbol, d - i);
+        den += den_(i, 0) * GiNaC::pow(symbol, d - i);
     }
 
     return den;
@@ -220,16 +228,16 @@ void ls::systems::TransferFunction::copyFromExpression(const GiNaC::ex &tf,
     const long n = num.degree(symbol)+1;
     const long d = den.degree(symbol)+1;
 
-    _num = Eigen::MatrixXd::Zero(n, 1);
-    _den = Eigen::MatrixXd::Zero(d, 1);
+    num_ = Eigen::MatrixXd::Zero(n, 1);
+    den_ = Eigen::MatrixXd::Zero(d, 1);
 
     for (int i = 0; i < n; i++) {
-        _num(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
+        num_(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
                 num.coeff(symbol, n - i - 1)).to_double();
     }
 
     for (int i = 0; i < d; i++) {
-        _den(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
+        den_(i, 0) = GiNaC::ex_to<GiNaC::numeric>(
                 den.coeff(symbol, d - i - 1)).to_double();
     }
 }
