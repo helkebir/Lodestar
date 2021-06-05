@@ -9,6 +9,7 @@
 #include "systems/StateSpace_test.hpp"
 #include "primitives/integrators/IntegratorNewton_test.hpp"
 #include "systems/TransferFunction_test.hpp"
+#include "block/Block_test.hpp"
 
 #ifdef LS_USE_GINAC
 
