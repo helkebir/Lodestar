@@ -41,7 +41,7 @@ TEST_CASE("Block connection", "[block][static]") {
             return true;
         };
 
-        block.setInputCallback<1, 0>(cbI1_0);
+        block.setInputCallback<1>(cbI1_0);
 
         block.setInput<1>(2);
         REQUIRE(block.getOutput<0>() == true);
@@ -55,7 +55,7 @@ TEST_CASE("Block connection", "[block][static]") {
         REQUIRE(block.getOutput<0>() == false);
         REQUIRE(block.getOutput<1>() == 'n');
 
-        block.setInputCallback<1, 0>(decltype(cbI1_0){});
+        block.clearInputCallbacks<1>();
         block.setInput<1>(0);
         REQUIRE(block.getOutput<0>() == false);
         REQUIRE(block.getOutput<1>() == 'n');
@@ -77,7 +77,7 @@ TEST_CASE("Block connection", "[block][static]") {
             return true;
         };
 
-        block.setInputCallback<1>(cbI1_0, 0);
+        block.setInputCallback<1>(cbI1_0);
 
         block.setInput<1>(2);
         REQUIRE(block.getOutput<0>() == true);
@@ -91,7 +91,7 @@ TEST_CASE("Block connection", "[block][static]") {
         REQUIRE(block.getOutput<0>() == false);
         REQUIRE(block.getOutput<1>() == 'n');
 
-        block.setInputCallback<1>(decltype(cbI1_0){}, 0);
+        block.clearInputCallbacks();
         block.setInput<1>(0);
         REQUIRE(block.getOutput<0>() == false);
         REQUIRE(block.getOutput<1>() == 'n');

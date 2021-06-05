@@ -90,6 +90,32 @@ namespace ls {
                 return std::get<TArrIdx>(std::get<TSlotIdx>(inputCallbacks_));
             }
 
+            template<size_t TSlotIdx, size_t TArrIdx>
+            inline void clearInputCallback(size_t idx)
+            {
+                if (TArrIdx < TCallbackNumber)
+                    std::get<TSlotIdx>(inputCallbacks_)[TArrIdx] = INPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            template<size_t TSlotIdx>
+            inline void clearInputCallback(size_t idx)
+            {
+                if (idx < TCallbackNumber)
+                    std::get<TSlotIdx>(inputCallbacks_)[idx] = INPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            template<size_t TSlotIdx>
+            inline void clearInputCallbacks()
+            {
+                for (size_t i = 0; i < TCallbackNumber; i++)
+                    std::get<TSlotIdx>(inputCallbacks_)[i] = INPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            inline void clearInputCallbacks()
+            {
+                recursivelyClearInputCallbacks<sizeof...(TInputs) - 1>();
+            }
+
             template<size_t TSlotIdx>
             inline INPUT_CB_TYPE_INTERNAL(TSlotIdx) getInputCallback(size_t idx)
             {
@@ -111,10 +137,50 @@ namespace ls {
             }
 
             template<size_t TSlotIdx>
+            inline void setInputCallback(INPUT_CB_TYPE_INTERNAL(TSlotIdx) value)
+            {
+                size_t i = 0;
+                while (i < TCallbackNumber) {
+                    if (!std::get<TSlotIdx>(inputCallbacks_)[i]) {
+                        std::get<TSlotIdx>(inputCallbacks_)[i] = value;
+                        break;
+                    }
+
+                    i++;
+                }
+            }
+
+            template<size_t TSlotIdx>
             inline OUTPUT_CB_TYPE_INTERNAL(TSlotIdx) getOutputCallback(size_t idx)
             {
                 if (idx < TCallbackNumber)
                     return std::get<TSlotIdx>(outputCallbacks_)[idx];
+            }
+
+            template<size_t TSlotIdx, size_t TArrIdx>
+            inline void clearOutputCallback(size_t idx)
+            {
+                if (TArrIdx < TCallbackNumber)
+                    std::get<TSlotIdx>(outputCallbacks_)[TArrIdx] = OUTPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            template<size_t TSlotIdx>
+            inline void clearOutputCallback(size_t idx)
+            {
+                if (idx < TCallbackNumber)
+                    std::get<TSlotIdx>(outputCallbacks_)[idx] = OUTPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            template<size_t TSlotIdx>
+            inline void clearOutputCallbacks()
+            {
+                for (size_t i = 0; i < TCallbackNumber; i++)
+                    std::get<TSlotIdx>(outputCallbacks_)[i] = OUTPUT_CB_TYPE_INTERNAL(TSlotIdx){};
+            }
+
+            inline void clearOutputCallbacks()
+            {
+                recursivelyClearOutputCallbacks<sizeof...(TInputs) - 1>();
             }
 
             template<size_t TSlotIdx, size_t TArrIdx>
@@ -128,6 +194,20 @@ namespace ls {
             {
                 if (idx < TCallbackNumber)
                     std::get<TSlotIdx>(outputCallbacks_)[idx] = value;
+            }
+
+            template<size_t TSlotIdx>
+            inline void setOutputCallback(INPUT_CB_TYPE_INTERNAL(TSlotIdx) value)
+            {
+                size_t i = 0;
+                while (i < TCallbackNumber) {
+                    if (!std::get<TSlotIdx>(outputCallbacks_)[i]) {
+                        std::get<TSlotIdx>(outputCallbacks_)[i] = value;
+                        break;
+                    }
+
+                    i++;
+                }
             }
 
             // Recursive full connection if this output and other input are the same.
@@ -319,6 +399,34 @@ namespace ls {
                     Block<std::tuple<TInputsOther...>, std::tuple<TOutputsOther...>, TCallbackNumberOther, TTicketNumberOther> &other)
             {
                 disconnect<0, 0>(other);
+                return true;
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx > 0), bool>::type recursivelyClearInputCallbacks()
+            {
+                clearInputCallbacks<TSlotIdx>();
+                return recursivelyClearInputCallbacks<TSlotIdx - 1>();
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx == 0), bool>::type recursivelyClearInputCallbacks()
+            {
+                clearInputCallbacks<0>();
+                return true;
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx > 0), bool>::type recursivelyClearOutputCallbacks()
+            {
+                clearOutputCallbacks<TSlotIdx>();
+                return recursivelyClearOutputCallbacks<TSlotIdx - 1>();
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx == 0), bool>::type recursivelyClearOutputCallbacks()
+            {
+                clearOutputCallbacks<0>();
                 return true;
             }
         };
