@@ -107,4 +107,40 @@ TEST_CASE("Block connection", "[block][static]") {
     }
 }
 
+TEST_CASE("Block Demo", "[block][static]") {
+    auto block = ls::block::Block<std::tuple<int, double, bool>, std::tuple<double, double, double>>{};
+
+    block.setInput<0>(0);
+    block.setInput<1>(3);
+    block.setInput<2>(true);
+
+    std::function<bool(int)> cbI0_0 = [&block](int i0) {
+        if (block.getInput<2>())
+            block.setOutput<0>(block.getOutput<0>() + i0 + block.getInput<1>());
+        else
+            block.setOutput<0>(block.getOutput<0>() - i0 + block.getInput<1>());
+
+        return true;
+    };
+
+    block.setInputCallback<0>(cbI0_0);
+    block.setInputCallback<0>(cbI0_0);
+    block.setInputCallback<0>(cbI0_0);
+
+    std::function<bool(int)> cbI0_3 = [&block](int i0) {
+        block.setOutput<1>(block.getOutput<0>() + i0);
+        block.setOutput<2>(block.getOutput<1>() + i0);
+
+        return true;
+    };
+
+    block.setInputCallback<0>(cbI0_3);
+
+    block.setInput<0>(1);
+
+    std::cout << "O0: " << block.getOutput<0>() << std::endl;
+    std::cout << "O1: " << block.getOutput<1>() << std::endl;
+    std::cout << "O2: " << block.getOutput<2>() << std::endl;
+}
+
 #endif //LODESTAR_BLOCK_TEST_HPP

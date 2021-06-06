@@ -34,28 +34,24 @@ ls::control::DiscreteLQR::finiteHorizon(const Eigen::MatrixXd &A,
                                         const Eigen::MatrixXd &R,
                                         const unsigned int N)
 {
-    std::vector<Eigen::MatrixXd> S_l = {Q};
-    std::vector<Eigen::MatrixXd> K_l = {
-            (R + B.transpose() * Q * B).inverse() * (B.transpose() * Q * A)
-    };
+    Eigen::MatrixXd SLatest = Q;
+    Eigen::MatrixXd KLatest = (R + B.transpose() * Q * B).inverse() * (B.transpose() * Q * A);
+
+    Eigen::MatrixXd Mi, Ri, S, Si, Ki;
 
     for (int i = 0; i < N; i++) {
-        Eigen::MatrixXd Mi, Ri, S, Si, Ki;
-
-        S = S_l.back();
-        S_l.pop_back();
+        S = SLatest;
         Ri = R + B.transpose() * S * B;
         Mi = S - S * B * Ri.inverse() * B.transpose() * S;
         Si = A.transpose() * Mi * A + Q;
-        Ki = R.inverse() * B.transpose() * Si * A;
+        Ki = Ri.inverse() * (B.transpose() * (S * A));
 
-        S_l.push_back(Si);
-        K_l.pop_back();
-        K_l.push_back(Ki);
+        SLatest = Si;
+        KLatest = Ki;
     }
 
 
-    return K_l.back();
+    return KLatest;
 }
 
 Eigen::MatrixXd

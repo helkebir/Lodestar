@@ -28,16 +28,14 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
     J.block(m, m, m, m) = A.conjugate().transpose();
     J.block(2 * m, m, n, m) = -B.conjugate().transpose();
 
-
+    // FIXME: Add diagonal similarity transformation
     { // Balancing
         Eigen::MatrixXd M = H.cwiseAbs() + J.cwiseAbs();
         M.diagonal() = Eigen::MatrixXd::Ones(2 * m + n, 1);
-        // TODO: Implement matrix_balance
         // https://github.com/scipy/scipy/blob/v1.6.3/scipy/linalg/_solvers.py#L529-L734
     }
 
     Eigen::MatrixXd hhQ = H.block(0, 2 * m, 2 * m + n, n).fullPivHouseholderQr().matrixQ();
-
     Eigen::MatrixXd hhQtemp = hhQ.block(0, n, hhQ.rows(), hhQ.cols() - n).conjugate().transpose();
     H = hhQtemp * H.block(0, 0, 2 * m + n, 2 * m);
     J = hhQtemp * J.block(0, 0, 2 * m + n, 2 * m);
@@ -61,7 +59,7 @@ ls::synthesis::AlgebraicRiccatiEquation::solveDARE(const Eigen::MatrixXd &A,
             )
     ).conjugate().transpose() * ZU.conjugate().transpose();
 
-    // TODO: Add deviation from symmetry check.
+    // FIXME: Add deviation from symmetry check.
 
     return (X + X.conjugate().transpose()) / 2;
 }

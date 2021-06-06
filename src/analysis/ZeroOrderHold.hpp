@@ -209,6 +209,8 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
     out->setB(memstruct->XXM.block(0, n, n, m));
     out->setC(Eigen::MatrixXd::Identity(n, n));
     out->setD(Eigen::MatrixXd::Zero(n, m));
+    out->setDiscreteParams(dt, true);
+
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -233,6 +235,7 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
 
     out->setA(memstruct->XXM.block<TStateDim, TStateDim>(0, 0));
     out->setB(memstruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
+    out->setDiscreteParams(dt, true);
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>

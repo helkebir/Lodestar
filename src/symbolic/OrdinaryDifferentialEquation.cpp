@@ -443,7 +443,7 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
     unsigned int i = 0;
     for (const auto &x: states_) {
         src = GiNaC::ex_to<GiNaC::symbol>(x).get_name();
-        dest = "STATES[" + std::to_string(i) + "]";
+        dest = "__STATES__[" + std::to_string(i) + "]";
         replaceStringAll(matrixArgs, src, dest);
 
         i++;
@@ -452,7 +452,7 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
     i = 0;
     for (const auto &u: inputs_) {
         src = GiNaC::ex_to<GiNaC::symbol>(u).get_name();
-        dest = "INPUTS[" + std::to_string(i) + "]";
+        dest = "__INPUTS__[" + std::to_string(i) + "]";
         replaceStringAll(matrixArgs, src, dest);
 
         i++;
@@ -460,25 +460,25 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
 
     {
         src = GiNaC::ex_to<GiNaC::symbol>(time_).get_name();
-        dest = "TIME";
+        dest = "__TIME__";
         replaceStringAll(matrixArgs, src, dest);
     }
 
     // Replace all-caps with more compact symbols.
     {
-        src = "STATES";
+        src = "__STATES__";
         dest = "x";
         replaceStringAll(matrixArgs, src, dest);
     }
 
     {
-        src = "INPUTS";
+        src = "__INPUTS__";
         dest = "u";
         replaceStringAll(matrixArgs, src, dest);
     }
 
     {
-        src = "TIME";
+        src = "__TIME__";
         dest = "t";
         replaceStringAll(matrixArgs, src, dest);
     }

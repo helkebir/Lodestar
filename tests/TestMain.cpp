@@ -19,6 +19,95 @@
 #endif
 
 #include <iostream>
+#include "TestAuxFunctions.hpp"
+#include "control/DiscreteLQR.hpp"
+
+TEST_CASE("Leapfrog", "") {
+    Eigen::Matrix<double, 4, 3> P;
+    P << -0.512312, 0, 0.280913,
+            0, -0512312, 0.287097,
+            0.512312, 0, 0.285137,
+            0, 0.512312, 0.289119;
+
+    Eigen::Vector3d Ivec;
+    Ivec << 1.81006, 2.83132, 1.90705;
+
+    double m = 21.544178;
+
+    ls::symbolic::OrdinaryDifferentialEquation ode{};
+
+    // 6 states
+    auto x = GiNaC::symbol("x");
+    auto y = GiNaC::symbol("y");
+    auto z = GiNaC::symbol("z");
+    auto roll = GiNaC::symbol("R");
+    auto pitch = GiNaC::symbol("P");
+    auto yaw = GiNaC::symbol("Y");
+
+    // 13 inputs
+    auto Fth = GiNaC::symbol("Fth");
+    auto Fpox = GiNaC::symbol("Fpox");
+    auto Fpoy = GiNaC::symbol("Fpoy");
+    auto Fpoz = GiNaC::symbol("Fpoz");
+    auto Fsbx = GiNaC::symbol("Fsbx");
+    auto Fsby = GiNaC::symbol("Fsby");
+    auto Fsbz = GiNaC::symbol("Fsbz");
+    auto Fstx = GiNaC::symbol("Fstx");
+    auto Fsty = GiNaC::symbol("Fsty");
+    auto Fstz = GiNaC::symbol("Fstz");
+    auto Fbox = GiNaC::symbol("Fbox");
+    auto Fboy = GiNaC::symbol("Fboy");
+    auto Fboz = GiNaC::symbol("Fboz");
+
+    ode.setStates(GiNaC::lst{
+        x, y, z,
+        roll, pitch, yaw
+    });
+    ode.setInputs(GiNaC::lst{
+        Fth,
+        Fpox, Fpoy, Fpoz,
+        Fsbx, Fsby, Fsbz,
+        Fstx, Fsty, Fstz,
+        Fbox, Fboy, Fboz
+    });
+
+    // z-y'-x" intrinsic Tait-Brian rotation matrix.
+    using GiNaC::cos;
+    using GiNaC::sin;
+    auto Rmat = GiNaC::lst{
+        GiNaC::lst{cos(pitch) * cos(yaw), - cos(roll) * sin(yaw) + sin(roll) * sin(pitch) * cos(yaw), sin(roll) * sin(yaw) + cos(roll) * sin(pitch) * cos(yaw)},
+        GiNaC::lst{cos(pitch) * sin(yaw), cos(roll) * cos(yaw) + sin(roll) * sin(pitch) * sin(yaw), -sin(roll) * cos(yaw) + cos(roll) * sin(pitch) * sin(yaw)},
+        GiNaC::lst{-sin(pitch), sin(roll) * cos(pitch), cos(roll) * cos(pitch)}
+    };
+
+    auto Rmat0 = Rmat[0];
+    auto Rmat1 = Rmat[1];
+    auto Rmat2 = Rmat[2];
+
+    ode.setFunctions(GiNaC::lst{
+        (Rmat0[0] * (Fpox + Fsbx + Fstx + Fbox) + Rmat0[1] * (Fpoy + Fsby + Fsty + Fboy) + Rmat0[2] * (Fpoz + Fsbz + Fstz + Fboz + Fth)) / m,
+        (Rmat1[0] * (Fpox + Fsbx + Fstx + Fbox) + Rmat1[1] * (Fpoy + Fsby + Fsty + Fboy) + Rmat1[2] * (Fpoz + Fsbz + Fstz + Fboz + Fth)) / m,
+        (Rmat2[0] * (Fpox + Fsbx + Fstx + Fbox) + Rmat2[1] * (Fpoy + Fsby + Fsty + Fboy) + Rmat2[2] * (Fpoz + Fsbz + Fstz + Fboz + Fth)) / m,
+        Rmat0[0] * (Fsbz * P(1,1) + Fboz * P(3, 1)) / Ivec[0] +
+            Rmat0[1] * (Fpoz * P(0,0) + Fstz * P(2, 0)) / Ivec[1] +
+            Rmat0[2] * (Fpoy * abs(P(0, 0)) + Fsbx * P(1, 1) + Fsty * P(2, 0) + Fbox * P(3, 1)) / Ivec[2],
+        Rmat1[0] * (Fsbz * P(1,1) + Fboz * P(3, 1)) / Ivec[0] +
+            Rmat1[1] * (Fpoz * P(0,0) + Fstz * P(2, 0)) / Ivec[1] +
+            Rmat1[2] * (Fpoy * abs(P(0, 0)) + Fsbx * P(1, 1) + Fsty * P(2, 0) + Fbox * P(3, 1)) / Ivec[2],
+        Rmat2[0] * (Fsbz * P(1,1) + Fboz * P(3, 1)) / Ivec[0] +
+            Rmat2[1] * (Fpoz * P(0,0) + Fstz * P(2, 0)) / Ivec[1] +
+            Rmat2[2] * (Fpoy * abs(P(0, 0)) + Fsbx * P(1, 1) + Fsty * P(2, 0) + Fbox * P(3, 1)) / Ivec[2]
+    });
+
+    std::cout << "ODE" << std::endl;
+    std::cout << GiNaC::latex << ode.getFunctions() << GiNaC::dflt << std::endl;
+    std::cout << "Jacobian of states" << std::endl;
+    std::cout << ode.generateJacobianStatesArrayInputCppFunc("jacStates") << std::endl;
+    std::cout << "Jacobian of inputs" << std::endl;
+    std::cout << ode.generateJacobianInputsArrayInputCppFunc("jacStates") << std::endl;
+
+//    ls::systems::StateSpace<double, 6, 13> ss;
+}
 
 TEST_CASE("Temporary main", "")
 {
@@ -177,4 +266,82 @@ TEST_CASE("Temporary main", "")
         std::cout << M.add(Mx) << std::endl;
     }
 #endif
+}
+
+TEST_CASE("Linearize and discretize", "[example]") {
+    std::cout << "=================================================" << std::endl << std::endl;
+    ls::symbolic::OrdinaryDifferentialEquation ode{};
+
+    // 2 states
+    auto x = GiNaC::symbol("x");
+    auto y = GiNaC::symbol("y");
+
+    // 1 input
+    auto u = GiNaC::symbol("u");
+
+    ode.setStates(GiNaC::lst{
+        x, y
+    });
+
+    ode.setInputs(GiNaC::lst{
+        u
+    });
+
+    ode.setFunctions(GiNaC::lst{
+        x*x + x*y + x*u + 0.2*u,
+        y*y + 2*u
+    });
+
+    std::cout << "Functions: " << ode.getFunctions() << std::endl;
+    std::cout << "// A(x, u)" << std::endl;
+    std::cout << ode.generateJacobianStatesCppFunc("jacStates") << std::endl << std::endl;
+    std::cout << "// B(x, u)" << std::endl;
+    std::cout << ode.generateJacobianInputsCppFunc("jacInputs") << std::endl;
+
+    auto A = jacStates(0, 0, 0, 0);
+    auto B = jacInputs(0, 0, 0, 0);
+
+    std::cout << "A((0, 0), 0)\n" << A << std::endl;
+    std::cout << "B((0, 0), 0)\n" << B << std::endl;
+
+    A = jacStates(1, 2, 3, 0);
+    B = jacInputs(1, 2, 3, 0);
+
+    std::cout << "A((1, 2), 3)\n" << A << std::endl;
+    std::cout << "B((1, 2), 3)\n" << B << std::endl;
+
+    ls::systems::StateSpace<> ss(A, B, Eigen::Matrix<double, 2, 2>::Identity(), Eigen::Matrix<double, 2, 1>::Zero());
+    auto dss = ls::analysis::ZeroOrderHold::c2d(ss, 0.1);
+
+    std::cout << "Continuous time system\nA:\n" << (*ss.getA()) << "\nB:\n" << (*ss.getB()) << "\nC:\n" << (*ss.getC()) << "\nD:\n" << (*ss.getD()) << std::endl;
+    std::cout << "\nDiscrete time system\nA:\n" << (*dss.getA()) << "\nB:\n" << (*dss.getB()) << "\nC:\n" << (*dss.getC()) << "\nD:\n" << (*dss.getD()) << std::endl;
+
+    Eigen::Matrix<double, 2, 2> Q;
+    Eigen::Matrix<double, 1, 1> R;
+
+    Q << 2, 0,
+         0, 2;
+
+    R << 1;
+
+    auto K = ls::control::DiscreteLQR::finiteHorizon(dss, Q, R, 100);
+    auto Kinf = ls::control::DiscreteLQR::infiniteHorizon(dss, Q, R);
+
+    std::cout << "\nLQR Feedback Fixed Gain:\n" << K << std::endl;
+    std::cout << "\nLQR Feedback Fixed Gain (inf):\n" << Kinf << std::endl;
+
+    {
+        Eigen::Matrix<double, 2, 1> x;
+        x << 2, 4;
+
+        std::cout << "x at 0 sec:\n" << std::endl;
+        std::cout << x << std::endl;
+
+        uint8_t N = 10;
+        for (int i = 0; i < N; i++) {
+            std::cout << "x at " << (i+1)*dss.getSamplingPeriod() << "sec:\n" << std::endl;
+            x = (*dss.getA()) * x + (*dss.getB()) * (-K * x);
+            std::cout << x << std::endl;
+        }
+    }
 }
