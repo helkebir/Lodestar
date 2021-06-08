@@ -464,7 +464,7 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
     docString += '\n';
     docString += " * @param u Input array:\n";
     if (inputs_.nops() > 0)
-        docString += "  *     " + GiNaC::ex_to<GiNaC::symbol>(inputs_[0]).get_name();
+        docString += " *     " + GiNaC::ex_to<GiNaC::symbol>(inputs_[0]).get_name();
 
     i = 0;
     for (const auto &u: inputs_) {
@@ -479,7 +479,8 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
     }
 
     docString += '\n';
-    docString += " * @param t Time.\n";
+    docString += " * @param t Time.\n\n";
+    docString += " * @return Jacobian matrix.\n";
     docString += " */\n";
     {
         src = GiNaC::ex_to<GiNaC::symbol>(time_).get_name();
