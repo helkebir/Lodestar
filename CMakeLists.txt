@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 #include("${CMAKE_SOURCE_DIR}/cmake/modules/FindProtobuf.cmake")
 
 option(WITH_GINAC "Use GiNaC" ON)
-option(WITH_PROTOBUF "Use Protocol Buffers" ON)
+option(WITH_PROTOBUF "Use Protocol Buffers" OFF)
 option(MAKE_STATIC_LIB "Make static library" OFF)
 
 include_directories("src")
