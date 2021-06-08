@@ -62,7 +62,8 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build cmake libcln-dev libginac-dev libprotobuf-dev
+          sudo apt-get install ninja-build cmake libcln6 libcln-dev libginac6 libginac-dev protobuf-compiler libprotobuf-dev
+          ldconfig
           ninja --version
           cmake --version
           gcc --version
@@ -75,7 +76,7 @@ jobs:
           gcc --version
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build cmake gcc-9 g++-9 libcln-dev libginac-dev libprotobuf-dev
+          sudo apt-get install ninja-build cmake gcc-9 g++-9 libcln6 libcln-dev libginac6 libginac-dev protobuf-compiler libprotobuf-dev
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
           echo gcc version after
           gcc --version
@@ -102,12 +103,15 @@ jobs:
           sudo update-alternatives --install /usr/bin/cmake cmake /opt/cmake/bin/cmake 1 --force
           echo New CMake version
           cmake --version
+          ldconfig
       - name: Install dependencies on MacOS
         if: startsWith(matrix.config.os, 'macos')
         run: |
-          brew install p7zip cmake ninja cln ginac
+          brew install cmake ninja cln ginac protobuf
           ninja --version
           cmake --version
+          protoc --version
+          sudo update_dyld_shared_cache
           
       - name: Configure
         shell: bash
