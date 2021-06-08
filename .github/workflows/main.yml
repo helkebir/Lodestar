@@ -117,6 +117,9 @@ jobs:
         shell: bash
         run: |
           mkdir build
+          cd src/io/proto
+          protoc -I=. --cpp_out=. *.proto
+          cd ../../..
           cmake \
             -S . \
             -B ./build \
