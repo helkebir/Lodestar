@@ -7,7 +7,7 @@ message symbol {
 }
 
 message ex {
-  optional bytes archive = 1;
+  bytes archive = 1;
   symbol symbols = 2;
 }
 
