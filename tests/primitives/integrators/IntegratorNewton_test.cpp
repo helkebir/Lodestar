@@ -2,9 +2,6 @@
 // Created by Hamza El-Kebir on 5/19/21.
 //
 
-#ifndef LODESTAR_INTEGRATORNEWTON_TEST_HPP
-#define LODESTAR_INTEGRATORNEWTON_TEST_HPP
-
 #include "catchOnce.hpp"
 #include "primitives/integrators/IntegratorNewton.hpp"
 
@@ -46,5 +43,3 @@ TEST_CASE("Newton integration", "[primitives][integrators][NewtonIntegrator]")
         REQUIRE(integrator->integral == Approx(0.040425));
     }
 }
-
-#endif //LODESTAR_INTEGRATORNEWTON_TEST_HPP

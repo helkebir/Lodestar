@@ -2,9 +2,6 @@
 // Created by Hamza El-Kebir on 5/19/21.
 //
 
-#ifndef LODESTAR_TRANSFERFUNCTION_TEST_HPP
-#define LODESTAR_TRANSFERFUNCTION_TEST_HPP
-
 #include "catchOnce.hpp"
 #include "systems/TransferFunction.hpp"
 
@@ -28,5 +25,3 @@ TEST_CASE("TransferFunction dynamic construction", "[systems][TransferFunction][
     REQUIRE(tf.getNumDegree() == 1);
     REQUIRE(tf.getDenDegree() == 2);
 }
-
-#endif //LODESTAR_TRANSFERFUNCTION_TEST_HPP

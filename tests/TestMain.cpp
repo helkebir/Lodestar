@@ -3,13 +3,7 @@
 //
 
 #define CATCH_CONFIG_MAIN
-
 #include "catchOnce.hpp"
-
-#include "systems/StateSpace_test.hpp"
-#include "primitives/integrators/IntegratorNewton_test.hpp"
-#include "systems/TransferFunction_test.hpp"
-#include "block/Block_test.hpp"
 
 #ifdef LS_USE_GINAC
 
@@ -21,6 +15,7 @@
 #include <iostream>
 #include "TestAuxFunctions.hpp"
 #include "control/DiscreteLQR.hpp"
+#include "analysis/ZeroOrderHold.hpp"
 
 TEST_CASE("Leapfrog", "") {
     Eigen::Matrix<double, 4, 3> P;

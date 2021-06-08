@@ -2,11 +2,9 @@
 // Created by Hamza El-Kebir on 5/27/21.
 //
 
-#ifndef LODESTAR_BLOCK_TEST_HPP
-#define LODESTAR_BLOCK_TEST_HPP
-
 #include "catchOnce.hpp"
 #include "block/Block.hpp"
+#include <iostream>
 
 TEST_CASE("Block connection", "[block][static]") {
     typedef ls::block::Block<std::tuple<double, int, char>, std::tuple<bool, char>, 10> TDCustomBlock;
@@ -142,5 +140,3 @@ TEST_CASE("Block Demo", "[block][static]") {
     std::cout << "O1: " << block.getOutput<1>() << std::endl;
     std::cout << "O2: " << block.getOutput<2>() << std::endl;
 }
-
-#endif //LODESTAR_BLOCK_TEST_HPP

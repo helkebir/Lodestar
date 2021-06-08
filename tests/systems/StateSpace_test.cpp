@@ -2,9 +2,6 @@
 // Created by Hamza El-Kebir on 5/19/21.
 //
 
-#ifndef LODESTAR_STATESPACE_TEST_HPP
-#define LODESTAR_STATESPACE_TEST_HPP
-
 #include "catchOnce.hpp"
 #include "Eigen/Dense"
 #include "systems/StateSpace.hpp"
@@ -94,5 +91,3 @@ TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]"
         REQUIRE(ss.getSamplingPeriod() == Approx(0.1));
     }
 }
-
-#endif //LODESTAR_STATESPACE_TEST_HPP

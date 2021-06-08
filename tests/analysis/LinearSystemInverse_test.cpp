@@ -2,9 +2,6 @@
 // Created by Hamza El-Kebir on 4/17/21.
 //
 
-#ifndef LODESTAR_LINEARSYSTEMINVERSE_TEST_HPP
-#define LODESTAR_LINEARSYSTEMINVERSE_TEST_HPP
-
 #include "analysis/LinearSystemInverse.hpp"
 #include "systems/StateSpace.hpp"
 #include "Eigen/Dense"
@@ -23,5 +20,3 @@ ls::systems::StateSpace<> linearSystemInverseExample()
 //
 //    return ilti;
 }
-
-#endif //LODESTAR_LINEARSYSTEMINVERSE_TEST_HPP
