@@ -5,8 +5,8 @@ import "ls.proto.ginac.proto";
 package ls.proto.symbolic;
 
 message OrdinaryDifferentialEquation {
-  optional ls.proto.ginac.lst functions = 1;
-  optional ls.proto.ginac.lst states = 2;
-  optional ls.proto.ginac.lst inputs = 3;
-  optional ls.proto.ginac.symbol time = 4;
+  ls.proto.ginac.lst functions = 1;
+  ls.proto.ginac.lst states = 2;
+  ls.proto.ginac.lst inputs = 3;
+  ls.proto.ginac.symbol time = 4;
 }
