@@ -63,7 +63,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build cmake libcln6 libcln-dev libginac6 libginac-dev protobuf-compiler libprotobuf-dev
-          ldconfig
+          sudo ldconfig
           ninja --version
           cmake --version
           gcc --version
@@ -103,7 +103,7 @@ jobs:
           sudo update-alternatives --install /usr/bin/cmake cmake /opt/cmake/bin/cmake 1 --force
           echo New CMake version
           cmake --version
-          ldconfig
+          sudo ldconfig
       - name: Install dependencies on MacOS
         if: startsWith(matrix.config.os, 'macos')
         run: |
