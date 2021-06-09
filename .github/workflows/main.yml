@@ -130,5 +130,5 @@ jobs:
         run: cmake --build ./build --config ${{ matrix.config.build_type }} -j $(getconf _NPROCESSORS_ONLN)
       - name: Tests
         shell: bash
-        run: ./build/Lodestar -d
+        run: ./build/Lodestar -s -d yes
 
