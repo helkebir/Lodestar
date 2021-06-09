@@ -125,7 +125,7 @@ jobs:
             -B ./build \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -G "${{ matrix.config.generators }}" \
-            -j ${getconf _NPROCESSORS_ONLN}
+            -j $(getconf _NPROCESSORS_ONLN)
       - name: Build
         shell: bash
         run: cmake --build ./build --config ${{ matrix.config.build_type }}
