@@ -56,14 +56,51 @@ namespace ls {
                       outputCallbacks_(TDOutputCallbackTuple{}), ticketBook_(TDTicketBook{})
             {}
 
+            inline bool trigger()
+            {
+                return recursivelyTriggerInput<0>();
+            }
+
+            inline bool triggerOutputs()
+            {
+                return recursivelyTriggerOutput<0>();
+            }
+
             template<size_t TSlotIdx>
-            inline INPUT_SLOT_TYPE_INTERNAL(TSlotIdx) getInput()
+            inline const INPUT_SLOT_TYPE_INTERNAL(TSlotIdx) &getInputRaw()
             {
                 return std::get<TSlotIdx>(inputs_);
             }
 
             template<size_t TSlotIdx>
-            inline void setInput(INPUT_SLOT_TYPE_INTERNAL(TSlotIdx) value)
+            inline typename std::enable_if<!std::is_pointer<INPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::value, const INPUT_SLOT_TYPE_INTERNAL(TSlotIdx) &>::type getInput()
+            {
+                return std::get<TSlotIdx>(inputs_);
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<std::is_pointer<INPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::value, const typename std::remove_pointer<INPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::type &>::type getInput()
+            {
+                return *std::get<TSlotIdx>(inputs_);
+            }
+
+            template<size_t TSlotIdx>
+            inline void
+            setInput(const typename std::remove_pointer<INPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::type &value,
+                     typename std::enable_if<std::is_pointer<INPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::value>::type * = nullptr)
+            {
+                (*std::get<TSlotIdx>(inputs_)) = value;
+
+                callbackInput<TSlotIdx>(value);
+            }
+
+            template<size_t TSlotIdx>
+            inline void
+            setInput(const typename std::remove_pointer<INPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::type &value,
+                     typename std::enable_if<!std::is_pointer<INPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::value>::type * = nullptr)
             {
                 std::get<TSlotIdx>(inputs_) = value;
 
@@ -71,13 +108,56 @@ namespace ls {
             }
 
             template<size_t TSlotIdx>
-            inline OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx) getOutput()
+            inline void setInputRaw(INPUT_SLOT_TYPE_INTERNAL(TSlotIdx) value)
+            {
+                std::get<TSlotIdx>(inputs_) = value;
+
+                callbackInput<TSlotIdx>(value);
+            }
+
+            template<size_t TSlotIdx>
+            inline const OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx) &getOutputRaw()
             {
                 return std::get<TSlotIdx>(outputs_);
             }
 
             template<size_t TSlotIdx>
-            inline void setOutput(OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx) value)
+            inline typename std::enable_if<!std::is_pointer<OUTPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::value, const OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx) &>::type getOutput()
+            {
+                return std::get<TSlotIdx>(outputs_);
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<std::is_pointer<OUTPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::value, const typename std::remove_pointer<OUTPUT_SLOT_TYPE_INTERNAL(
+                    TSlotIdx)>::type &>::type getOutput()
+            {
+                return *std::get<TSlotIdx>(outputs_);
+            }
+
+            template<size_t TSlotIdx>
+            inline void
+            setOutput(const typename std::remove_pointer<OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::type &value,
+                     typename std::enable_if<std::is_pointer<OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::value>::type * = nullptr)
+            {
+                (*std::get<TSlotIdx>(outputs_)) = value;
+
+                callbackOutput<TSlotIdx>(value);
+            }
+
+            template<size_t TSlotIdx>
+            inline void
+            setOutput(const typename std::remove_pointer<OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::type &value,
+                     typename std::enable_if<!std::is_pointer<OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx)>::value>::type * = nullptr)
+            {
+                std::get<TSlotIdx>(outputs_) = value;
+
+                callbackOutput<TSlotIdx>(value);
+            }
+
+            template<size_t TSlotIdx>
+            inline void setOutputRaw(OUTPUT_SLOT_TYPE_INTERNAL(TSlotIdx) value)
             {
                 std::get<TSlotIdx>(outputs_) = value;
 
@@ -427,6 +507,36 @@ namespace ls {
             inline typename std::enable_if<(TSlotIdx == 0), bool>::type recursivelyClearOutputCallbacks()
             {
                 clearOutputCallbacks<0>();
+                return true;
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx < (sizeof...(TInputs) - 1)), bool>::type recursivelyTriggerInput()
+            {
+                callbackInput<TSlotIdx>(getInputRaw<TSlotIdx>());
+                return recursivelyTriggerInput<TSlotIdx + 1>();
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx == (sizeof...(TInputs) - 1)), bool>::type recursivelyTriggerInput()
+            {
+                callbackInput<TSlotIdx>(getInputRaw<TSlotIdx>());
+                return true;
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx < (sizeof...(TOutputs) - 1)), bool>::type
+            recursivelyTriggerOutput()
+            {
+                callbackOutput<TSlotIdx>(getOutputRaw<TSlotIdx>());
+                return recursivelyTriggerOutput<TSlotIdx + 1>();
+            }
+
+            template<size_t TSlotIdx>
+            inline typename std::enable_if<(TSlotIdx == (sizeof...(TOutputs) - 1)), bool>::type
+            recursivelyTriggerOutput()
+            {
+                callbackOutput<TSlotIdx>(getOutputRaw<TSlotIdx>());
                 return true;
             }
         };

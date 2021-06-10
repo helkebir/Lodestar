@@ -4,6 +4,8 @@
 
 #include "catchOnce.hpp"
 #include "block/Block.hpp"
+#include "block/std/Mux.hpp"
+#include "block/std/Demux.hpp"
 #include <iostream>
 
 TEST_CASE("Block connection", "[block][static]") {
@@ -139,4 +141,52 @@ TEST_CASE("Block Demo", "[block][static]") {
     std::cout << "O0: " << block.getOutput<0>() << std::endl;
     std::cout << "O1: " << block.getOutput<1>() << std::endl;
     std::cout << "O2: " << block.getOutput<2>() << std::endl;
+}
+
+TEST_CASE("MuxBlock", "[block][static]") {
+    auto mux = ls::block::MuxBlock<double, 3>{};
+
+    SECTION("Mux outputs") {
+        mux.setInput<0>(4);
+        mux.setInput<2>(3);
+
+        std::cout << "Mux output:\n" << mux.getOutput<0>() << std::endl;
+
+        REQUIRE(mux.getOutput<0>()(0,0) == 4);
+        REQUIRE(mux.getOutput<0>()(1,0) == 0);
+        REQUIRE(mux.getOutput<0>()(2,0) == 3);
+    }
+
+    SECTION("Mux set") {
+        mux.set(3);
+
+        REQUIRE(mux.getOutput<0>()(0,0) == 3);
+
+        mux.set(5, 7);
+
+        REQUIRE(mux.getOutput<0>()(0,0) == 5);
+        REQUIRE(mux.getOutput<0>()(1,0) == 7);
+
+        mux.set(4, 1, 8);
+
+        REQUIRE(mux.getOutput<0>()(0,0) == 4);
+        REQUIRE(mux.getOutput<0>()(1,0) == 1);
+        REQUIRE(mux.getOutput<0>()(2,0) == 8);
+    }
+}
+
+TEST_CASE("DemuxBlock", "[block][static]") {
+    Eigen::Matrix<double, 3, 1> vec;
+    auto demux = ls::block::DemuxBlock<double, 3>{vec};
+    vec.setZero();
+//    demux.setInputRaw<0>(&vec);
+
+    SECTION("Demux outputs") {
+        vec << 1, 2, 3;
+        demux.trigger();
+
+        REQUIRE(demux.getOutput<0>() == 1);
+        REQUIRE(demux.getOutput<1>() == 2);
+        REQUIRE(demux.getOutput<2>() == 3);
+    }
 }
