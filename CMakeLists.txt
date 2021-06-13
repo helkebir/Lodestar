@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 #include("${CMAKE_SOURCE_DIR}/cmake/modules/FindProtobuf.cmake")
 
-option(WITH_GINAC "Use GiNaC" ON)
+option(WITH_GINAC "Use GiNaC" OFF)
 option(WITH_PROTOBUF "Use Protocol Buffers" OFF)
 option(MAKE_STATIC_LIB "Make static library" OFF)
 
@@ -15,6 +15,8 @@ include_directories("dep")
 include_directories("tests")
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 #find_package(ginac REQUIRED 1.7.0)
+
+remove_definitions(LS_USE_GINAC)
 
 if (WITH_GINAC)
     add_compile_definitions(LS_USE_GINAC)
@@ -72,7 +74,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     FetchContent_MakeAvailable(Catch2)
 endif()
 
-add_executable(Lodestar src/primitives/Integrator.hpp src/primitives/integrators/IntegratorNewton.hpp src/analysis/BilinearTransformation.cpp src/analysis/BilinearTransformation.hpp src/systems/SystemStateless.hpp src/systems/StateSpace.cpp src/systems/StateSpace.hpp src/analysis/ZeroOrderHold.cpp src/analysis/ZeroOrderHold.hpp src/analysis/LinearSystemInverse.cpp src/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.cpp src/systems/TransferFunction.cpp src/systems/TransferFunction.hpp src/LodestarErrors.hpp src/LodestarErrorNames.hpp src/io/EigenProtoIface.cpp src/io/EigenProtoIface.hpp src/io/ProtoIfaceABC.hpp src/aux/UnitLiterals.hpp src/systems/DiscreteStateSpace.cpp src/systems/DiscreteStateSpace.hpp src/systems/DiscreteSystem.cpp src/systems/DiscreteSystem.hpp src/io/ProtoWrapper.cpp src/io/ProtoWrapper.hpp src/control/FixedGain.cpp src/control/FixedGain.hpp src/io/ProtoTypeTrait.hpp src/systems/SystemStateful.hpp src/symbolic/OrdinaryDifferentialEquation.cpp src/symbolic/OrdinaryDifferentialEquation.hpp src/control/DiscreteLQR.cpp src/control/DiscreteLQR.hpp src/synthesis/AlgebraicRiccatiEquation.cpp src/synthesis/AlgebraicRiccatiEquation.hpp src/filter/DiscreteLQE.cpp src/filter/DiscreteLQE.hpp src/io/GiNaCProtoIface.cpp src/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} src/aux/CompileTimeQualifiers.hpp tests/TestMain.cpp tests/systems/StateSpace_test.cpp tests/primitives/integrators/IntegratorNewton_test.cpp tests/systems/TransferFunction_test.cpp tests/catchOnce.hpp src/block/BlockBase.hpp src/block/Block.hpp src/aux/Conjunction.hpp src/block/Ticket.hpp src/aux/RecursionException.hpp tests/block/Block_test.cpp tests/TestAuxFunctions.hpp src/block/std/Mux.hpp src/aux/Repeat.hpp src/aux/Indices.hpp src/block/std/Demux.hpp)
+add_executable(Lodestar src/primitives/Integrator.hpp src/primitives/integrators/IntegratorNewton.hpp src/analysis/BilinearTransformation.cpp src/analysis/BilinearTransformation.hpp src/systems/SystemStateless.hpp src/systems/StateSpace.cpp src/systems/StateSpace.hpp src/analysis/ZeroOrderHold.cpp src/analysis/ZeroOrderHold.hpp src/analysis/LinearSystemInverse.cpp src/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.cpp src/systems/TransferFunction.cpp src/systems/TransferFunction.hpp src/LodestarErrors.hpp src/LodestarErrorNames.hpp src/io/EigenProtoIface.cpp src/io/EigenProtoIface.hpp src/io/ProtoIfaceABC.hpp src/aux/UnitLiterals.hpp src/systems/DiscreteStateSpace.cpp src/systems/DiscreteStateSpace.hpp src/systems/DiscreteSystem.cpp src/systems/DiscreteSystem.hpp src/io/ProtoWrapper.cpp src/io/ProtoWrapper.hpp src/control/FixedGain.cpp src/control/FixedGain.hpp src/io/ProtoTypeTrait.hpp src/systems/SystemStateful.hpp src/symbolic/OrdinaryDifferentialEquation.cpp src/symbolic/OrdinaryDifferentialEquation.hpp src/control/DiscreteLQR.cpp src/control/DiscreteLQR.hpp src/synthesis/AlgebraicRiccatiEquation.cpp src/synthesis/AlgebraicRiccatiEquation.hpp src/filter/DiscreteLQE.cpp src/filter/DiscreteLQE.hpp src/io/GiNaCProtoIface.cpp src/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} src/aux/CompileTimeQualifiers.hpp tests/TestMain.cpp tests/systems/StateSpace_test.cpp tests/primitives/integrators/IntegratorNewton_test.cpp tests/systems/TransferFunction_test.cpp tests/catchOnce.hpp src/block/BlockBase.hpp src/block/Block.hpp src/aux/Conjunction.hpp src/block/Ticket.hpp src/aux/RecursionException.hpp tests/block/Block_test.cpp tests/TestAuxFunctions.hpp src/block/std/Mux.hpp src/aux/Repeat.hpp src/aux/Indices.hpp src/block/std/Demux.hpp src/block/std/Multiply.hpp src/aux/AlgebraicOperators.hpp src/aux/OperationTypes.hpp src/aux/BinOpCheck.hpp src/aux/PairUp.hpp src/aux/TypeName.hpp src/aux/Pack.hpp src/time/Metronome.hpp src/time/TimeResolution.hpp tests/time/Metronome_test.cpp src/time/TimeDuration.hpp)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     target_link_libraries(Lodestar Catch2::Catch2)

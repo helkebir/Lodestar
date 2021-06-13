@@ -175,6 +175,11 @@ TEST_CASE("MuxBlock", "[block][static]") {
     }
 }
 
+#include "aux/BinOpCheck.hpp"
+#include "aux/PairUp.hpp"
+#include "aux/TypeName.hpp"
+#include "block/std/Multiply.hpp"
+
 TEST_CASE("DemuxBlock", "[block][static]") {
     Eigen::Matrix<double, 3, 1> vec;
     auto demux = ls::block::DemuxBlock<double, 3>{vec};
@@ -189,4 +194,17 @@ TEST_CASE("DemuxBlock", "[block][static]") {
         REQUIRE(demux.getOutput<1>() == 2);
         REQUIRE(demux.getOutput<2>() == 3);
     }
+
+    std::cout << "Multiplicable? Eigen::Matrix<double, 3, 2>, double: " << is_multiplicable<Eigen::Matrix<double, 3, 2>, double>::value << std::endl;
+    std::cout << "Multiplicable? Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 2, 3>: " << is_multiplicable<Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 2, 3>>::value << std::endl;
+    std::cout << "Multiplicable? Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 3, 2>: " << is_multiplicable<Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 3, 2>>::value << std::endl;
+    std::cout << "Multiplicable? Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 4, 2>: " << is_multiplicable<Eigen::Matrix<double, 3, 2>, Eigen::Matrix<double, 4, 2>>::value << std::endl;
+//    Eigen::Matrix<double, 3, 2>{} * Eigen::Matrix<double, 4, 2>{};
+
+    std::cout << "Typename: " << type_name<Collection<double>>() << std::endl;
+    std::cout << "Typename: " << type_name<Collection<double, int>>() << std::endl;
+    std::cout << "Typename: " << type_name<Collection<double, int, char>>() << std::endl;
+
+    ls::block::MultiplyBlock<std::tuple<double, int>, AlgebraicOperatorsPack<AlgebraicOperators::Multiplication, AlgebraicOperators::Division>, Collection<double, int>> A;
+    std::cout << "Typename: " << type_name<decltype(A)::left>() << std::endl;
 }

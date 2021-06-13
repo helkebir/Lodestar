@@ -1,5 +1,5 @@
 //
-// Created by helkebir on 6/10/21.
+// Created by Hamza El-Kebir on 6/10/21.
 //
 
 #ifndef LODESTAR_MUX_HPP
@@ -26,6 +26,18 @@ namespace ls {
             {
                 std::get<0>(outputs_) = new TDVector;
                 getVector().setZero();
+                initCallbacks();
+            }
+
+            MuxBlock(TDVector *vec) : Base()
+            {
+                std::get<0>(outputs_) = vec;
+                initCallbacks();
+            }
+
+            MuxBlock(TDVector &vec) : Base()
+            {
+                std::get<0>(outputs_) = &vec;
                 initCallbacks();
             }
 

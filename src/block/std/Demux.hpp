@@ -1,5 +1,5 @@
 //
-// Created by helkebir on 6/10/21.
+// Created by Hamza El-Kebir on 6/10/21.
 //
 
 #ifndef LODESTAR_DEMUX_HPP
