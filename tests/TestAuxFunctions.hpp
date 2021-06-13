@@ -1,9 +1,11 @@
 //
-// Created by helkebir on 6/6/21.
+// Created by Hamza El-Kebir on 6/6/21.
 //
 
 #ifndef LODESTAR_TESTAUXFUNCTIONS_HPP
 #define LODESTAR_TESTAUXFUNCTIONS_HPP
+
+#include "Eigen/Dense"
 
 // A(x, u)
 Eigen::Matrix<double, 2, 2> jacStates(const double x, const double y, const double u, const double t) {
