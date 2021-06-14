@@ -145,6 +145,7 @@ jobs:
             -S . \
             -B ./build \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -DWITH_NNG=OFF \
             -G "${{ matrix.config.generators }}"
 
       - name: Build
