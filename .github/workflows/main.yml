@@ -107,10 +107,22 @@ jobs:
       - name: Install dependencies on MacOS
         if: startsWith(matrix.config.os, 'macos')
         run: |
-          brew install cmake ninja cln ginac protobuf nng
+          brew install cmake ninja cln ginac protobuf wget
+          wget https://github.com/nanomsg/nng/archive/refs/tags/v1.4.0.zip
+          unzip v1.4.0.zip
+          cd nng-1.4.0
+          mkdir build
+          cd build
+          cmake -G Ninja ..
+          ninja
+          ninja install
+          cd ../..
+          rm -rf nng-1.4.0
+          rm v1.4.0.zip
           ninja --version
           cmake --version
           protoc --version
+          nngcat --version
           sudo update_dyld_shared_cache
           
       - name: Configure
