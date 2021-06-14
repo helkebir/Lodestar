@@ -127,7 +127,7 @@ jobs:
           sudo update_dyld_shared_cache
           
       - name: Configure
-        if: !startsWith(matrix.config.os, 'macos')
+        if: startsWith(matrix.config.os, 'macos') == false
         shell: bash
         run: |
           mkdir build
