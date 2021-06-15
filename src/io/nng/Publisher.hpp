@@ -1,5 +1,5 @@
 //
-// Created by helkebir on 6/13/21.
+// Created by Hamza El-Kebir on 6/13/21.
 //
 
 #ifndef LODESTAR_PUBLISHER_HPP
