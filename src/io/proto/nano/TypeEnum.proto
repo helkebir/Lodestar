@@ -4,17 +4,19 @@ package npb;
 
 enum TypeEnum {
   Unknown_t = 0;
+  Custom_t = 1;
+  Error_t = 2;
   // POD
-  Double_t = 1;
-  Float_t = 2;
-  Int32_t = 3;
-  Int64_t = 4;
-  UInt32_t = 5;
-  UInt64_t = 6;
-  Bool_t = 7;
+  Double_t = 3;
+  Float_t = 4;
+  Int32_t = 5;
+  Int64_t = 6;
+  UInt32_t = 7;
+  UInt64_t = 8;
+  Bool_t = 9;
   // Strings
-  Bytes_t = 8;
-  String_t = 9;
+  Bytes_t = 10;
+  String_t = 11;
   // Vectors
   Vector2d_t = 20;
   Vector2f_t = 21;

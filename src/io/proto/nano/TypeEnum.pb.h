@@ -12,17 +12,19 @@
 /* Enum definitions */
 typedef enum _npb_TypeEnum { 
     npb_Unknown_t = 0, 
+    npb_Custom_t = 1, 
+    npb_Error_t = 2, 
     /* POD */
-    npb_Double_t = 1, 
-    npb_Float_t = 2, 
-    npb_Int32_t = 3, 
-    npb_Int64_t = 4, 
-    npb_UInt32_t = 5, 
-    npb_UInt64_t = 6, 
-    npb_Bool_t = 7, 
+    npb_Double_t = 3, 
+    npb_Float_t = 4, 
+    npb_Int32_t = 5, 
+    npb_Int64_t = 6, 
+    npb_UInt32_t = 7, 
+    npb_UInt64_t = 8, 
+    npb_Bool_t = 9, 
     /* Strings */
-    npb_Bytes_t = 8, 
-    npb_String_t = 9, 
+    npb_Bytes_t = 10, 
+    npb_String_t = 11, 
     /* Vectors */
     npb_Vector2d_t = 20, 
     npb_Vector2f_t = 21, 
@@ -63,6 +65,8 @@ typedef enum _npb_TypeEnum {
 #define _npb_TypeEnum_MAX npb_Vector64c_t
 #define _npb_TypeEnum_ARRAYSIZE ((npb_TypeEnum)(npb_Vector64c_t+1))
 #define npb_TypeEnum_Unknown_t npb_Unknown_t
+#define npb_TypeEnum_Custom_t npb_Custom_t
+#define npb_TypeEnum_Error_t npb_Error_t
 #define npb_TypeEnum_Double_t npb_Double_t
 #define npb_TypeEnum_Float_t npb_Float_t
 #define npb_TypeEnum_Int32_t npb_Int32_t

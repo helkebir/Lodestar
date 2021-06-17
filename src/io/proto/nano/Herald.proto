@@ -3,7 +3,9 @@ syntax = "proto2";
 package npb;
 
 import "TypeEnum.proto";
+import "CustomTypeEnum.proto";
 
 message Herald {
   required TypeEnum type = 1 [default = Unknown_t];
+  optional CustomTypeEnum custom_type = 2;
 }
