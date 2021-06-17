@@ -3,6 +3,9 @@ project(Lodestar)
 
 set(CMAKE_CXX_STANDARD 11)
 
+# Force use of MPL2 compatible licenses only.
+add_compile_definitions(EIGEN_MPL2_ONLY)
+
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 #include("${CMAKE_SOURCE_DIR}/cmake/modules/FindProtobuf.cmake")
 

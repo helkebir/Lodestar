@@ -24,11 +24,10 @@ TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
         REQUIRE(v3d.size == 3);
 
         herald.type = npb_Vector3d_t;
-        v3d.coeff[0] = 1;
-        v3d.coeff[1] = 2;
-        v3d.coeff[2] = 3;
 
-        v3d.size = 3;
+        Eigen::Vector3d vec3d;
+        vec3d << 1, 2, 3;
+        v3d = NanopbWrapper<Eigen::Vector3d>::wrap(vec3d);
 
         pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 

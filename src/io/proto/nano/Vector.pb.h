@@ -128,8 +128,8 @@ extern "C" {
 #define npb_Vector2f_init_default                {{0, 0}, false, 2}
 #define npb_Vector3d_init_default                {{0, 0, 0}, false, 3}
 #define npb_Vector3f_init_default                {{0, 0, 0}, false, 3}
-#define npb_Vector4d_init_default                {{0, 0, 0, 0}, false, 3}
-#define npb_Vector4f_init_default                {{0, 0, 0, 0}, false, 3}
+#define npb_Vector4d_init_default                {{0, 0, 0, 0}, false, 4}
+#define npb_Vector4f_init_default                {{0, 0, 0, 0}, false, 4}
 #define npb_Vector6d_init_default                {{0, 0, 0, 0, 0, 0}, false, 6}
 #define npb_Vector6f_init_default                {{0, 0, 0, 0, 0, 0}, false, 6}
 #define npb_Vector8d_init_default                {{0, 0, 0, 0, 0, 0, 0, 0}, false, 8}
@@ -228,13 +228,13 @@ X(a, STATIC,   OPTIONAL, INT32,    size,              2)
 X(a, STATIC,   FIXARRAY, DOUBLE,   coeff,             1) \
 X(a, STATIC,   OPTIONAL, INT32,    size,              2)
 #define npb_Vector4d_CALLBACK NULL
-#define npb_Vector4d_DEFAULT (const pb_byte_t*)"\x10\x03\x00"
+#define npb_Vector4d_DEFAULT (const pb_byte_t*)"\x10\x04\x00"
 
 #define npb_Vector4f_FIELDLIST(X, a) \
 X(a, STATIC,   FIXARRAY, FLOAT,    coeff,             1) \
 X(a, STATIC,   OPTIONAL, INT32,    size,              2)
 #define npb_Vector4f_CALLBACK NULL
-#define npb_Vector4f_DEFAULT (const pb_byte_t*)"\x10\x03\x00"
+#define npb_Vector4f_DEFAULT (const pb_byte_t*)"\x10\x04\x00"
 
 #define npb_Vector6d_FIELDLIST(X, a) \
 X(a, STATIC,   FIXARRAY, DOUBLE,   coeff,             1) \

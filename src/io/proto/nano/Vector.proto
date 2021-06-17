@@ -24,12 +24,12 @@ message Vector3f {
 
 message Vector4d {
   repeated double coeff = 1;
-  optional int32 size = 2 [default = 3];
+  optional int32 size = 2 [default = 4];
 }
 
 message Vector4f {
   repeated float coeff = 1;
-  optional int32 size = 2 [default = 3];
+  optional int32 size = 2 [default = 4];
 }
 
 message Vector6d {

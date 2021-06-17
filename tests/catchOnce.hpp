@@ -5,6 +5,6 @@
 #ifndef LODESTAR_CATCHONCE_HPP
 #define LODESTAR_CATCHONCE_HPP
 
-#include "catch.hpp"
+#include "catch2/catch.hpp"
 
 #endif //LODESTAR_CATCHONCE_HPP
