@@ -8,7 +8,7 @@
 #include <string>
 
 namespace ls {
-    namespace aux {
+    namespace core {
         enum class StatusCode : int {
             Ok = 0,
             Unknown = 1,

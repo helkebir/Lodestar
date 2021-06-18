@@ -5,7 +5,7 @@
 #include "Status.hpp"
 
 namespace ls {
-    namespace aux {
+    namespace core {
 //        inline
 //        Status &Status::operator=(const Status &other)
 //        {

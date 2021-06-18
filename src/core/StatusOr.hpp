@@ -9,7 +9,7 @@
 #include <type_traits>
 
 namespace ls {
-    namespace aux {
+    namespace core {
         template<typename TType>
         class StatusOr {
             // Allow access to private/protected variables/methods in all other StatusOr instances.
@@ -84,7 +84,7 @@ namespace ls {
         template<typename TType>
         inline StatusOr<TType>::StatusOr(const TType &value)
         {
-            if (std::is_null_pointer<decltype(value)>::value)
+            if (std::is_pointer<decltype(value)>::value)
                 status_ = util::InternalError(); // nullptr is not a valid argument.
             else {
                 status_ = util::OkStatus();

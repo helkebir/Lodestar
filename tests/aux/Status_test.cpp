@@ -3,14 +3,14 @@
 //
 
 #include "catchOnce.hpp"
-#include "aux/Status.hpp"
-#include "aux/StatusOr.hpp"
+#include "core/Status.hpp"
+#include "core/StatusOr.hpp"
 
-TEST_CASE("Status", "[static][aux]") {
-//    ls::aux::Status status{};
+TEST_CASE("Status", "[static][core]") {
+//    ls::core::Status status{};
 
-    ls::aux::StatusOr<double> d(2);
-    ls::aux::StatusOr<float> f(d);
+    ls::core::StatusOr<double> d(2);
+    ls::core::StatusOr<float> f(d);
     REQUIRE(f.ok());
     REQUIRE(f.value() == Approx(2));
 
@@ -18,10 +18,10 @@ TEST_CASE("Status", "[static][aux]") {
     REQUIRE(f.ok());
     REQUIRE(f.value() == Approx(2));
 
-//    ls::aux::StatusOr<char*> c(f);
+//    ls::core::StatusOr<char*> c(f);
 //
-//    ls::aux::StatusOr<char*> c{};
+//    ls::core::StatusOr<char*> c{};
 //    c = f;
 
-//    ls::aux::util::OkStatus();
+//    ls::core::util::OkStatus();
 }
