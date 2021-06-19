@@ -7,28 +7,38 @@
 
 namespace ls {
     namespace primitives {
-        template<typename State>
+        template<typename TState>
         class Integrator {
         public:
-            State *state;
-            State integral;
-
-            double samplingPeriod;
-            double time;
+            template<typename> friend
+            class Integrator;
 
             virtual void updateState() = 0;
 
             virtual void updateState(double samplingPeriod) = 0;
 
-            virtual void updateState(State *curState) = 0;
+            virtual void updateState(TState *curState) = 0;
 
-            virtual void updateState(double samplingPeriod, State *curState) = 0;
+            virtual void updateState(double samplingPeriod, TState *curState) = 0;
+
+            virtual const TState *getState() const = 0;
+
+            virtual void setState(const TState &state) = 0;
 
             virtual double updateTime() = 0;
 
             virtual double updateTime(double samplingPeriod) = 0;
 
-            virtual State getIntegral() = 0;
+            virtual double getTime() const = 0;
+
+            virtual const TState *getIntegral() const = 0;
+
+        protected:
+            TState *state_;
+            TState *integral_;
+
+            double samplingPeriod_;
+            double time_;
         };
     }
 }

@@ -105,7 +105,7 @@ TEST_CASE("Car control demo", "[demo]") {
 
     std::cout << "K:\n" << K << std::endl;
 
-    int N = 1000;
+    int N = 50;
 
     Eigen::Matrix<double, 6, 1> X = x;
     Eigen::Matrix<double, 2, 1> U = u;

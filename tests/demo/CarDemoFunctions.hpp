@@ -8,7 +8,7 @@
 #include "Eigen/Dense"
 
 /**
- * @param x State array:
+ * @param x TState array:
  *     _s_x_, _s_y_, _s_vx_, _s_vy_, _s_psi_, _s_r_
  * @param u Input array:
  *     _s_f1_, _s_f2_
@@ -31,7 +31,7 @@ Eigen::Matrix<double, 6, 6> jacStates(const double (&x)[6], const double (&u)[2]
 
 
 /**
- * @param x State array:
+ * @param x TState array:
  *     _s_x_, _s_y_, _s_vx_, _s_vy_, _s_psi_, _s_r_
  * @param u Input array:
  *     _s_f1_, _s_f2_
