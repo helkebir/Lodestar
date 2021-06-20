@@ -309,7 +309,7 @@ namespace ls {
              */
             template<typename TType, size_t TStage = 0>
             typename std::enable_if<TStage == 0, TType>::type
-            execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
+            inline execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
                     const TScalarType h)
             {
                 TType kCurr = f(t, y);
@@ -850,7 +850,7 @@ namespace ls {
              */
             template<typename TType, size_t TStage = 0, bool TIsEmbedded = false>
             typename std::enable_if<(TStage == 0) && !TIsEmbedded, TType>::type
-            execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
+            inline execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
                     const TScalarType h)
             {
                 TType kCurr = f(t, y);
@@ -879,7 +879,7 @@ namespace ls {
              */
             template<typename TType, size_t TStage = 0, bool TIsEmbedded = false>
             typename std::enable_if<(TStage == 0) && TIsEmbedded, std::pair<TType, TType>>::type
-            execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
+            inline execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
                     const TScalarType h)
             {
                 TType kCurr = f(t, y);
@@ -908,7 +908,7 @@ namespace ls {
             template<typename TType, size_t TStage = 0, bool TIsEmbedded = false, typename... TArgs>
             typename std::enable_if<(TStage > 0) && (TStage < TStages) && !TIsEmbedded &&
                                     (Conjunction<std::is_convertible<TArgs, TType>...>::value), TType>::type
-            execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
+            inline execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
                     const TScalarType h,
                     TArgs... vars)
             {

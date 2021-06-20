@@ -96,6 +96,10 @@ namespace ls {
         public:
             typedef std::function<TType(TScalarType, TType)> TDFunction;
 
+            static const short int kLowerErrorOrder = 2;
+            static const short int kLigherErrorOrder = 3;
+            static const short int kStages = 4;
+
             /**
              * @brief Simple integration using the third-order scheme in the Bogacki-Shampine method.
              *
@@ -137,7 +141,6 @@ namespace ls {
         TType BogackiShampine<TType, TScalarType>::integrateEmbedded(TDFunction f, TScalarType &t, TType &y,
                                                                      const TScalarType h, size_t N)
         {
-            TType yLo = y;
             std::pair<TType, TType> ye;
             for (int i = 0; i < N; i++) {
                 ye = detail::BogackiShampine::getButcherTableau().template execute<TType, 0, true>(f, y, t, h);
