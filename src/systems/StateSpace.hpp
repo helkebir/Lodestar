@@ -205,14 +205,14 @@ namespace ls {
              *
              * @return True if the system is discrete.
              */
-            bool isDiscrete() const;
+            inline bool isDiscrete() const;
 
             /**
              * @brief Returns the sampling period.
              *
              * @return Sampling period.
              */
-            double getSamplingPeriod() const;
+            inline double getSamplingPeriod() const;
 
             /**
              * @brief Sets the sampling period.
@@ -227,13 +227,13 @@ namespace ls {
              * @return TState dimension.
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            stateDim() const
+            inline stateDim() const
             {
                 return A_->rows();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            stateDim() const
+            inline stateDim() const
             {
                 return TStateDim;
             }
@@ -244,13 +244,13 @@ namespace ls {
              * @return Input dimension.
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            inputDim() const
+            inline inputDim() const
             {
                 return B_->cols();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            inputDim() const
+            inline inputDim() const
             {
                 return TInputDim;
             }
@@ -261,13 +261,13 @@ namespace ls {
              * @return Output dimension
              */
             IF_DYNAMIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            outputDim() const
+            inline outputDim() const
             {
                 return C_->rows();
             }
 
             IF_STATIC_RETURN(TStateDim, TInputDim, TOutputDim, long)
-            outputDim() const
+            inline outputDim() const
             {
                 return TOutputDim;
             }
@@ -293,15 +293,59 @@ namespace ls {
              * @param tolerance Eigenvalue tolerance.
              * @return True if system is stable.
              */
-            bool isStable(double tolerance = 0) const;
+            inline bool isStable(double tolerance = 0) const;
+
+            /**
+             * @brief Returns a state space representation that adds integral action to the original system.
+             *
+             * @details For details on the discrete time case, see [1].
+             *
+             * @sa D. D. Ruscio, “Discrete LQ optimal control with integral action: A simple controller on incremental
+             *  form for MIMO systems,” MIC, vol. 33, no. 2, pp. 35–44, 2012, doi:
+             *  <a href="http://dx.doi.org/10.4173/mic.2012.2.1">10.4173/mic.2012.2.1</a>.
+             *
+             * @note This particular function gets called when the state space system is dynamic.
+             *
+             * @tparam T_TScalar Copy of \c TScalar.
+             * @tparam T_TStateDim Copy of \c TStateDim.
+             * @tparam T_TInputDim Copy of \c TInputDim.
+             * @tparam T_TOutputDim Copy of \c TOutputDim.
+             *
+             * @return State space system augmented with integral action.
+             */
+            template <typename T_TScalar = TScalar, const int T_TStateDim = TStateDim, const int T_TInputDim = TInputDim, const int T_TOutputDim = TOutputDim>
+            ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim>
+            addIntegralAction(LS_IS_DYNAMIC_DEFAULT(T_TStateDim, T_TInputDim, T_TOutputDim)) const;
+
+            /**
+             * @brief Returns a state space representation that adds integral action to the original system.
+             *
+             * @details For details on the discrete time case, see [1].
+             *
+             * @sa [1] D. D. Ruscio, “Discrete LQ optimal control with integral action: A simple controller on
+             * incremental form for MIMO systems,” MIC, vol. 33, no. 2, pp. 35–44, 2012, doi:
+             *  <a href="http://dx.doi.org/10.4173/mic.2012.2.1">10.4173/mic.2012.2.1</a>.
+             *
+             * @note This particular function gets called when the state space system is static.
+             *
+             * @tparam T_TScalar Copy of \c TScalar.
+             * @tparam T_TStateDim Copy of \c TStateDim.
+             * @tparam T_TInputDim Copy of \c TInputDim.
+             * @tparam T_TOutputDim Copy of \c TOutputDim.
+             *
+             * @return State space system augmented with integral action.
+             */
+            template <typename T_TScalar = TScalar, const int T_TStateDim = TStateDim, const int T_TInputDim = TInputDim, const int T_TOutputDim = TOutputDim>
+            ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim>
+            addIntegralAction(LS_IS_STATIC_DEFAULT(T_TStateDim, T_TInputDim, T_TOutputDim)) const;
 
         protected:
-            TDStateMatrix *A_; /// TState matrix.
-            TDInputMatrix *B_; /// Input matrix.
-            TDOutputMatrix *C_; /// Output matrix.
-            TDFeedforwardMatrix *D_; /// Feedforward matrix.
-            double dt_; /// Sampling period.
-            bool isDiscrete_; /// Discrete flag.
+            TDStateMatrix *A_; //! TState matrix.
+            TDInputMatrix *B_; //! Input matrix.
+            TDOutputMatrix *C_; //! Output matrix.
+            TDFeedforwardMatrix *D_; //! Feedforward matrix.
+            double dt_; //! Sampling period.
+            bool isDiscrete_; //! Discrete flag.
         };
     }
 }
@@ -565,6 +609,62 @@ void ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::copyMat
     setC(other.getC());
     setD(other.getD());
 
+}
+
+template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
+template <typename T_TScalar, const int T_TStateDim, const int T_TInputDim, const int T_TOutputDim>
+ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim>
+ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::addIntegralAction(LS_IS_DYNAMIC(T_TStateDim, T_TInputDim, T_TOutputDim)) const
+{
+    Eigen::Matrix<TScalar, Eigen::Dynamic, Eigen::Dynamic> A(stateDim() + outputDim(), stateDim() + outputDim());
+    A.setZero();
+    A.topLeftCorner(stateDim(), stateDim()) = *getA();
+    A.bottomLeftCorner(outputDim(), stateDim()) = *getC();
+    A.bottomRightCorner(outputDim(), outputDim()).setIdentity();
+
+    Eigen::Matrix<TScalar, Eigen::Dynamic, Eigen::Dynamic> B(stateDim() + outputDim(), inputDim());
+    B.setZero();
+    B.topRows(stateDim()) = *getB();
+
+    Eigen::Matrix<TScalar, Eigen::Dynamic, Eigen::Dynamic> C(outputDim(), stateDim() + outputDim());
+    C.setZero();
+    C.leftCols(stateDim()) = *getC();
+    C.rightCols(outputDim()).setIdentity();
+
+    Eigen::Matrix<TScalar, Eigen::Dynamic, Eigen::Dynamic> D(outputDim(), inputDim());
+    D = *getD();
+
+    ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim> ssi{A, B, C, D};
+
+    return ssi;
+}
+
+template<typename TScalar, const int TStateDim, const int TInputDim, const int TOutputDim>
+template <typename T_TScalar, const int T_TStateDim, const int T_TInputDim, const int T_TOutputDim>
+ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim>
+ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::addIntegralAction(LS_IS_STATIC(T_TStateDim, T_TInputDim, T_TOutputDim)) const
+{
+    Eigen::Matrix<TScalar, TStateDim + TOutputDim, TStateDim + TOutputDim> A{};
+    A.setZero();
+    A.template topLeftCorner<TStateDim, TStateDim>() = *getA();
+    A.template bottomLeftCorner<TOutputDim, TStateDim>() = *getC();
+    A.template bottomRightCorner<TOutputDim, TOutputDim>().setIdentity();
+
+    Eigen::Matrix<TScalar, TStateDim + TOutputDim, TInputDim> B{};
+    B.setZero();
+    B.template topRows<TStateDim>() = *getB();
+
+    Eigen::Matrix<TScalar, TOutputDim, TStateDim + TOutputDim> C{};
+    C.setZero();
+    C.template leftCols<TStateDim>() = *getC();
+    C.template rightCols<TOutputDim>().setIdentity();
+
+    Eigen::Matrix<TScalar, TOutputDim, TInputDim> D{};
+    D = *getD();
+
+    ls::systems::StateSpace<T_TScalar, LS_STATIC_UNLESS_DYNAMIC(T_TStateDim + T_TOutputDim), T_TInputDim, T_TOutputDim> ssi{A, B, C, D};
+
+    return ssi;
 }
 
 #endif //LODESTAR_STATESPACE_HPP

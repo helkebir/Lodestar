@@ -6,7 +6,8 @@
 #include "Eigen/Dense"
 #include "systems/StateSpace.hpp"
 
-TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][construction]") {
+TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][construction]")
+{
     Eigen::MatrixXd A(3, 3), B(3, 2), C(2, 3), D(2, 2);
     A << 1,  2, 0,
          4, -1, 0,
@@ -47,9 +48,23 @@ TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][con
         REQUIRE(ss.isDiscrete() == true);
         REQUIRE(ss.getSamplingPeriod() == Approx(0.1));
     }
+
+    SECTION("Integral action") {
+        auto ssi = ss.addIntegralAction();
+        REQUIRE(ssi.stateDim() == ss.stateDim() + ss.outputDim());
+        REQUIRE(ssi.inputDim() == ss.inputDim());
+        REQUIRE(ssi.outputDim() == ss.outputDim());
+
+
+        REQUIRE(ssi.getA()->topLeftCorner<3, 3>() == *ss.getA());
+        REQUIRE(ssi.getB()->topRows<3>() == *ss.getB());
+        REQUIRE(ssi.getC()->leftCols<3>() == *ss.getC());
+        REQUIRE(*ssi.getD() == *ss.getD());
+    }
 }
 
-TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]") {
+TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]")
+{
     Eigen::MatrixXd A(3, 3), B(3, 2), C(2, 3), D(2, 2);
     A << 1,  2, 0,
          4, -1, 0,
@@ -89,5 +104,18 @@ TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]"
         ss.setDiscreteParams(0.1);
         REQUIRE(ss.isDiscrete() == true);
         REQUIRE(ss.getSamplingPeriod() == Approx(0.1));
+    }
+
+    SECTION("Integral action") {
+        auto ssi = ss.addIntegralAction();
+        REQUIRE(ssi.stateDim() == ss.stateDim() + ss.outputDim());
+        REQUIRE(ssi.inputDim() == ss.inputDim());
+        REQUIRE(ssi.outputDim() == ss.outputDim());
+
+
+        REQUIRE(ssi.getA()->topLeftCorner<3, 3>() == *ss.getA());
+        REQUIRE(ssi.getB()->topRows<3>() == *ss.getB());
+        REQUIRE(ssi.getC()->leftCols<3>() == *ss.getC());
+        REQUIRE(*ssi.getD() == *ss.getD());
     }
 }
