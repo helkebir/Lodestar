@@ -9,6 +9,9 @@
 
 namespace ls {
     namespace primitives {
+        /**
+         * @deprecated Butcher tableau-based methods should be used instead.
+         */
         template<typename TState>
         class IntegratorNewton : public Integrator<TState> {
         public:

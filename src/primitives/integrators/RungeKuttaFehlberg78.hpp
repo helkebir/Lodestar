@@ -135,7 +135,7 @@ namespace ls {
                     btSimple.setWeight<6>(9.0 / 35.0);
                     btSimple.setWeight<7>(9.0 / 35.0);
                     btSimple.setWeight<8>(9.0 / 280.0);
-                    btSimple.setWeight<9>(9.0 / 280.0 );
+                    btSimple.setWeight<9>(9.0 / 280.0);
                     btSimple.setWeight<10>(0.0);
                     btSimple.setWeight<11>(41.0 / 840.0);
                     btSimple.setWeight<12>(41.0 / 840.0);
@@ -253,7 +253,7 @@ namespace ls {
                     btExtended.setWeight<6, true>(9.0 / 35.0);
                     btExtended.setWeight<7, true>(9.0 / 35.0);
                     btExtended.setWeight<8, true>(9.0 / 280.0);
-                    btExtended.setWeight<9, true>(9.0 / 280.0 );
+                    btExtended.setWeight<9, true>(9.0 / 280.0);
                     btExtended.setWeight<10, true>(0.0);
                     btExtended.setWeight<11, true>(41.0 / 840.0);
                     btExtended.setWeight<12, true>(41.0 / 840.0);
@@ -325,7 +325,7 @@ namespace ls {
              * @param h Integration step.
              * @param N Number of integration scheme executions.
              */
-            static void integrateSimple(TDFunction f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
+            static void integrateSimple(const TDFunction &f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
 
             /**
              * @brief Integrate using the Runge-Kutta-Fehlberg method (rk78) with truncation error output.
@@ -338,13 +338,13 @@ namespace ls {
              *
              * @return Local truncation error.
              */
-            static TType integrateEmbedded(TDFunction f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
+            static TType integrateEmbedded(const TDFunction &f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
 
             // TODO: Add integrate function with maximum allowable error (adaptive step size).
         };
 
         template<typename TType, typename TScalarType>
-        void RungeKuttaFehlberg78<TType, TScalarType>::integrateSimple(TDFunction f, TScalarType &t, TType &y,
+        void RungeKuttaFehlberg78<TType, TScalarType>::integrateSimple(const TDFunction &f, TScalarType &t, TType &y,
                                                                        const TScalarType h, size_t N)
         {
             for (int i = 0; i < N; i++) {
@@ -354,7 +354,7 @@ namespace ls {
         }
 
         template<typename TType, typename TScalarType>
-        TType RungeKuttaFehlberg78<TType, TScalarType>::integrateEmbedded(TDFunction f, TScalarType &t, TType &y,
+        TType RungeKuttaFehlberg78<TType, TScalarType>::integrateEmbedded(const TDFunction &f, TScalarType &t, TType &y,
                                                                           const TScalarType h, size_t N)
         {
             std::pair<TType, TType> ye;

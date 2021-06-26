@@ -479,7 +479,8 @@ ls::symbolic::OrdinaryDifferentialEquation::generateMatrixArrayInputCppFunc(cons
     }
 
     docString += '\n';
-    docString += " * @param t Time.\n\n";
+    docString += " * @param t Time.\n";
+    docString += " *\n";
     docString += " * @return Jacobian matrix.\n";
     docString += " */\n";
     {

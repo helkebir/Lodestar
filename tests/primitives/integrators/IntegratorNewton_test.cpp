@@ -17,6 +17,9 @@ void quadratic(ls::primitives::Integrator<S> *integrator)
     integrator->setState(integrator->getTime() * integrator->getTime());
 }
 
+/**
+ * @deprecated Butcher tableau-based methods should be used instead.
+ */
 TEST_CASE("Newton integration", "[primitives][integrators][NewtonIntegrator]")
 {
     double state = 0;

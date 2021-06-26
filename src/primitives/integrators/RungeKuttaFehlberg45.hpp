@@ -148,7 +148,7 @@ namespace ls {
              * @param h Integration step.
              * @param N Number of integration scheme executions.
              */
-            static void integrateSimple(TDFunction f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
+            static void integrateSimple(const TDFunction &f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
 
             /**
              * @brief Integrate using the Runge-Kutta-Fehlberg method (rk45) with truncation error output.
@@ -161,13 +161,13 @@ namespace ls {
              *
              * @return Local truncation error.
              */
-            static TType integrateEmbedded(TDFunction f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
+            static TType integrateEmbedded(const TDFunction &f, TScalarType &t, TType &y, TScalarType h, size_t N = 1);
 
             // TODO: Add integrate function with maximum allowable error (adaptive step size).
         };
 
         template<typename TType, typename TScalarType>
-        void RungeKuttaFehlberg45<TType, TScalarType>::integrateSimple(TDFunction f, TScalarType &t, TType &y,
+        void RungeKuttaFehlberg45<TType, TScalarType>::integrateSimple(const TDFunction &f, TScalarType &t, TType &y,
                                                                        const TScalarType h, size_t N)
         {
             for (int i = 0; i < N; i++) {
@@ -177,7 +177,7 @@ namespace ls {
         }
 
         template<typename TType, typename TScalarType>
-        TType RungeKuttaFehlberg45<TType, TScalarType>::integrateEmbedded(TDFunction f, TScalarType &t, TType &y,
+        TType RungeKuttaFehlberg45<TType, TScalarType>::integrateEmbedded(const TDFunction &f, TScalarType &t, TType &y,
                                                                           const TScalarType h, size_t N)
         {
             std::pair<TType, TType> ye;

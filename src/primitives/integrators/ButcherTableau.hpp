@@ -13,6 +13,8 @@
 #include <functional>
 #include "aux/Indices.hpp"
 #include "aux/Conjunction.hpp"
+#include <iostream>
+#include "Eigen/Dense"
 
 namespace ls {
     namespace primitives {
@@ -312,7 +314,10 @@ namespace ls {
             inline execute(const std::function<TType(TScalarType, TType)> &f, const TType &y, const TScalarType t,
                     const TScalarType h)
             {
-                TType kCurr = f(t, y);
+//                TType kCurr;
+//                std::cout << "f(t,y) in Butcher tableau: " << f(t, y) << std::endl;
+//                kCurr = f(t, y);
+                auto kCurr = f(t,y);
 
                 return execute<TType, TStage + 1>(f, y, t, h, kCurr);
             }
@@ -349,6 +354,7 @@ namespace ls {
                 kCurr = f(tCurr, yCurr);
 
                 return execute<TType, TStage + 1>(f, y, t, h, vars..., kCurr);
+//                return execute<TType, TStage + 1>(f, y, t, h, vars..., f(t + getNode<TStage - 1>() * h, y + h * sumCoefficients<TType, TStage>(vars...)));
             }
 
             /**
