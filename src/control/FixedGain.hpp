@@ -5,7 +5,7 @@
 #ifndef LODESTAR_FIXEDGAIN_HPP
 #define LODESTAR_FIXEDGAIN_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 namespace ls {
     namespace control {

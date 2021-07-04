@@ -14,7 +14,7 @@
 #include "aux/Indices.hpp"
 #include "aux/Conjunction.hpp"
 #include <iostream>
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 namespace ls {
     namespace primitives {

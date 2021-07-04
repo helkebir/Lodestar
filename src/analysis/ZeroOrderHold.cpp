@@ -39,21 +39,21 @@ ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace<> *ss, double dt)
     const long m = ss->inputDim();
 
     systems::StateSpace<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic> out;
-    auto *memstruct = new mallocStruct<>;
-    memstruct->upperXM.resize(n, n + m);
-    memstruct->upperXM.setZero();
+    auto *memStruct = new mallocStruct<>;
+    memStruct->upperXM.resize(n, n + m);
+    memStruct->upperXM.setZero();
 
-    memstruct->lowerXM.resize(m, n + m);
-    memstruct->lowerXM.setZero();
+    memStruct->lowerXM.resize(m, n + m);
+    memStruct->lowerXM.setZero();
 
-    memstruct->XM.resize(n + m, n + m);
-    memstruct->XM.setZero();
+    memStruct->XM.resize(n + m, n + m);
+    memStruct->XM.setZero();
 
-    memstruct->XXM.resize(n, n + m);
-    memstruct->XXM.setZero();
+    memStruct->XXM.resize(n, n + m);
+    memStruct->XXM.setZero();
 
-    c2d<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic>(ss, dt, &out, memstruct);
-    delete memstruct;
+    c2d<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic>(ss, dt, &out, memStruct);
+    delete memStruct;
 
     return out;
 }
@@ -65,21 +65,21 @@ ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> *ss, double dt)
     const long m = ss->inputDim();
 
     systems::StateSpace<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic> out;
-    auto *memstruct = new mallocStruct<>;
-    memstruct->upperXM.resize(n, n + m);
-    memstruct->upperXM.setZero();
+    auto *memStruct = new mallocStruct<>;
+    memStruct->upperXM.resize(n, n + m);
+    memStruct->upperXM.setZero();
 
-    memstruct->lowerXM.resize(m, n + m);
-    memstruct->lowerXM.setZero();
+    memStruct->lowerXM.resize(m, n + m);
+    memStruct->lowerXM.setZero();
 
-    memstruct->XM.resize(n + m, n + m);
-    memstruct->XM.setZero();
+    memStruct->XM.resize(n + m, n + m);
+    memStruct->XM.setZero();
 
-    memstruct->XXM.resize(n, n + m);
-    memstruct->XXM.setZero();
+    memStruct->XXM.resize(n, n + m);
+    memStruct->XXM.setZero();
 
-    d2c<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic>(ss, dt, &out, memstruct);
-    delete memstruct;
+    d2c<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::Dynamic>(ss, dt, &out, memStruct);
+    delete memStruct;
 
     return out;
 }

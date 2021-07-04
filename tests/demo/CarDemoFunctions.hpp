@@ -5,7 +5,7 @@
 #ifndef LODESTAR_CARDEMOFUNCTIONS_HPP
 #define LODESTAR_CARDEMOFUNCTIONS_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 /**
  * @param x TState array:

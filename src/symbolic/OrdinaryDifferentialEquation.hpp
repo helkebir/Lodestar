@@ -7,7 +7,7 @@
 
 #ifdef LS_USE_GINAC
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "ginac/ginac.h"
 
 #include "systems/StateSpace.hpp"

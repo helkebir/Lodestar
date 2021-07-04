@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "systems/StateSpace.hpp"
 
 TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][construction]")

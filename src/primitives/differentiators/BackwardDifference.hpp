@@ -5,7 +5,7 @@
 #ifndef LODESTAR_BACKWARDDIFFERENCE_HPP
 #define LODESTAR_BACKWARDDIFFERENCE_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 namespace ls {
     namespace primitives {

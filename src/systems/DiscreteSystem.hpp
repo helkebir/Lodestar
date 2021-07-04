@@ -5,7 +5,7 @@
 #ifndef LODESTAR_DISCRETESYSTEM_HPP
 #define LODESTAR_DISCRETESYSTEM_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "StateSpace.hpp"
 #include "SystemStateful.hpp"
 #include "aux/CompileTimeQualifiers.hpp"

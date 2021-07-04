@@ -5,7 +5,7 @@
 #ifndef LODESTAR_BILINEARTRANSFORMATION_HPP
 #define LODESTAR_BILINEARTRANSFORMATION_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "systems/StateSpace.hpp"
 #include "aux/CompileTimeQualifiers.hpp"
 
@@ -15,6 +15,7 @@ namespace ls {
          * @brief Routines for converting a state space system from continuous-
          * to discrete-time and vice versa.
          *
+         * @note
          * Corresponds to SLICOT Routine <a href="http://slicot.org/objects/software/shared/doc/AB04MD.html">AB04MD</a>
          * (<em>Discrete-time <-> continuous-time conversion by bilinear transformation</em>).
          */
@@ -91,14 +92,14 @@ namespace ls {
             static void
             c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
                 systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                 LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void
             c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
                 systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                 LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
@@ -120,14 +121,14 @@ namespace ls {
             static void
             d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
                 systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                 LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void
             d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt, double alpha,
                 systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                 LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
@@ -264,21 +265,21 @@ void
 ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                           LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    memstruct->I.setIdentity(ss->stateDim(), ss->stateDim());
-    memstruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            memstruct->I - alpha * dt * (*ss->getA()));
-    memstruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            (memstruct->I - alpha * dt * (*ss->getA())).transpose());
+    memStruct->I.setIdentity(ss->stateDim(), ss->stateDim());
+    memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            memStruct->I - alpha * dt * (*ss->getA()));
+    memStruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            (memStruct->I - alpha * dt * (*ss->getA())).transpose());
 
-    out->setA(memstruct->HH.template solve(memstruct->I - (1 - alpha) * dt * (*ss->getA())));
-    out->setB(memstruct->HH.template solve(dt * (*ss->getB())));
-    out->setC(memstruct->HH2.template solve((*ss->getC()).transpose()).transpose());
+    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (*ss->getA())));
+    out->setB(memStruct->HH.template solve(dt * (*ss->getB())));
+    out->setC(memStruct->HH2.template solve((*ss->getC()).transpose()).transpose());
     out->setD((*ss->getD()) + alpha * (*ss->getC()) * (*out->getB()));
     out->setSamplingPeriod(dt);
 }
@@ -288,21 +289,21 @@ void
 ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructC2D<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                           LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    memstruct->I.setIdentity();
-    memstruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            memstruct->I - alpha * dt * (*ss->getA()));
-    memstruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            (memstruct->I - alpha * dt * (*ss->getA())).transpose());
+    memStruct->I.setIdentity();
+    memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            memStruct->I - alpha * dt * (*ss->getA()));
+    memStruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            (memStruct->I - alpha * dt * (*ss->getA())).transpose());
 
-    out->setA(memstruct->HH.template solve(memstruct->I - (1 - alpha) * dt * (*ss->getA())));
-    out->setB(memstruct->HH.template solve(dt * (*ss->getB())));
-    out->setC(memstruct->HH2.template solve((*ss->getC()).transpose()).transpose());
+    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (*ss->getA())));
+    out->setB(memStruct->HH.template solve(dt * (*ss->getB())));
+    out->setC(memStruct->HH2.template solve((*ss->getC()).transpose()).transpose());
     out->setD((*ss->getD()) + alpha * (*ss->getC()) * (*out->getB()));
     out->setSamplingPeriod(dt);
 }
@@ -312,20 +313,20 @@ void
 ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                           LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    memstruct->I.setIdentity(ss->stateDim(), ss->stateDim());
-    memstruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memstruct->I);
-    out->setA(memstruct->HH.template solve((*ss->getA()).transpose() - memstruct->I));
-    memstruct->IMAC = memstruct->I - alpha * dt * (*out->getA());
+    memStruct->I.setIdentity(ss->stateDim(), ss->stateDim());
+    memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
+    out->setA(memStruct->HH.template solve((*ss->getA()).transpose() - memStruct->I));
+    memStruct->IMAC = memStruct->I - alpha * dt * (*out->getA());
 
-    out->setB(memstruct->IMAC * (*ss->getB()) / dt);
-    out->setC((*ss->getC()) * memstruct->IMAC);
+    out->setB(memStruct->IMAC * (*ss->getB()) / dt);
+    out->setC((*ss->getC()) * memStruct->IMAC);
     out->setD((*ss->getD()) - alpha * (*out->getC()) * (*ss->getB()));
     out->setDiscreteParams(-1, false);
 }
@@ -335,20 +336,20 @@ void
 ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                           double dt, double alpha,
                                           ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                          mallocStructD2C<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                           LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     if (alpha < 0 || alpha > 1) alpha = 0;
     dt = abs(dt);
 
-    memstruct->I.setIdentity();
-    memstruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memstruct->I);
-    out->setA(memstruct->HH.template solve((*ss->getA()).transpose() - memstruct->I));
-    memstruct->IMAC = memstruct->I - alpha * dt * (*out->getA());
+    memStruct->I.setIdentity();
+    memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
+            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
+    out->setA(memStruct->HH.template solve((*ss->getA()).transpose() - memStruct->I));
+    memStruct->IMAC = memStruct->I - alpha * dt * (*out->getA());
 
-    out->setB(memstruct->IMAC * (*ss->getB()) / dt);
-    out->setC((*ss->getC()) * memstruct->IMAC);
+    out->setB(memStruct->IMAC * (*ss->getB()) / dt);
+    out->setC((*ss->getC()) * memStruct->IMAC);
     out->setD((*ss->getD()) - alpha * (*out->getC()) * (*ss->getB()));
     out->setDiscreteParams(-1, false);
 }

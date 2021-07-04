@@ -5,8 +5,8 @@
 #ifndef LODESTAR_ZEROORDERHOLD_HPP
 #define LODESTAR_ZEROORDERHOLD_HPP
 
-#include "Eigen/Dense"
-#include "unsupported/Eigen/MatrixFunctions"
+#include <Eigen/Dense>
+#include <unsupported/Eigen/MatrixFunctions>
 #include "systems/StateSpace.hpp"
 #include "aux/CompileTimeQualifiers.hpp"
 
@@ -62,13 +62,13 @@ namespace ls {
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt,
                             systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                             LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void c2d(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt,
                             systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                             LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
@@ -162,7 +162,7 @@ namespace ls {
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt,
                             systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                             LS_IS_DYNAMIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
 
             /**
@@ -177,7 +177,7 @@ namespace ls {
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
             static void d2c(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss, double dt,
                             systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                            mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                             LS_IS_STATIC_DEFAULT(TStateDim, TInputDim, TOutputDim));
         };
     }
@@ -187,7 +187,7 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                       double dt,
                                       ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                       LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     dt = abs(dt);
@@ -195,18 +195,18 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
     const long n = ss->stateDim();
     const long m = ss->inputDim();
 
-    memstruct->upperXM.block(0, 0, n, n) << (*ss->getA());
-    memstruct->upperXM.block(0, n, n, m) << (*ss->getB());
+    memStruct->upperXM.block(0, 0, n, n) << (*ss->getA());
+    memStruct->upperXM.block(0, n, n, m) << (*ss->getB());
 
-    memstruct->lowerXM.setZero();
+    memStruct->lowerXM.setZero();
 
-    memstruct->XM.block(0, 0, n, n + m) << memstruct->upperXM;
-    memstruct->XM.block(n, 0, m, n + m) << memstruct->lowerXM;
+    memStruct->XM.block(0, 0, n, n + m) << memStruct->upperXM;
+    memStruct->XM.block(n, 0, m, n + m) << memStruct->lowerXM;
 
-    memstruct->XXM = (memstruct->XM * dt).exp().block(0, 0, n, n + m);
+    memStruct->XXM = (memStruct->XM * dt).exp().block(0, 0, n, n + m);
 
-    out->setA(memstruct->XXM.block(0, 0, n, n));
-    out->setB(memstruct->XXM.block(0, n, n, m));
+    out->setA(memStruct->XXM.block(0, 0, n, n));
+    out->setB(memStruct->XXM.block(0, n, n, m));
     out->setC(Eigen::MatrixXd::Identity(n, n));
     out->setD(Eigen::MatrixXd::Zero(n, m));
     out->setDiscreteParams(dt, true);
@@ -217,24 +217,24 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                       double dt,
                                       ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                       LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     dt = abs(dt);
 
-    memstruct->upperXM.block<TStateDim, TStateDim>(0, 0);
-    memstruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
-    memstruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
+    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0);
+    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
+    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
 
-    memstruct->lowerXM.setZero();
+    memStruct->lowerXM.setZero();
 
-    memstruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memstruct->upperXM;
-    memstruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memstruct->lowerXM;
+    memStruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
+    memStruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
 
-    memstruct->XXM = (memstruct->XM * dt).exp().block<TStateDim, TStateDim + TInputDim>(0, 0);
+    memStruct->XXM = (memStruct->XM * dt).exp().block<TStateDim, TStateDim + TInputDim>(0, 0);
 
-    out->setA(memstruct->XXM.block<TStateDim, TStateDim>(0, 0));
-    out->setB(memstruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
+    out->setA(memStruct->XXM.block<TStateDim, TStateDim>(0, 0));
+    out->setB(memStruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
     out->setDiscreteParams(dt, true);
 }
 
@@ -242,7 +242,7 @@ template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                       double dt,
                                       ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                       LS_IS_DYNAMIC(TStateDim, TInputDim, TOutputDim))
 {
     dt = abs(dt);
@@ -250,44 +250,44 @@ void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TSt
     const long n = ss->stateDim();
     const long m = ss->inputDim();
 
-    memstruct->upperXM.block(0, 0, n, n) << (*ss->getA());
-    memstruct->upperXM.block(0, n, n, m) << (*ss->getB());
+    memStruct->upperXM.block(0, 0, n, n) << (*ss->getA());
+    memStruct->upperXM.block(0, n, n, m) << (*ss->getB());
 
-    memstruct->lowerXM.setZero();
-    memstruct->lowerXM.block(0, n, m, m).setIdentity();
+    memStruct->lowerXM.setZero();
+    memStruct->lowerXM.block(0, n, m, m).setIdentity();
 
-    memstruct->XM.block(0, 0, n, n + m) << memstruct->upperXM;
-    memstruct->XM.block(n, 0, m, n + m) << memstruct->lowerXM;
+    memStruct->XM.block(0, 0, n, n + m) << memStruct->upperXM;
+    memStruct->XM.block(n, 0, m, n + m) << memStruct->lowerXM;
 
-    memstruct->XXM = (memstruct->XM).log().block(0, 0, n, n + m) / dt;
+    memStruct->XXM = (memStruct->XM).log().block(0, 0, n, n + m) / dt;
 
-    out->setA(memstruct->XXM.block(0, 0, n, n));
-    out->setB(memstruct->XXM.block(0, n, n, m));
+    out->setA(memStruct->XXM.block(0, 0, n, n));
+    out->setB(memStruct->XXM.block(0, n, n, m));
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                       double dt,
                                       ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *out,
-                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memstruct,
+                                      ls::analysis::ZeroOrderHold::mallocStruct<TScalar, TStateDim, TInputDim, TOutputDim> *memStruct,
                                       LS_IS_STATIC(TStateDim, TInputDim, TOutputDim))
 {
     dt = abs(dt);
 
-    memstruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
-    memstruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
+    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
+    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
 
-    memstruct->lowerXM.setZero();
-    memstruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim)
+    memStruct->lowerXM.setZero();
+    memStruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim)
             << Eigen::Matrix<TScalar, TInputDim, TInputDim>::Identity();
 
-    memstruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memstruct->upperXM;
-    memstruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memstruct->lowerXM;
+    memStruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
+    memStruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
 
-    memstruct->XXM = (memstruct->XM).log().block<TStateDim, TStateDim + TInputDim>(0, 0) / dt;
+    memStruct->XXM = (memStruct->XM).log().block<TStateDim, TStateDim + TInputDim>(0, 0) / dt;
 
-    out->setA(memstruct->XXM.block<TStateDim, TStateDim>(0, 0));
-    out->setB(memstruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
+    out->setA(memStruct->XXM.block<TStateDim, TStateDim>(0, 0));
+    out->setB(memStruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
 }
 
 #endif //LODESTAR_ZEROORDERHOLD_HPP

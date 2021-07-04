@@ -10,7 +10,7 @@
 #include "aux/AlgebraicOperators.hpp"
 #include "aux/PairUp.hpp"
 #include "aux/Pack.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 namespace ls {
     namespace block {

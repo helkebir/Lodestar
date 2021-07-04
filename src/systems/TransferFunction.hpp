@@ -11,7 +11,7 @@
 #include "analysis/BilinearTransformation.hpp"
 #include "LodestarErrors.hpp"
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 #ifdef LS_USE_GINAC
 

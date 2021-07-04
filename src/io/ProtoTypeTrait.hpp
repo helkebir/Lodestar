@@ -19,7 +19,7 @@
 
 #endif
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "systems/StateSpace.hpp"
 #include "systems/TransferFunction.hpp"
 

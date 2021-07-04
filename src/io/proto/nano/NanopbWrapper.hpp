@@ -5,7 +5,7 @@
 #ifndef LODESTAR_NANOPBWRAPPER_HPP
 #define LODESTAR_NANOPBWRAPPER_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "Vector.pb.h"
 #include "TypeEnum.pb.h"
 

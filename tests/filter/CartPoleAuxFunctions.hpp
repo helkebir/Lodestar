@@ -5,7 +5,7 @@
 #ifndef LODESTAR_CARTPOLEAUXFUNCTIONS_HPP
 #define LODESTAR_CARTPOLEAUXFUNCTIONS_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 /**
  * @param x State array:

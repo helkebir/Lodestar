@@ -5,7 +5,7 @@
 #ifndef LODESTAR_TESTAUXFUNCTIONS_HPP
 #define LODESTAR_TESTAUXFUNCTIONS_HPP
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 // A(x, u)
 Eigen::Matrix<double, 2, 2> jacStates(const double x, const double y, const double u, const double t) {

@@ -5,8 +5,8 @@
 #ifndef LODESTAR_CONTINUOUSSAMPLEDEKF_HPP
 #define LODESTAR_CONTINUOUSSAMPLEDEKF_HPP
 
-#include "Eigen/Dense"
-#include "Eigen/QR"
+#include <Eigen/Dense>
+#include <Eigen/QR>
 #include <functional>
 #include <type_traits>
 

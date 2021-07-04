@@ -4,7 +4,7 @@
 
 #include "catchOnce.hpp"
 #include "primitives/integrators/RungeKuttaFehlberg78.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include <iostream>
 
 TEST_CASE("Runge-Kutta-Fehlberg 78", "[primitives][integrators]")

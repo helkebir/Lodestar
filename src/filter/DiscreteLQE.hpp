@@ -6,7 +6,7 @@
 #define LODESTAR_DISCRETELQE_HPP
 
 #include "synthesis/AlgebraicRiccatiEquation.hpp"
-#include "Eigen/QR"
+#include <Eigen/QR>
 #include <vector>
 
 namespace ls {

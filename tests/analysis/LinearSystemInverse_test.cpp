@@ -4,7 +4,7 @@
 
 #include "analysis/LinearSystemInverse.hpp"
 #include "systems/StateSpace.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 ls::systems::StateSpace<> linearSystemInverseExample()
 {

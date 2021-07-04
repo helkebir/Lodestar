@@ -6,7 +6,7 @@
 #define LODESTAR_ALGEBRAICRICCATIEQUATION_HPP
 
 #include "systems/StateSpace.hpp"
-#include "Eigen/Eigenvalues"
+#include <Eigen/Eigenvalues>
 
 namespace ls {
     namespace synthesis {

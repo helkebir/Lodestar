@@ -5,8 +5,8 @@
 #ifndef LODESTAR_FASTFOURIERTRANSFORM_HPP
 #define LODESTAR_FASTFOURIERTRANSFORM_HPP
 
-#include "Eigen/Dense"
-#include "unsupported/Eigen/FFT"
+#include <Eigen/Dense>
+#include <unsupported/Eigen/FFT>
 
 namespace ls {
     namespace data {

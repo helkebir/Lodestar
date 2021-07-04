@@ -12,9 +12,9 @@ ls::analysis::BilinearTransformation::c2d(const Eigen::MatrixXd &A,
                                           double alpha)
 {
     systems::StateSpace<> ss(A, B, C, D), out;
-    auto *memstruct = new mallocStructC2D<>;
-    c2d(&ss, dt, alpha, &out, memstruct);
-    delete memstruct;
+    auto *memStruct = new mallocStructC2D<>;
+    c2d(&ss, dt, alpha, &out, memStruct);
+    delete memStruct;
 
     return out;
 }
@@ -45,9 +45,9 @@ ls::analysis::BilinearTransformation::d2c(const Eigen::MatrixXd *A,
                                           double alpha)
 {
     systems::StateSpace<> ss(*A, *B, *C, *D), out;
-    auto *memstruct = new mallocStructD2C<>;
-    d2c(&ss, dt, alpha, &out, memstruct);
-    delete memstruct;
+    auto *memStruct = new mallocStructD2C<>;
+    d2c(&ss, dt, alpha, &out, memStruct);
+    delete memStruct;
 
     return out;
 }
@@ -60,9 +60,9 @@ ls::analysis::BilinearTransformation::d2c(const Eigen::MatrixXd &A,
                                           double alpha)
 {
     systems::StateSpace<> ss(A, B, C, D), out;
-    auto *memstruct = new mallocStructD2C<>;
-    d2c(&ss, dt, alpha, &out, memstruct);
-    delete memstruct;
+    auto *memStruct = new mallocStructD2C<>;
+    d2c(&ss, dt, alpha, &out, memStruct);
+    delete memStruct;
 
     return out;
 }

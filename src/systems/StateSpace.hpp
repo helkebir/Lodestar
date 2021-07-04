@@ -6,7 +6,7 @@
 #define LODESTAR_STATESPACE_HPP
 
 #include "SystemStateless.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "aux/CompileTimeQualifiers.hpp"
 
 namespace ls {

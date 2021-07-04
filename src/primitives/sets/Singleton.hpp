@@ -6,7 +6,7 @@
 #define LODESTAR_SINGLETON_HPP
 
 #include <type_traits>
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "aux/CompileTimeQualifiers.hpp"
 
 #include "SetExpression.hpp"

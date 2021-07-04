@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "filter/SimpleMovingAverage.h"
+#include "filter/SimpleMovingAverage.hpp"
 
 TEST_CASE("SimpleMovingAverage", "[filter][static]") {
     ls::filter::SimpleMovingAverage<double, 5> sma;

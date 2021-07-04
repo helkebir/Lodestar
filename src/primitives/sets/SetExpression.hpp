@@ -6,7 +6,7 @@
 #define LODESTAR_SETEXPRESSION_HPP
 
 #include "SetEnum.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 namespace ls {
     namespace primitives {

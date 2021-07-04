@@ -7,7 +7,7 @@
 
 #include "../Block.hpp"
 #include "aux/Repeat.hpp"
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include "aux/CompileTimeQualifiers.hpp"
 
 namespace ls {

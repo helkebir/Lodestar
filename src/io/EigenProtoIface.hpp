@@ -7,7 +7,7 @@
 
 #ifdef LS_USE_PROTOBUF
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 
 #include "ProtoIfaceABC.hpp"
 #include "proto/ls.proto.eigen.pb.h"
