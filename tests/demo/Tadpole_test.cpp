@@ -113,7 +113,7 @@ TEST_CASE("Tadpole LQR", "[demo]")
     for (int i = 0; i < N; i++) {
         u = -K * (x - xdes);
 
-        x = (*dss.getA()) * x + (*dss.getB()) * u;
+        x = (dss.getA()) * x + (dss.getB()) * u;
 
         xrec << (i+1) * dt << " " << x(0) << "\n";
         yrec << (i+1) * dt << " " << x(1) << "\n";

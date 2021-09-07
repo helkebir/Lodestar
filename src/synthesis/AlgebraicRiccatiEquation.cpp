@@ -69,8 +69,8 @@ Eigen::MatrixXd ls::synthesis::AlgebraicRiccatiEquation::solveDARE(
         const Eigen::MatrixXd &R)
 {
     Eigen::MatrixXd A, B;
-    A = *sys.getA();
-    B = *sys.getB();
+    A = sys.getA();
+    B = sys.getB();
 
     return solveDARE(A, B, Q, R);
 }

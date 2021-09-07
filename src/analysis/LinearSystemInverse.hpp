@@ -66,10 +66,10 @@ void
 ls::analysis::LinearSystemInverse::inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
                                            systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out)
 {
-    out->setA((*ss->getA()) - (*ss->getB()) * (*ss->getD()).inverse() * (*ss->getC()));
-    out->setB(-(*ss->getB()) * (*ss->getD()).inverse());
-    out->setC((*ss->getD()).inverse() * (*ss->getC()));
-    out->setD((*ss->getD()).inverse());
+    out->setA((ss->getA()) - (ss->getB()) * (ss->getD()).inverse() * (ss->getC()));
+    out->setB(-(ss->getB()) * (ss->getD()).inverse());
+    out->setC((ss->getD()).inverse() * (ss->getC()));
+    out->setD((ss->getD()).inverse());
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>

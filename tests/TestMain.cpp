@@ -97,10 +97,10 @@ TEST_CASE("Temporary main", "")
 
         auto ss = ode.linearize(jacStates, jacInputs, std::vector<double>{2, 4, 6}, std::vector<double>{3});
         std::cout << "Linearize ODE about x0=2, x1=4, x2=6, u=3:" << std::endl;
-        std::cout << "A" << std::endl << *ss.getA() << std::endl;
-        std::cout << "B" << std::endl << *ss.getB() << std::endl;
-        std::cout << "C" << std::endl << *ss.getC() << std::endl;
-        std::cout << "D" << std::endl << *ss.getD() << std::endl;
+        std::cout << "A" << std::endl << ss.getA() << std::endl;
+        std::cout << "B" << std::endl << ss.getB() << std::endl;
+        std::cout << "C" << std::endl << ss.getC() << std::endl;
+        std::cout << "D" << std::endl << ss.getD() << std::endl;
 
 //    // FIXME: Fix casting problem here.
 //    ss.copyMatrices(ode.linearize(jacStates, jacInputs, std::vector<double>{3}, std::vector<double>{5}));
@@ -112,10 +112,10 @@ TEST_CASE("Temporary main", "")
 
         auto dss = ls::analysis::ZeroOrderHold::c2d(ss, 0.1);
         std::cout << "Discretized at 0.1 s ZOH" << std::endl;
-        std::cout << "Ad" << std::endl << *dss.getA() << std::endl;
-        std::cout << "Bd" << std::endl << *dss.getB() << std::endl;
-        std::cout << "Cd" << std::endl << *dss.getC() << std::endl;
-        std::cout << "Dd" << std::endl << *dss.getD() << std::endl;
+        std::cout << "Ad" << std::endl << dss.getA() << std::endl;
+        std::cout << "Bd" << std::endl << dss.getB() << std::endl;
+        std::cout << "Cd" << std::endl << dss.getC() << std::endl;
+        std::cout << "Dd" << std::endl << dss.getD() << std::endl;
 
         std::cout << std::endl;
 

@@ -24,7 +24,7 @@ ls::control::DiscreteLQR::infiniteHorizon(const ls::systems::StateSpace<> &sys,
                                           const Eigen::MatrixXd &Q,
                                           const Eigen::MatrixXd &R)
 {
-    return infiniteHorizon(*sys.getA(), *sys.getB(), Q, R);
+    return infiniteHorizon(sys.getA(), sys.getB(), Q, R);
 }
 
 Eigen::MatrixXd
@@ -60,5 +60,5 @@ ls::control::DiscreteLQR::finiteHorizon(const ls::systems::StateSpace<> &sys,
                                         const Eigen::MatrixXd &R,
                                         const unsigned int N)
 {
-    return finiteHorizon(*sys.getA(), *sys.getB(), Q, R, N);
+    return finiteHorizon(sys.getA(), sys.getB(), Q, R, N);
 }

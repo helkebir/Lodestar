@@ -273,14 +273,14 @@ ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar,
 
     memStruct->I.setIdentity(ss->stateDim(), ss->stateDim());
     memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            memStruct->I - alpha * dt * (*ss->getA()));
+            memStruct->I - alpha * dt * (ss->getA()));
     memStruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            (memStruct->I - alpha * dt * (*ss->getA())).transpose());
+            (memStruct->I - alpha * dt * (ss->getA())).transpose());
 
-    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (*ss->getA())));
-    out->setB(memStruct->HH.template solve(dt * (*ss->getB())));
-    out->setC(memStruct->HH2.template solve((*ss->getC()).transpose()).transpose());
-    out->setD((*ss->getD()) + alpha * (*ss->getC()) * (*out->getB()));
+    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (ss->getA())));
+    out->setB(memStruct->HH.template solve(dt * (ss->getB())));
+    out->setC(memStruct->HH2.template solve((ss->getC()).transpose()).transpose());
+    out->setD((ss->getD()) + alpha * (ss->getC()) * (out->getB()));
     out->setSamplingPeriod(dt);
 }
 
@@ -297,14 +297,14 @@ ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar,
 
     memStruct->I.setIdentity();
     memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            memStruct->I - alpha * dt * (*ss->getA()));
+            memStruct->I - alpha * dt * (ss->getA()));
     memStruct->HH2 = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            (memStruct->I - alpha * dt * (*ss->getA())).transpose());
+            (memStruct->I - alpha * dt * (ss->getA())).transpose());
 
-    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (*ss->getA())));
-    out->setB(memStruct->HH.template solve(dt * (*ss->getB())));
-    out->setC(memStruct->HH2.template solve((*ss->getC()).transpose()).transpose());
-    out->setD((*ss->getD()) + alpha * (*ss->getC()) * (*out->getB()));
+    out->setA(memStruct->HH.template solve(memStruct->I - (1 - alpha) * dt * (ss->getA())));
+    out->setB(memStruct->HH.template solve(dt * (ss->getB())));
+    out->setC(memStruct->HH2.template solve((ss->getC()).transpose()).transpose());
+    out->setD((ss->getD()) + alpha * (ss->getC()) * (*out->getB()));
     out->setSamplingPeriod(dt);
 }
 
@@ -321,13 +321,13 @@ ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar,
 
     memStruct->I.setIdentity(ss->stateDim(), ss->stateDim());
     memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
-    out->setA(memStruct->HH.template solve((*ss->getA()).transpose() - memStruct->I));
-    memStruct->IMAC = memStruct->I - alpha * dt * (*out->getA());
+            alpha * dt * (ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
+    out->setA(memStruct->HH.template solve((ss->getA()).transpose() - memStruct->I));
+    memStruct->IMAC = memStruct->I - alpha * dt * (out->getA());
 
-    out->setB(memStruct->IMAC * (*ss->getB()) / dt);
-    out->setC((*ss->getC()) * memStruct->IMAC);
-    out->setD((*ss->getD()) - alpha * (*out->getC()) * (*ss->getB()));
+    out->setB(memStruct->IMAC * (ss->getB()) / dt);
+    out->setC((ss->getC()) * memStruct->IMAC);
+    out->setD((ss->getD()) - alpha * (out->getC()) * (ss->getB()));
     out->setDiscreteParams(-1, false);
 }
 
@@ -344,13 +344,13 @@ ls::analysis::BilinearTransformation::d2c(const ls::systems::StateSpace<TScalar,
 
     memStruct->I.setIdentity();
     memStruct->HH = Eigen::ColPivHouseholderQR<Eigen::Matrix<TScalar, TStateDim, TStateDim>>(
-            alpha * dt * (*ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
-    out->setA(memStruct->HH.template solve((*ss->getA()).transpose() - memStruct->I));
-    memStruct->IMAC = memStruct->I - alpha * dt * (*out->getA());
+            alpha * dt * (ss->getA()).transpose() + (1 - alpha) * dt * memStruct->I);
+    out->setA(memStruct->HH.template solve((ss->getA()).transpose() - memStruct->I));
+    memStruct->IMAC = memStruct->I - alpha * dt * (out->getA());
 
-    out->setB(memStruct->IMAC * (*ss->getB()) / dt);
-    out->setC((*ss->getC()) * memStruct->IMAC);
-    out->setD((*ss->getD()) - alpha * (*out->getC()) * (*ss->getB()));
+    out->setB(memStruct->IMAC * (ss->getB()) / dt);
+    out->setC((ss->getC()) * memStruct->IMAC);
+    out->setD((ss->getD()) - alpha * (out->getC()) * (ss->getB()));
     out->setDiscreteParams(-1, false);
 }
 

@@ -37,10 +37,10 @@ TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][con
     }
 
     SECTION("Matrices") {
-        REQUIRE(*ss.getA() == A);
-        REQUIRE(*ss.getB() == B);
-        REQUIRE(*ss.getC() == C);
-        REQUIRE(*ss.getD() == D);
+        REQUIRE(ss.getA() == A);
+        REQUIRE(ss.getB() == B);
+        REQUIRE(ss.getC() == C);
+        REQUIRE(ss.getD() == D);
     }
 
     SECTION("Set discrete parameters") {
@@ -56,10 +56,10 @@ TEST_CASE("StateSpace dynamic construction", "[systems][StateSpace][dynamic][con
         REQUIRE(ssi.outputDim() == ss.outputDim());
 
 
-        REQUIRE(ssi.getA()->topLeftCorner<3, 3>() == *ss.getA());
-        REQUIRE(ssi.getB()->topRows<3>() == *ss.getB());
-        REQUIRE(ssi.getC()->leftCols<3>() == *ss.getC());
-        REQUIRE(*ssi.getD() == *ss.getD());
+        REQUIRE(ssi.getA().topLeftCorner<3, 3>() == ss.getA());
+        REQUIRE(ssi.getB().topRows<3>() == ss.getB());
+        REQUIRE(ssi.getC().leftCols<3>() == ss.getC());
+        REQUIRE(ssi.getD() == ss.getD());
     }
 }
 
@@ -94,10 +94,10 @@ TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]"
     }
 
     SECTION("Matrices") {
-        REQUIRE(*ss.getA() == A);
-        REQUIRE(*ss.getB() == B);
-        REQUIRE(*ss.getC() == C);
-        REQUIRE(*ss.getD() == D);
+        REQUIRE(ss.getA() == A);
+        REQUIRE(ss.getB() == B);
+        REQUIRE(ss.getC() == C);
+        REQUIRE(ss.getD() == D);
     }
 
     SECTION("Set discrete parameters") {
@@ -113,9 +113,9 @@ TEST_CASE("StateSpace static construction", "[StateSpace][static][construction]"
         REQUIRE(ssi.outputDim() == ss.outputDim());
 
 
-        REQUIRE(ssi.getA()->topLeftCorner<3, 3>() == *ss.getA());
-        REQUIRE(ssi.getB()->topRows<3>() == *ss.getB());
-        REQUIRE(ssi.getC()->leftCols<3>() == *ss.getC());
-        REQUIRE(*ssi.getD() == *ss.getD());
+        REQUIRE(ssi.getA().topLeftCorner<3, 3>() == ss.getA());
+        REQUIRE(ssi.getB().topRows<3>() == ss.getB());
+        REQUIRE(ssi.getC().leftCols<3>() == ss.getC());
+        REQUIRE(ssi.getD() == ss.getD());
     }
 }

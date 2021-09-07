@@ -59,6 +59,28 @@ ls::analysis::ZeroOrderHold::c2d(const systems::StateSpace<> *ss, double dt)
 }
 
 ls::systems::StateSpace<>
+ls::analysis::ZeroOrderHold::d2c(const Eigen::MatrixXd &A,
+                                 const Eigen::MatrixXd &B,
+                                 const Eigen::MatrixXd &C,
+                                 const Eigen::MatrixXd &D, double dt)
+{
+    systems::StateSpace<> ss(A, B, C, D);
+
+    return d2c(ss, dt);
+}
+
+ls::systems::StateSpace<>
+ls::analysis::ZeroOrderHold::d2c(Eigen::MatrixXd *A,
+                                 Eigen::MatrixXd *B,
+                                 Eigen::MatrixXd *C,
+                                 Eigen::MatrixXd *D, double dt)
+{
+    systems::StateSpace<> ss(A, B, C, D);
+
+    return d2c(ss, dt);
+}
+
+ls::systems::StateSpace<>
 ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> *ss, double dt)
 {
     const long n = ss->stateDim();

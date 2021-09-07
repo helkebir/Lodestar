@@ -86,18 +86,18 @@ TEST_CASE("Car control demo", "[demo]") {
     auto dss = ls::analysis::BilinearTransformation::c2d(ss, dt);
 
     std::cout << "A matrix" << std::endl;
-    std::cout << *ss.getA() << std::endl;
+    std::cout << ss.getA() << std::endl;
     std::cout << "\n";
     std::cout << "B matrix" << std::endl;
-    std::cout << *ss.getB() << std::endl;
+    std::cout << ss.getB() << std::endl;
 
     std::cout << "\n";
 
     std::cout << "Ad matrix" << std::endl;
-    std::cout << *dss.getA() << std::endl;
+    std::cout << dss.getA() << std::endl;
     std::cout << "\n";
     std::cout << "Bd matrix" << std::endl;
-    std::cout << *dss.getB() << std::endl;
+    std::cout << dss.getB() << std::endl;
 
     Eigen::Matrix<double, 6, 6> Q = Eigen::Matrix<double, 6, 6>::Identity();
     Q(0,0) = 1e2;
@@ -143,15 +143,15 @@ TEST_CASE("Car control demo", "[demo]") {
     auto dssi = ls::analysis::BilinearTransformation::c2d(ssi, dt);
 
     std::cout << "Ai matrix" << std::endl;
-    std::cout << *ssi.getA() << std::endl;
+    std::cout << ssi.getA() << std::endl;
     std::cout << "\n";
     std::cout << "Bi matrix" << std::endl;
-    std::cout << *ssi.getB() << std::endl;
+    std::cout << ssi.getB() << std::endl;
     std::cout << "Ci matrix" << std::endl;
-    std::cout << *ssi.getC() << std::endl;
+    std::cout << ssi.getC() << std::endl;
     std::cout << "\n";
     std::cout << "Di matrix" << std::endl;
-    std::cout << *ssi.getD() << std::endl;
+    std::cout << ssi.getD() << std::endl;
     std::cout << "\n";
 
     Eigen::Matrix<double, 12, 12> Qi = 1e-5 * Eigen::Matrix<double, 12, 12>::Identity();
@@ -177,7 +177,7 @@ TEST_CASE("Car control demo", "[demo]") {
 
         u = -K * (x - Xdes);
 
-        x = *dss.getA() * x + *dss.getB() * u;
+        x = dss.getA() * x + dss.getB() * u;
 
         std::cout << "x:\n" << x.transpose() << std::endl;
         std::cout << "u:\n" << u.transpose() << std::endl;
@@ -199,8 +199,8 @@ TEST_CASE("Car control demo", "[demo]") {
 
         u = -Ki * xi;
 
-        xi = *dssi.getA() * xi + *dssi.getB() * u;
-        x = *dss.getA() * x + *dss.getB() * u;
+        xi = dssi.getA() * xi + dssi.getB() * u;
+        x = dss.getA() * x + dss.getB() * u;
         xi.topRows(6) = x;
 
         xrec << (i+1) * dt << " " << xi(0) << "\n";

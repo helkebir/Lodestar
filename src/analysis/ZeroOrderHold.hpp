@@ -15,6 +15,8 @@ namespace ls {
         /**
          * @brief Routines for computing zero-order hold transformation on state
          * space systems.
+         *
+         * @sa <a href="https://theory.ldstr.dev/discretization">theory.ldstr.dev/discretization</a>
          */
         class ZeroOrderHold {
         public:
@@ -195,8 +197,8 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
     const long n = ss->stateDim();
     const long m = ss->inputDim();
 
-    memStruct->upperXM.block(0, 0, n, n) << (*ss->getA());
-    memStruct->upperXM.block(0, n, n, m) << (*ss->getB());
+    memStruct->upperXM.block(0, 0, n, n) << (ss->getA());
+    memStruct->upperXM.block(0, n, n, m) << (ss->getB());
 
     memStruct->lowerXM.setZero();
 
@@ -223,8 +225,8 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
     dt = abs(dt);
 
     memStruct->upperXM.block<TStateDim, TStateDim>(0, 0);
-    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
-    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
+    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (ss->getA());
+    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
 
     memStruct->lowerXM.setZero();
 
@@ -250,8 +252,8 @@ void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TSt
     const long n = ss->stateDim();
     const long m = ss->inputDim();
 
-    memStruct->upperXM.block(0, 0, n, n) << (*ss->getA());
-    memStruct->upperXM.block(0, n, n, m) << (*ss->getB());
+    memStruct->upperXM.block(0, 0, n, n) << (ss->getA());
+    memStruct->upperXM.block(0, n, n, m) << (ss->getB());
 
     memStruct->lowerXM.setZero();
     memStruct->lowerXM.block(0, n, m, m).setIdentity();
@@ -274,8 +276,8 @@ void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TSt
 {
     dt = abs(dt);
 
-    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (*ss->getA());
-    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (*ss->getB());
+    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (ss->getA());
+    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
 
     memStruct->lowerXM.setZero();
     memStruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim)
