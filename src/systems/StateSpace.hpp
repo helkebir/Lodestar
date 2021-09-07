@@ -384,15 +384,14 @@ namespace ls {
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::StateSpace(
-        const StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &other)
-{
-    *A_ = other.getA();
-    *B_ = other.getB();
-    *C_ = other.getC();
-    *D_ = other.getD();
-    dt_ = other.getSamplingPeriod();
-    isDiscrete_ = other.isDiscrete();
-}
+        const StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &other):
+        A_(new TDStateMatrix(other.getA())),
+        B_(new TDInputMatrix(other.getB())),
+        C_(new TDOutputMatrix(other.getC())),
+        D_(new TDFeedforwardMatrix(other.getD())),
+        dt_(other.getSamplingPeriod()),
+        isDiscrete_(other.isDiscrete())
+{}
 
 // TODO: Replace constructors by Eigen::EigenBase<*>
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -628,9 +627,18 @@ bool ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>::isStabl
 {
     auto eig = A_->eigenvalues();
 
-    for (int i = 0; i < eig.size(); i++) {
-        if (eig(i).real() > tolerance)
-            return false;
+    if (isDiscrete()) {
+        double tol = (tolerance < 0 ? -tolerance * tolerance : tolerance * tolerance);
+
+        for (int i = 0; i < eig.size(); i++) {
+            if (eig(i).real() * eig(i).real() + eig(i).imag() * eig(i).imag() > 1 + tol)
+                return false;
+        }
+    } else {
+        for (int i = 0; i < eig.size(); i++) {
+            if (eig(i).real() > -tolerance)
+                return false;
+        }
     }
 
     return true;
