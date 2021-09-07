@@ -111,3 +111,15 @@ ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> &ss, double dt)
 {
     return d2c(&ss, dt);
 }
+
+ls::systems::StateSpace<>
+ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> *ss)
+{
+    return d2c(ss, ss->getSamplingPeriod());
+}
+
+ls::systems::StateSpace<>
+ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<> &ss)
+{
+    return d2c(&ss);
+}

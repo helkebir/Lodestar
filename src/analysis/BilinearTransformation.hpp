@@ -281,7 +281,7 @@ ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar,
     out->setB(memStruct->HH.template solve(dt * (ss->getB())));
     out->setC(memStruct->HH2.template solve((ss->getC()).transpose()).transpose());
     out->setD((ss->getD()) + alpha * (ss->getC()) * (out->getB()));
-    out->setSamplingPeriod(dt);
+    out->setDiscreteParams(dt, true);
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -305,7 +305,7 @@ ls::analysis::BilinearTransformation::c2d(const ls::systems::StateSpace<TScalar,
     out->setB(memStruct->HH.template solve(dt * (ss->getB())));
     out->setC(memStruct->HH2.template solve((ss->getC()).transpose()).transpose());
     out->setD((ss->getD()) + alpha * (ss->getC()) * (*out->getB()));
-    out->setSamplingPeriod(dt);
+    out->setDiscreteParams(dt, true);
 }
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>

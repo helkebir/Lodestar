@@ -33,7 +33,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param A TState matrix.
+             * @param A State matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -49,7 +49,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param A TState matrix.
+             * @param A State matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -77,7 +77,7 @@ namespace ls {
              * @brief Generates zero-order hold discretization from a
              * continuous-time state space system.
              *
-             * @param ss TState space system.
+             * @param ss State space system.
              * @param dt Sampling period.
              *
              * @return Zero-order hold discrete-time state space system.
@@ -100,7 +100,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param A TState matrix.
+             * @param A State matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -116,7 +116,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param A TState matrix.
+             * @param A State matrix.
              * @param B Input matrix.
              * @param C Output matrix.
              * @param D Feedforward matrix.
@@ -132,7 +132,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss TState space system.
+             * @param ss State space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -144,7 +144,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss TState space system.
+             * @param ss State space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -156,7 +156,37 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss TState space system.
+             * This method retrieves the sampling period from the state space
+             * object.
+             *
+             * @param ss State space system.
+             * @param dt Sampling period.
+             *
+             * @return Continuous-time state space system.
+             */
+            static systems::StateSpace<>
+            d2c(const systems::StateSpace<> *ss);
+
+            /**
+             * @brief Reverts a zero-order hold discretization on a
+             * discrete-time state space system.
+             *
+             * This method retrieves the sampling period from the state space
+             * object.
+             *
+             * @param ss State space system.
+             * @param dt Sampling period.
+             *
+             * @return Continuous-time state space system.
+             */
+            static systems::StateSpace<>
+            d2c(const systems::StateSpace<> &ss);
+
+            /**
+             * @brief Reverts a zero-order hold discretization on a
+             * discrete-time state space system.
+             *
+             * @param ss State space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
@@ -171,7 +201,7 @@ namespace ls {
              * @brief Reverts a zero-order hold discretization on a
              * discrete-time state space system.
              *
-             * @param ss TState space system.
+             * @param ss State space system.
              * @param dt Sampling period.
              *
              * @return Continuous-time state space system.
