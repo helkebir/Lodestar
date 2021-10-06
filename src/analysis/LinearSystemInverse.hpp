@@ -19,7 +19,7 @@ namespace ls {
         class LinearSystemInverse {
         public:
             /**
-             * @brief Generates the inverse of a state space system.
+             * @brief Generates the inverse of a continuous-time state space system
              *
              * @param ss Pointer to state space system.
              * @param out Output of inverted state space system.
@@ -29,9 +29,9 @@ namespace ls {
                                 systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
 
             /**
-             * @brief Generates the inverse of a state space system.
+             * @brief Generates the inverse of a continuous-time state space system
              *
-             * @param ss TState space system.
+             * @param ss State space system.
              * @param out Output of inverted state space system.
              */
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
@@ -39,7 +39,7 @@ namespace ls {
                                 systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
 
             /**
-             * @brief Generates the inverse of a state space system.
+             * @brief Generates the inverse of a continuous-time state space system
              *
              * @param ss Pointer to state space system.
              *
@@ -49,7 +49,7 @@ namespace ls {
             inverse(const systems::StateSpace<> *ss);
 
             /**
-             * @brief Generates the inverse of a state space system.
+             * @brief Generates the inverse of a continuous-time state space system
              *
              * @param ss TState space system.
              *
@@ -61,6 +61,7 @@ namespace ls {
     }
 }
 
+// TODO: Return status in case system is not invertible or is in discrete-time
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void
 ls::analysis::LinearSystemInverse::inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
