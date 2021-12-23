@@ -47,6 +47,18 @@ constexpr T Kmax2(const T a, const T b, const T c)
     return (a >= b ? a : c);
 }
 
+template <typename TInt, typename TFloat>
+constexpr TInt ceil(TFloat f)
+{
+    return f > static_cast<TFloat>(f) ? static_cast<TFloat>(f) + 1 : static_cast<TFloat>(f);
+}
+
+template <typename TInt, typename TFloat>
+constexpr TInt floor(TFloat f)
+{
+    return f < static_cast<TFloat>(f) ? static_cast<TFloat>(f) - 1 : static_cast<TFloat>(f);
+}
+
 #define LS_STATIC_UNLESS_DYNAMIC(DIM) Kmax(-1, DIM)
 
 #define LS_STATIC_UNLESS_DYNAMIC_VAL(DIM, VAL) Kmax2(-1, DIM, VAL)

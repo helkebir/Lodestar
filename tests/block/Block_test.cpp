@@ -143,7 +143,7 @@ TEST_CASE("Block Demo", "[block][static]") {
     std::cout << "O2: " << block.getOutput<2>() << std::endl;
 }
 
-TEST_CASE("MuxBlock", "[block][static]") {
+TEST_CASE("MuxBlock [old]", "[block][static]") {
     auto mux = ls::block::MuxBlock<double, 3>{};
 
     SECTION("Mux outputs") {
