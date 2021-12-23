@@ -78,6 +78,21 @@ namespace ls {
             }
 
             template <typename TObject2, typename std::enable_if<std::is_convertible<TObject2, TObject>::value, TObject2>::type* = nullptr>
+            Signal<TObject>& operator=(const TObject2 &obj)
+            {
+                object = obj;
+                propagate();
+                return *this;
+            }
+
+            template <typename TObject2, typename std::enable_if<!std::is_convertible<TObject2, TObject>::value, TObject2>::type* = nullptr>
+            Signal<Object>& operator=(const TObject2 &obj)
+            {
+                static_assert(std::is_convertible<TObject2, TObject>::value, "Signal object type is not convertible.");
+                return *this;
+            }
+
+            template <typename TObject2, typename std::enable_if<std::is_convertible<TObject2, TObject>::value, TObject2>::type* = nullptr>
             Signal<TObject>& operator=(const Signal<TObject2> &signal)
             {
                 object = signal.object;
