@@ -25,8 +25,9 @@ namespace ls {
              * @param out Output of inverted state space system.
              */
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
-                                systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
+            static void
+            inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
+                    systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
 
             /**
              * @brief Generates the inverse of a continuous-time state space system
@@ -35,8 +36,9 @@ namespace ls {
              * @param out Output of inverted state space system.
              */
             template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
-            static void inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &ss,
-                                systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
+            static void
+            inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &ss,
+                    systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out);
 
             /**
              * @brief Generates the inverse of a continuous-time state space system
@@ -64,10 +66,12 @@ namespace ls {
 // TODO: Return status in case system is not invertible or is in discrete-time
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void
-ls::analysis::LinearSystemInverse::inverse(const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
-                                           systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out)
+ls::analysis::LinearSystemInverse::inverse(
+        const systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> *ss,
+        systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out)
 {
-    out->setA((ss->getA()) - (ss->getB()) * (ss->getD()).inverse() * (ss->getC()));
+    out->setA((ss->getA()) -
+              (ss->getB()) * (ss->getD()).inverse() * (ss->getC()));
     out->setB(-(ss->getB()) * (ss->getD()).inverse());
     out->setC((ss->getD()).inverse() * (ss->getC()));
     out->setD((ss->getD()).inverse());
@@ -75,8 +79,9 @@ ls::analysis::LinearSystemInverse::inverse(const systems::StateSpace<TScalar, TS
 
 template<typename TScalar, int TStateDim, int TInputDim, int TOutputDim>
 void
-ls::analysis::LinearSystemInverse::inverse(const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &ss,
-                                           ls::systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out)
+ls::analysis::LinearSystemInverse::inverse(
+        const ls::systems::StateSpace<TScalar, TStateDim, TInputDim, TOutputDim> &ss,
+        ls::systems::StateSpace<TScalar, TStateDim, TOutputDim, TInputDim> *out)
 {
     inverse(&ss, out);
 }

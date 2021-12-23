@@ -38,7 +38,7 @@ constexpr T &Kmin(T a, T b)
 template<class T>
 constexpr T &Kmax(const T &a, const T &b)
 {
-    return (int &) (a > b ? a : b);
+    return (int &) (a >= b ? a : b);
 }
 
 template<class T>

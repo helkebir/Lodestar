@@ -45,10 +45,10 @@ TEST_CASE("6-DOF Demo", "[demo]")
     ls::systems::StateSpace<> ss(A, B, Eigen::Matrix<double, 13, 13>::Identity(), Eigen::Matrix<double, 13, 13>::Zero());
     auto dss = ls::analysis::ZeroOrderHold::c2d(ss, dt);
 
-    std::cout << "Continuous time system\nA:\n" << (*ss.getA()) << "\nB:\n" << (*ss.getB()) << "\nC:\n" << (*ss.getC())
-              << "\nD:\n" << (*ss.getD()) << std::endl;
-    std::cout << "\nDiscrete time system\nA:\n" << (*dss.getA()) << "\nB:\n" << (*dss.getB()) << "\nC:\n"
-              << (*dss.getC()) << "\nD:\n" << (*dss.getD()) << std::endl;
+    std::cout << "Continuous time system\nA:\n" << (ss.getA()) << "\nB:\n" << (ss.getB()) << "\nC:\n" << (ss.getC())
+              << "\nD:\n" << (ss.getD()) << std::endl;
+    std::cout << "\nDiscrete time system\nA:\n" << (dss.getA()) << "\nB:\n" << (dss.getB()) << "\nC:\n"
+              << (dss.getC()) << "\nD:\n" << (dss.getD()) << std::endl;
 
     Eigen::Matrix<double, 13, 13> Q;
     Eigen::Matrix<double, 13, 13> R;
@@ -93,7 +93,7 @@ TEST_CASE("6-DOF Demo", "[demo]")
         U = -K * (X - Xdes);
 //        U = u0 + u;
 
-        X = (*dss.getA()) * X + (*dss.getB()) * U;
+        X = (dss.getA()) * X + (dss.getB()) * U;
 //        X = x0 + x;
 
 //        Eigen::Map<Eigen::Matrix<double, 13, 1>>(xArray, 13, 1) = X;
