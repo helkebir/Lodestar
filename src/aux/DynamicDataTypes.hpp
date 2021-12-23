@@ -20,47 +20,15 @@ namespace ls {
                 doubleType,
                 longType,
                 charType,
-                stringType
+                stringType,
+                unknownType
             };
 
             template<typename TType>
             struct type_to_enum {
-                //        static_assert(false, "Unknown dynamic type.");
-            };
-
-            template<>
-            struct type_to_enum<int> {
-                static constexpr Types type = Types::intType;
-            };
-
-            template<>
-            struct type_to_enum<bool> {
-                static constexpr Types type = Types::boolType;
-            };
-
-            template<>
-            struct type_to_enum<float> {
-                static constexpr Types type = Types::floatType;
-            };
-
-            template<>
-            struct type_to_enum<double> {
-                static constexpr Types type = Types::doubleType;
-            };
-
-            template<>
-            struct type_to_enum<long> {
-                static constexpr Types type = Types::longType;
-            };
-
-            template<>
-            struct type_to_enum<std::string> {
-                static constexpr Types type = Types::stringType;
-            };
-
-            template<>
-            struct type_to_enum<char> {
-                static constexpr Types type = Types::charType;
+                static constexpr Types type = Types::unknownType;
+                static_assert(type == Types::unknownType,
+                              "Unknown dynamic type; please define a suitable DynamicDataType.");
             };
         };
     }
