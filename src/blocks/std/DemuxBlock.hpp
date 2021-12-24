@@ -2,8 +2,8 @@
 // Created by Hamza El-Kebir on 12/23/21.
 //
 
-#ifndef LODESTAR_MUXBLOCK_HPP
-#define LODESTAR_MUXBLOCK_HPP
+#ifndef LODESTAR_DEMUXBLOCK_HPP
+#define LODESTAR_DEMUXBLOCK_HPP
 
 #include "blocks/Block.hpp"
 #include "aux/TemplateTools.hpp"
@@ -13,58 +13,58 @@
 namespace ls {
     namespace blocks {
         namespace std {
-            enum class MuxBlockOperator {
+            enum class DemuxBlockOperator {
                 RowMajor,
                 ColMajor
             };
 
-            template<typename TWrapper, MuxBlockOperator TOps = MuxBlockOperator::RowMajor>
-            class MuxBlock :
+            template<typename TWrapper, DemuxBlockOperator TOps = DemuxBlockOperator::RowMajor>
+            class DemuxBlock :
                     public Block<
                             ::std::tuple<TWrapper>,
                             ::std::tuple<TWrapper>,
-                            BlockProto::empty
+                            ::std::tuple<DemuxBlockOperator>
                     > {
                 static_assert(true,
                               "MuxBlock not defined for this wrapper.");
             };
 
             // TODO: Look into support for dynamically size matrices.
-            template<typename TScalar, int TRows, int TCols, MuxBlockOperator TOps>
-            class MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps> :
+            template<typename TScalar, int TRows, int TCols, DemuxBlockOperator TOps>
+            class DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps> :
                     public Block<
+                            ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
                             typename aux::TemplateTools::repeat<TScalar,
                                     TRows * TCols, ::std::tuple>::type,
-                            ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
-                            ::std::tuple<MuxBlockOperator>
+                            ::std::tuple<DemuxBlockOperator>
                     > {
             public:
                 using Base =
                 Block<
+                        ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
                         typename aux::TemplateTools::repeat<TScalar,
                                 TRows * TCols, ::std::tuple>::type,
-                        ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
-                        ::std::tuple<MuxBlockOperator>
+                        ::std::tuple<DemuxBlockOperator>
                 >;
 
-                MuxBlock()
+                DemuxBlock()
                 {
                     setOperator(TOps);
                     bindEquation();
                 }
 
-                explicit MuxBlock(const MuxBlockOperator ops)
+                explicit DemuxBlock(const DemuxBlockOperator ops)
                 {
                     setOperator(ops);
                     bindEquation();
                 }
 
-                void setOperator(const MuxBlockOperator ops)
+                void setOperator(const DemuxBlockOperator ops)
                 {
                     this->template p<0>() = ops;
                 }
 
-                MuxBlockOperator getOperator() const
+                DemuxBlockOperator getOperator() const
                 {
                     return this->template p<0>();
                 }
@@ -73,7 +73,7 @@ namespace ls {
                 void bindEquation()
                 {
                     this->equation = ::std::bind(
-                            &MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>::triggerFunction,
+                            &DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>::triggerFunction,
                             this,
                             ::std::placeholders::_1
                     );
@@ -81,81 +81,80 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    set();
+                    get();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx > 0), void>::type
-                set()
+                get()
                 {
                     switch (getOperator()) {
-                        case MuxBlockOperator::RowMajor:
-                            this->template o<0>().object(
+                        case DemuxBlockOperator::RowMajor:
+                            this->template o<TIdx>() = this->template i<0>().object(
                                     floor<int, double>(TIdx / TCols),
                                     TIdx -
-                                    floor<int, double>(TIdx / TCols) * TCols)
-                                    = this->template i<TIdx>();
+                                    floor<int, double>(TIdx / TCols) * TCols
+                            );
                             break;
-                        case MuxBlockOperator::ColMajor:
-                            this->template o<0>().object(
+                        case DemuxBlockOperator::ColMajor:
+                            this->template o<TIdx>() = this->template i<0>().object(
                                     TIdx -
                                     floor<int, double>(TIdx / TRows) * TRows,
-                                    floor<int, double>(TIdx / TRows))
-                                    = this->template i<TIdx>();
+                                    floor<int, double>(TIdx / TRows));
                             break;
                     }
-                    return set<TIdx - 1>();
+                    return get<TIdx - 1>();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx == 0), void>::type
-                set()
+                get()
                 {
-                    this->template o<0>().object(0,
-                                                 0) = this->template i<TIdx>();
+                    this->template o<TIdx>() = this->template i<0>().object(0,
+                                                                            0);
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx < 0), void>::type
-                set()
+                get()
                 {
                     return;
                 }
             };
 
-            template<typename... TTypes, MuxBlockOperator TOps>
-            class MuxBlock<::std::tuple<TTypes...>, TOps> :
+            template<typename... TTypes, DemuxBlockOperator TOps>
+            class DemuxBlock<::std::tuple<TTypes...>, TOps> :
                     public Block<
-                            ::std::tuple<TTypes...>,
                             ::std::tuple<::std::tuple<TTypes...>>,
-                            ::std::tuple<MuxBlockOperator>
+                            ::std::tuple<TTypes...>,
+                            ::std::tuple<DemuxBlockOperator>
                     > {
             public:
                 using Base =
                 Block<
-                        ::std::tuple<TTypes...>,
                         ::std::tuple<::std::tuple<TTypes...>>,
-                        ::std::tuple<MuxBlockOperator>
+                        ::std::tuple<TTypes...>,
+                        ::std::tuple<DemuxBlockOperator>
                 >;
 
-                MuxBlock()
+                DemuxBlock()
                 {
                     setOperator(TOps);
                     bindEquation();
                 }
 
-                explicit MuxBlock(const MuxBlockOperator ops)
+                explicit DemuxBlock(const DemuxBlockOperator ops)
                 {
                     setOperator(ops);
                     bindEquation();
                 }
 
-                void setOperator(const MuxBlockOperator ops)
+                void setOperator(const DemuxBlockOperator ops)
                 {
                     this->template p<0>() = ops;
                 }
 
-                MuxBlockOperator getOperator() const
+                DemuxBlockOperator getOperator() const
                 {
                     return this->template p<0>();
                 }
@@ -164,7 +163,7 @@ namespace ls {
                 void bindEquation()
                 {
                     this->equation = ::std::bind(
-                            &MuxBlock<::std::tuple<TTypes...>, TOps>::triggerFunction,
+                            &DemuxBlock<::std::tuple<TTypes...>, TOps>::triggerFunction,
                             this,
                             ::std::placeholders::_1
                     );
@@ -172,30 +171,29 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    set();
+                    get();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx > 0), void>::type
-                set()
+                get()
                 {
-                    ::std::get<TIdx>(
-                            this->template o<0>().object) = this->template i<TIdx>().object;
-                    return set<TIdx - 1>();
+                    this->template o<TIdx>() = ::std::get<TIdx>(
+                            this->template i<0>().object);
+                    return get<TIdx - 1>();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx == 0), void>::type
-                set()
+                get()
                 {
-                    ::std::get<TIdx>(
-                            this->template o<0>().object) = this->template i<TIdx>().object;
-                    this->template o<0>().propagate();
+                    this->template o<TIdx>() = ::std::get<TIdx>(
+                            this->template i<0>().object);
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = Base::kOuts - 1>
                 typename ::std::enable_if<(TIdx < 0), void>::type
-                set()
+                get()
                 {
                     return;
                 }
@@ -205,4 +203,4 @@ namespace ls {
 }
 
 
-#endif //LODESTAR_MUXBLOCK_HPP
+#endif //LODESTAR_DEMUXBLOCK_HPP

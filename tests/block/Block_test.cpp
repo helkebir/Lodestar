@@ -180,7 +180,7 @@ TEST_CASE("MuxBlock [old]", "[block][static]") {
 #include "aux/TypeName.hpp"
 #include "block/std/Multiply.hpp"
 
-TEST_CASE("DemuxBlock", "[block][static]") {
+TEST_CASE("DemuxBlock [old]", "[block][static]") {
     Eigen::Matrix<double, 3, 1> vec;
     auto demux = ls::block::DemuxBlock<double, 3>{vec};
     vec.setZero();
