@@ -45,8 +45,8 @@ TEST_CASE("ReImToComplexBlock vector", "[blocks][std]")
 
         ricb.trigger();
 
-        REQUIRE((ricb.o<0>().object.real() - v1).norm() == Approx(0));
-        REQUIRE((ricb.o<0>().object.imag() - v2).norm() == Approx(0));
+        REQUIRE((ricb.o<0>().object.real() - v1).isZero());
+        REQUIRE((ricb.o<0>().object.imag() - v2).isZero());
     }
 
     SECTION("Alias accessors") {
@@ -55,7 +55,7 @@ TEST_CASE("ReImToComplexBlock vector", "[blocks][std]")
 
         ricb.trigger();
 
-        REQUIRE((ricb.o<0>().object.real() - v1).norm() == Approx(0));
-        REQUIRE((ricb.o<0>().object.imag() - v2).norm() == Approx(0));
+        REQUIRE((ricb.o<0>().object.real() - v1).isZero());
+        REQUIRE((ricb.o<0>().object.imag() - v2).isZero());
     }
 }
