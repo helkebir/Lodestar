@@ -30,6 +30,188 @@ namespace ls {
                               "SaturationBlock not defined for this type.");
             };
 
+            template<typename TType, SaturationBlockOperator TOps>
+            class SaturationBlock<
+                    TType,
+                    TOps,
+                    SaturationBlockParameter::Parametric
+            > :
+                    public Block<
+                            ::std::tuple<TType>,
+                            ::std::tuple<TType>,
+                            ::std::tuple<TType, TType>
+                    > {
+            public:
+                using type =
+                SaturationBlock<
+                        TType,
+                        TOps,
+                        SaturationBlockParameter::Parametric
+                >;
+
+                using Base =
+                Block<
+                        ::std::tuple<TType>,
+                        ::std::tuple<TType>,
+                        ::std::tuple<TType, TType>
+                >;
+
+                SaturationBlock()
+                {
+                    bindEquation();
+                }
+
+                TType &lower()
+                {
+                    return this->template p<0>();
+                }
+
+                TType &lower(const TType lo)
+                {
+                    this->template p<0>() = lo;
+                    return this->template p<0>();
+                }
+
+                TType lower() const
+                {
+                    return this->template p<0>();
+                }
+
+                TType &upper()
+                {
+                    return this->template p<1>();
+                }
+
+                TType &upper(const TType up)
+                {
+                    this->template p<1>() = up;
+                    return this->template p<1>();
+                }
+
+                TType upper() const
+                {
+                    return this->template p<1>();
+                }
+
+            protected:
+                void bindEquation()
+                {
+                    this->equation = ::std::bind(
+                            &type::triggerFunction,
+                            this,
+                            ::std::placeholders::_1
+                    );
+                }
+
+                TType saturate(const TType x) const
+                {
+                    return (x < lower() ? lower() :
+                            (x > upper() ? upper() : x));
+                }
+
+                void triggerFunction(Base &b)
+                {
+                    b.template o<0>() = saturate(b.template i<0>().object);
+                }
+            };
+
+            template<typename TType, SaturationBlockOperator TOps>
+            class SaturationBlock<
+                    TType,
+                    TOps,
+                    SaturationBlockParameter::AdditionalInput
+            > :
+                    public Block<
+                            ::std::tuple<TType, TType, TType>,
+                            ::std::tuple<TType>,
+                            ::std::tuple<TType>
+                    > {
+            public:
+                using type =
+                SaturationBlock<
+                        TType,
+                        TOps,
+                        SaturationBlockParameter::AdditionalInput
+                >;
+
+                using Base =
+                Block<
+                        ::std::tuple<TType, TType, TType>,
+                        ::std::tuple<TType>,
+                        ::std::tuple<TType>
+                >;
+
+                SaturationBlock()
+                {
+                    bindEquation();
+                }
+
+                Signal<TType> &lower()
+                {
+                    return this->template i<1>();
+                }
+
+                Signal<TType> &lower(const TType &lo)
+                {
+                    this->template i<1>() = lo;
+                    return this->template i<1>();
+                }
+
+                Signal<TType> &lower(const Signal<TType> &lo)
+                {
+                    this->template i<1>() = lo;
+                    return this->template i<1>();
+                }
+
+                const Signal<TType> &lower() const
+                {
+                    return this->template i<1>();
+                }
+
+                Signal<TType> &upper()
+                {
+                    return this->template i<2>();
+                }
+
+                Signal<TType> &upper(const TType &up)
+                {
+                    this->template i<2>() = up;
+                    return this->template i<2>();
+                }
+
+                Signal<TType> &upper(const Signal<TType> up)
+                {
+                    this->template i<2>() = up;
+                    return this->template i<2>();
+                }
+
+                const Signal<TType> &upper() const
+                {
+                    return this->template i<2>();
+                }
+
+            protected:
+                void bindEquation()
+                {
+                    this->equation = ::std::bind(
+                            &type::triggerFunction,
+                            this,
+                            ::std::placeholders::_1
+                    );
+                }
+
+                TType saturate(const TType x) const
+                {
+                    return (x < lower().object ? lower().object :
+                            (x > upper().object ? upper().object : x));
+                }
+
+                void triggerFunction(Base &b)
+                {
+                    b.template o<0>() = saturate(b.template i<0>().object);
+                }
+            };
+
             template<typename TScalar, int TRows, int TCols>
             class SaturationBlock<
                     Eigen::Matrix<TScalar, TRows, TCols>,
@@ -103,7 +285,7 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x)
+                TScalar saturate(const TScalar x) const
                 {
                     return (x < lower() ? lower() :
                             (x > upper() ? upper() : x));
@@ -206,7 +388,7 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x)
+                TScalar saturate(const TScalar x) const
                 {
                     return (x < lower().object ? lower().object :
                             (x > upper().object ? upper().object : x));
@@ -299,7 +481,7 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x, int i = 0, int j = 0)
+                TScalar saturate(const TScalar x, int i = 0, int j = 0) const
                 {
                     return (x < lower()(i, j) ? lower()(i, j) :
                             (x > upper()(i, j) ? upper()(i, j) : x));
@@ -420,7 +602,7 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x, int i = 0, int j = 0)
+                TScalar saturate(const TScalar x, int i = 0, int j = 0) const
                 {
                     return (x < lower().object(i, j) ? lower().object(i, j) :
                             (x > upper().object(i, j) ? upper().object(i, j)

@@ -8,6 +8,30 @@
 
 TEST_CASE("SaturationBlock", "[blocks][std]")
 {
+    SECTION("Parametric input") {
+        ls::blocks::std::SaturationBlock<double> sb;
+
+        sb.lower() = -1;
+        sb.upper() = 1;
+
+        sb.i<0>() = 3;
+        sb.trigger();
+
+        REQUIRE(sb.o<0>().object == Approx(1));
+    }
+
+    SECTION("Additional input") {
+        ls::blocks::std::SaturationBlock<double, ls::blocks::std::SaturationBlockOperator::Scalar, ls::blocks::std::SaturationBlockParameter::AdditionalInput> sb;
+
+        sb.lower() = -1;
+        sb.upper() = 1;
+
+        sb.i<0>() = 3;
+        sb.trigger();
+
+        REQUIRE(sb.o<0>().object == Approx(1));
+    }
+
     SECTION("Scalar and parametric input") {
         ls::blocks::std::SaturationBlock<Eigen::Vector2d> sb;
 
