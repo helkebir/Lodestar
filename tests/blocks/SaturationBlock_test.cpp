@@ -79,4 +79,9 @@ TEST_CASE("SaturationBlock", "[blocks][std]")
         REQUIRE(sb.o<0>().object(2) == Approx(0));
         REQUIRE(sb.o<0>().object(3) == Approx(5));
     }
+
+    SECTION("Type alias") {
+        REQUIRE(::std::is_same<ls::blocks::std::SaturationBlockDynamic<Eigen::Vector4d, ls::blocks::std::SaturationBlockOperator::Elementwise>, ls::blocks::std::SaturationBlock<Eigen::Vector4d, ls::blocks::std::SaturationBlockOperator::Elementwise, ls::blocks::std::SaturationBlockParameter::AdditionalInput>>::value);
+        REQUIRE(::std::is_same<ls::blocks::std::SaturationBlockDynamic<Eigen::Vector4d, ls::blocks::std::SaturationBlockOperator::Scalar>, ls::blocks::std::SaturationBlock<Eigen::Vector4d, ls::blocks::std::SaturationBlockOperator::Scalar, ls::blocks::std::SaturationBlockParameter::AdditionalInput>>::value);
+    }
 }

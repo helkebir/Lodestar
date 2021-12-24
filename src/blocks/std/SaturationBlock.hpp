@@ -25,7 +25,9 @@ namespace ls {
             template<typename TType,
                     SaturationBlockOperator TOps = SaturationBlockOperator::Scalar,
                     SaturationBlockParameter TPar = SaturationBlockParameter::Parametric>
-            class SaturationBlock;
+            class SaturationBlock {
+                static_assert(::std::is_same<TType, TType>::value, "SaturationBlock not defined for this type.");
+            };
 
             template<typename TScalar, int TRows, int TCols>
             class SaturationBlock<
@@ -446,6 +448,9 @@ namespace ls {
                     b.template o<0>().propagate();
                 }
             };
+
+            template<typename TType, SaturationBlockOperator TOps>
+            using SaturationBlockDynamic = SaturationBlock<TType, TOps, SaturationBlockParameter::AdditionalInput>;
         }
     }
 }
