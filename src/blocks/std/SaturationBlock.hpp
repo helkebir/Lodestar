@@ -26,7 +26,8 @@ namespace ls {
                     SaturationBlockOperator TOps = SaturationBlockOperator::Scalar,
                     SaturationBlockParameter TPar = SaturationBlockParameter::Parametric>
             class SaturationBlock {
-                static_assert(::std::is_same<TType, TType>::value, "SaturationBlock not defined for this type.");
+                static_assert(::std::is_same<TType, TType>::value,
+                              "SaturationBlock not defined for this type.");
             };
 
             template<typename TScalar, int TRows, int TCols>
@@ -110,11 +111,13 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>() = b.template i<0>().object.unaryExpr(::std::bind(
-                            &type::saturate,
-                            this,
-                            ::std::placeholders::_1
-                    ));
+                    b.template o<0>() = b.template i<0>().object.unaryExpr(
+                            ::std::bind(
+                                    &type::saturate,
+                                    this,
+                                    ::std::placeholders::_1
+                            )
+                    );
                 }
             };
 
@@ -211,11 +214,13 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>() = b.template i<0>().object.unaryExpr(::std::bind(
-                            &type::saturate,
-                            this,
-                            ::std::placeholders::_1
-                    ));
+                    b.template o<0>() = b.template i<0>().object.unaryExpr(
+                            ::std::bind(
+                                    &type::saturate,
+                                    this,
+                                    ::std::placeholders::_1
+                            )
+                    );
                 }
             };
 
@@ -294,10 +299,10 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x, int i=0, int j=0)
+                TScalar saturate(TScalar x, int i = 0, int j = 0)
                 {
-                    return (x < lower()(i,j) ? lower()(i,j) :
-                            (x > upper()(i,j) ? upper()(i,j) : x));
+                    return (x < lower()(i, j) ? lower()(i, j) :
+                            (x > upper()(i, j) ? upper()(i, j) : x));
                 }
 
                 int row(int idx) const
@@ -316,7 +321,7 @@ namespace ls {
                     int i = 0;
                     int j = 0;
 
-                    for (auto x : b.template i<0>().object.reshaped()) {
+                    for (auto x: b.template i<0>().object.reshaped()) {
                         i = row(idx);
                         j = col(idx);
 
@@ -415,10 +420,11 @@ namespace ls {
                     );
                 }
 
-                TScalar saturate(TScalar x, int i=0, int j=0)
+                TScalar saturate(TScalar x, int i = 0, int j = 0)
                 {
-                    return (x < lower().object(i,j) ? lower().object(i,j) :
-                            (x > upper().object(i,j) ? upper().object(i,j) : x));
+                    return (x < lower().object(i, j) ? lower().object(i, j) :
+                            (x > upper().object(i, j) ? upper().object(i, j)
+                                                      : x));
                 }
 
                 int row(int idx) const
@@ -437,7 +443,7 @@ namespace ls {
                     int i = 0;
                     int j = 0;
 
-                    for (auto x : b.template i<0>().object.reshaped()) {
+                    for (auto x: b.template i<0>().object.reshaped()) {
                         i = row(idx);
                         j = col(idx);
 

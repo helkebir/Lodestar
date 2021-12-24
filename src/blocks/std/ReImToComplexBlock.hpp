@@ -183,7 +183,9 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>().object = real().object + ::std::complex<TScalar>(0, 1) * imag().object;
+                    b.template o<0>().object = real().object +
+                                               ::std::complex<TScalar>(0, 1) *
+                                               imag().object;
                 }
             };
         }
