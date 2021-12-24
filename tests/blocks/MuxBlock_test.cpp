@@ -38,11 +38,22 @@ TEST_CASE("MuxBlock", "[blocks][std]")
         REQUIRE(mb.o<0>().object(1, 1) == 4);
     }
 
-    SECTION("Vector") {
+    SECTION("Vector standard accessors") {
         ls::blocks::std::MuxBlock<Eigen::Vector2d> mb;
 
         mb.i<0>() = 1;
         mb.i<1>() = 2;
+        mb.trigger();
+
+        REQUIRE(mb.o<0>().object(0) == 1);
+        REQUIRE(mb.o<0>().object(1) == 2);
+    }
+
+    SECTION("Vector alias accessors") {
+        ls::blocks::std::MuxBlock<Eigen::Vector2d> mb;
+
+        mb.x() = 1;
+        mb.y() = 2;
         mb.trigger();
 
         REQUIRE(mb.o<0>().object(0) == 1);

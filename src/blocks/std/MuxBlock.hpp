@@ -18,15 +18,15 @@ namespace ls {
                 ColMajor
             };
 
-            template<typename TWrapper, MuxBlockOperator TOps = MuxBlockOperator::RowMajor>
+            template<typename TType, MuxBlockOperator TOps = MuxBlockOperator::RowMajor>
             class MuxBlock :
                     public Block<
-                            ::std::tuple<TWrapper>,
-                            ::std::tuple<TWrapper>,
+                            ::std::tuple<TType>,
+                            ::std::tuple<TType>,
                             BlockProto::empty
                     > {
                 static_assert(true,
-                              "MuxBlock not defined for this wrapper.");
+                              "MuxBlock not defined for this type.");
             };
 
             // TODO: Look into support for dynamically size matrices.
@@ -69,6 +69,198 @@ namespace ls {
                     return this->template p<0>();
                 }
 
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                ((TTRows * TTCols > 0) &&
+                                 ((TTRows == 1) ||
+                                  (TTCols == 1))), void *>::type * = nullptr>
+                Signal<TScalar> &x()
+                {
+                    return this->template i<0>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 0) &&
+                                  ((TTRows == 1) ||
+                                   (TTCols == 1))), void *>::type * = nullptr>
+                Signal<TScalar> &x()
+                {
+                    static_assert(
+                            (TTRows * TTCols > 0) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 1 input and/or does not map to a 1D object.");
+                    return this->template i<0>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                ((TTRows * TTCols > 0) &&
+                                 (TTRows == 1 ||
+                                  TTCols == 1)), void *>::type * = nullptr>
+                const Signal<TScalar> &x() const
+                {
+                    return this->template i<0>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 0) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                const Signal<TScalar> &x() const
+                {
+                    static_assert(
+                            (TTRows * TTCols > 0) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 1 input and/or does not map to a 1D object.");
+                    return this->template i<0>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 1) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                Signal<TScalar> &y()
+                {
+                    return this->template i<1>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 1) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                Signal<TScalar> &y()
+                {
+                    static_assert(
+                            (TTRows * TTCols > 1) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 2 inputs and/or does not map to a 1D object.");
+                    return this->template i<1>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 1) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                const Signal<TScalar> &y() const
+                {
+                    return this->template i<1>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 1) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                const Signal<TScalar> &y() const
+                {
+                    static_assert(
+                            (TTRows * TTCols > 1) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 2 inputs and/or does not map to a 1D object.");
+                    return this->template i<1>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 2) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                Signal<TScalar> &z()
+                {
+                    return this->template i<2>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 2) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                Signal<TScalar> &z()
+                {
+                    static_assert(
+                            (TTRows * TCols > 2) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 3 inputs and/or does not map to a 1D object.");
+                    return this->template i<2>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 2) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                const Signal<TScalar> &z() const
+                {
+                    return this->template i<2>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 2) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                const Signal<TScalar> &z() const
+                {
+                    static_assert(
+                            (TTRows * TTCols > 2) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 3 inputs and/or does not map to a 1D object.");
+                    return this->template i<2>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 3) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                Signal<TScalar> &w()
+                {
+                    return this->template i<3>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 3) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                Signal<TScalar> &w()
+                {
+                    static_assert(
+                            (TTRows * TTCols > 3) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 4 inputs and/or does not map to a 1D object.");
+                    return this->template i<3>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                (TTRows * TTCols > 3) &&
+                                (TTRows == 1 ||
+                                 TTCols == 1), void *>::type * = nullptr>
+                const Signal<TScalar> &w() const
+                {
+                    return this->template i<3>();
+                }
+
+                template<int TTRows = TRows, int TTCols = TCols,
+                        typename ::std::enable_if<
+                                !((TTRows * TTCols > 3) &&
+                                  (TTRows == 1 ||
+                                   TTCols == 1)), void *>::type * = nullptr>
+                const Signal<TScalar> &w() const
+                {
+                    static_assert(
+                            (TTRows * TTCols > 3) &&
+                            (TTRows == 1 || TTCols == 1),
+                            "Mux contains less than 4 inputs and/or does not map to a 1D object.");
+                    return this->template i<3>();
+                }
+
             protected:
                 void bindEquation()
                 {
@@ -84,7 +276,7 @@ namespace ls {
                     set();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = TRows * TCols - 1>
                 typename ::std::enable_if<(TIdx > 0), void>::type
                 set()
                 {
@@ -107,7 +299,7 @@ namespace ls {
                     return set<TIdx - 1>();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = TRows * TCols - 1>
                 typename ::std::enable_if<(TIdx == 0), void>::type
                 set()
                 {
@@ -115,7 +307,7 @@ namespace ls {
                                                  0) = this->template i<TIdx>();
                 }
 
-                template<unsigned int TIdx = Base::kIns - 1>
+                template<unsigned int TIdx = TRows * TCols - 1>
                 typename ::std::enable_if<(TIdx < 0), void>::type
                 set()
                 {
