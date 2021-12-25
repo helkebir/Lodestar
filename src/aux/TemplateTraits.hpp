@@ -22,6 +22,11 @@ namespace ls {
                 static const bool value = true;
             };
 
+            template<class... T, template<class...> class U>
+            struct isInstance<U<T...>, U> : public std::true_type {
+                static const bool value = true;
+            };
+
             // https://stackoverflow.com/a/29671981
             template<bool...>
             struct bool_pack;

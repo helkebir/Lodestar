@@ -10,6 +10,7 @@
 #include <functional>
 #include "BlockBase.hpp"
 #include "Signal.hpp"
+#include "BlockTraits.hpp"
 #include "aux/TemplateTools.hpp"
 
 namespace ls {
@@ -233,6 +234,25 @@ namespace ls {
 
         template <typename... TInputs, typename... TOutputs, typename... TParameters>
         constexpr const int Block<std::tuple<TInputs...>, std::tuple<TOutputs...>, std::tuple<TParameters...>>::kPars = sizeof...(TParameters);
+
+        template<typename... TInputs, typename... TOutputs, typename... TParameters>
+        class BlockTraits<Block<std::tuple<TInputs...>, std::tuple<TOutputs...>, std::tuple<TParameters...>>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::GenericBlock;
+            static constexpr const bool directFeedthrough = false;
+
+            using type =
+            Block<
+                std::tuple<TInputs...>,
+                std::tuple<TOutputs...>,
+                std::tuple<TParameters...>
+            >;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

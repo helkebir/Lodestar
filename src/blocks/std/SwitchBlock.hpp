@@ -167,6 +167,20 @@ namespace ls {
             };
 
         }
+
+        template<typename TType, std::SwitchBlockParameter TPar>
+        class BlockTraits<std::SwitchBlock<TType, TPar>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::SwitchBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::SwitchBlock<TType, TPar>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

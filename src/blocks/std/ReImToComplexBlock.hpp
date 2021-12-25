@@ -5,10 +5,10 @@
 #ifndef LODESTAR_REIMTOCOMPLEXBLOCK_HPP
 #define LODESTAR_REIMTOCOMPLEXBLOCK_HPP
 
+#include "blocks/Block.hpp"
 #include <iomanip>
 #include <complex>
 #include <cmath>
-#include "blocks/Block.hpp"
 #include "Eigen/Dense"
 
 namespace ls {
@@ -21,7 +21,7 @@ namespace ls {
                             ::std::tuple<TType>,
                             BlockProto::empty
                     > {
-                static_assert(true,
+                static_assert(!::std::is_same<TType, TType>::value,
                               "ReImToComplexBlock not defined for this type.");
             };
 
@@ -51,6 +51,8 @@ namespace ls {
                         ::std::tuple<::std::complex<TType>>,
                         BlockProto::empty
                 >;
+
+                static const ::std::complex<TType> j;
 
                 ReImToComplexBlock()
                 {
@@ -106,6 +108,13 @@ namespace ls {
                 }
             };
 
+            template<typename TType>
+            const ::std::complex<TType> ReImToComplexBlock<TType, typename ::std::enable_if<(
+                    ::std::is_same<TType, float>::value ||
+                    ::std::is_same<TType, double>::value ||
+                    ::std::is_same<TType, long double>::value)>::type>::j =
+                    ::std::complex<TType>{0, 1};
+
             template<typename TScalar, int TRows, int TCols>
             class ReImToComplexBlock<Eigen::Matrix<TScalar, TRows, TCols>, typename ::std::enable_if<(
                     ::std::is_same<TScalar, float>::value ||
@@ -131,6 +140,8 @@ namespace ls {
                         ::std::tuple<Eigen::Matrix<::std::complex<TScalar>, TRows, TCols>>,
                         BlockProto::empty
                 >;
+
+                static const ::std::complex<TScalar> j;
 
                 using RealMatrix = Eigen::Matrix<TScalar, TRows, TCols>;
 
@@ -188,7 +199,28 @@ namespace ls {
                                                imag().object;
                 }
             };
+
+            template<typename TScalar, int TRows, int TCols>
+            const ::std::complex<TScalar> ReImToComplexBlock<Eigen::Matrix<TScalar, TRows, TCols>, typename ::std::enable_if<(
+                    ::std::is_same<TScalar, float>::value ||
+                    ::std::is_same<TScalar, double>::value ||
+                    ::std::is_same<TScalar, long double>::value)>::type>::j =
+                    ::std::complex<TScalar>{0, 1};
         }
+
+        template<typename TType, typename SFINAE>
+        class BlockTraits<std::ReImToComplexBlock<TType, SFINAE>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::ReImToComplexBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::ReImToComplexBlock<TType, SFINAE>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

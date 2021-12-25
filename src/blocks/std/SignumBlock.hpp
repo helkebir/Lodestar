@@ -70,6 +70,20 @@ namespace ls {
                 }
             };
         }
+
+        template<typename TType, typename TOutput>
+        class BlockTraits<std::SignumBlock<TType, TOutput>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::SignumBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::SignumBlock<TType, TOutput>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

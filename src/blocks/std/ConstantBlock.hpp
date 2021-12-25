@@ -64,6 +64,20 @@ namespace ls {
                 }
             };
         }
+
+        template<typename TType>
+        class BlockTraits<std::ConstantBlock<TType>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::ConstantBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::ConstantBlock<TType>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

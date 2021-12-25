@@ -389,8 +389,9 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    vec_
-                            << b.template i<0>().object, b.template i<1>().object, b.template i<2>().object;
+                    vec_ << b.template i<0>().object,
+                            b.template i<1>().object,
+                            b.template i<2>().object;
                     vec_ = quaternion() * vec_;
                     b.template o<0>() = vec_.x();
                     b.template o<1>() = vec_.y();
@@ -472,8 +473,9 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    vec_
-                            << b.template i<0>().object, b.template i<1>().object, b.template i<2>().object;
+                    vec_ << b.template i<0>().object,
+                            b.template i<1>().object,
+                            b.template i<2>().object;
                     vec_ = quaternion().object * vec_;
                     b.template o<0>() = vec_.x();
                     b.template o<1>() = vec_.y();

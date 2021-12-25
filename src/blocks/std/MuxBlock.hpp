@@ -393,6 +393,20 @@ namespace ls {
                 }
             };
         }
+
+        template<typename TType, std::MuxBlockOperator TOps>
+        class BlockTraits<std::MuxBlock<TType, TOps>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::MuxBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::MuxBlock<TType, TOps>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

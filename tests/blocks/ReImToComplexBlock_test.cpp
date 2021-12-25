@@ -18,6 +18,7 @@ TEST_CASE("ReImToComplexBlock", "[blocks][std]")
 
         REQUIRE(ricb.o<0>().object.real() == Approx(5));
         REQUIRE(ricb.o<0>().object.imag() == Approx(7));
+        REQUIRE(ricb.o<0>().object == 5.0 + decltype(ricb)::j * 7.0);
     }
 
     SECTION("Alias accessors") {
@@ -28,6 +29,7 @@ TEST_CASE("ReImToComplexBlock", "[blocks][std]")
 
         REQUIRE(ricb.o<0>().object.real() == Approx(5));
         REQUIRE(ricb.o<0>().object.imag() == Approx(7));
+        REQUIRE(ricb.o<0>().object == 5.0 + decltype(ricb)::j * 7.0);
     }
 }
 
@@ -47,6 +49,7 @@ TEST_CASE("ReImToComplexBlock vector", "[blocks][std]")
 
         REQUIRE((ricb.o<0>().object.real() - v1).isZero());
         REQUIRE((ricb.o<0>().object.imag() - v2).isZero());
+        REQUIRE((ricb.o<0>().object - (v1 + decltype(ricb)::j * v2)).isZero());
     }
 
     SECTION("Alias accessors") {
@@ -57,5 +60,6 @@ TEST_CASE("ReImToComplexBlock vector", "[blocks][std]")
 
         REQUIRE((ricb.o<0>().object.real() - v1).isZero());
         REQUIRE((ricb.o<0>().object.imag() - v2).isZero());
+        REQUIRE((ricb.o<0>().object - (v1 + decltype(ricb)::j * v2)).isZero());
     }
 }

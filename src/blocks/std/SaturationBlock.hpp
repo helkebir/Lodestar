@@ -26,7 +26,7 @@ namespace ls {
                     SaturationBlockOperator TOps = SaturationBlockOperator::Scalar,
                     SaturationBlockParameter TPar = SaturationBlockParameter::Parametric>
             class SaturationBlock {
-                static_assert(::std::is_same<TType, TType>::value,
+                static_assert(!::std::is_same<TType, TType>::value,
                               "SaturationBlock not defined for this type.");
             };
 
@@ -640,6 +640,22 @@ namespace ls {
             template<typename TType, SaturationBlockOperator TOps>
             using SaturationBlockDynamic = SaturationBlock<TType, TOps, SaturationBlockParameter::AdditionalInput>;
         }
+
+        template<typename TType,
+                std::SaturationBlockOperator TOps,
+                std::SaturationBlockParameter TPar>
+        class BlockTraits<std::SaturationBlock<TType, TOps, TPar>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::SaturationBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::SaturationBlock<TType, TOps, TPar>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 

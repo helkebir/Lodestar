@@ -16,29 +16,34 @@ TEST_CASE("SumBlock", "[blocks][std]")
     SECTION("Default settings") {
         sb.trigger();
 
-        REQUIRE(sb.o<0>() == Approx(8.6));
+        REQUIRE(sb.o<0>() == Approx(2.4 + 3 + 3.2));
     }
 
     SECTION("Set operators") {
-        sb.setOperators(decltype(sb)::Minus, decltype(sb)::Plus, decltype(sb)::Plus);
+        sb.setOperators(decltype(sb)::Minus,
+                        decltype(sb)::Plus,
+                        decltype(sb)::Plus);
         sb.trigger();
 
-        REQUIRE(sb.o<0>() == Approx(3.8));
+        REQUIRE(sb.o<0>() == Approx(-2.4 + 3 + 3.2));
     }
 
     SECTION("Set superset of operators") {
-        sb.setOperators(decltype(sb)::Minus, decltype(sb)::Plus, decltype(sb)::Plus,
+        sb.setOperators(decltype(sb)::Minus,
+                        decltype(sb)::Plus,
+                        decltype(sb)::Plus,
                         decltype(sb)::Minus);
         sb.trigger();
 
-        REQUIRE(sb.o<0>() == Approx(3.8));
+        REQUIRE(sb.o<0>() == Approx(-2.4 + 3 + 3.2));
     }
 
     SECTION("Set subset of operators") {
-        sb.setOperators(decltype(sb)::Plus, decltype(sb)::Minus);
+        sb.setOperators(decltype(sb)::Plus,
+                        decltype(sb)::Minus);
         sb.trigger();
 
-        REQUIRE(sb.o<0>() == Approx(2.6));
+        REQUIRE(sb.o<0>() == Approx(2.4 - 3 + 3.2));
     }
 
 }

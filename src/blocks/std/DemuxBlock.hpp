@@ -391,6 +391,20 @@ namespace ls {
                 }
             };
         }
+
+        template<typename TType, std::DemuxBlockOperator TOps>
+        class BlockTraits<std::DemuxBlock<TType, TOps>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::DemuxBlock;
+            static constexpr const bool directFeedthrough = true;
+
+            using type = std::DemuxBlock<TType, TOps>;
+            using Base = typename type::Base;
+
+            static const constexpr int kIns = type::Base::kIns;
+            static const constexpr int kOuts = type::Base::kOuts;
+            static const constexpr int kPars = type::Base::kPars;
+        };
     }
 }
 
