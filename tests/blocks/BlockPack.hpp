@@ -21,6 +21,8 @@ namespace ls {
                 int pars;
             };
 
+            // TODO: Check if SFINAE is still possible here; if not, delegate
+            //  to append.
             template <typename... TTypes>
             BlockPack(TTypes& ...blocks)
             {

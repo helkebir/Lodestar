@@ -17,11 +17,6 @@ namespace ls {
                 static const bool value = false;
             };
 
-            template<class T, template<class...> class U>
-            struct isInstance<U<T>, U> : public std::true_type {
-                static const bool value = true;
-            };
-
             template<class... T, template<class...> class U>
             struct isInstance<U<T...>, U> : public std::true_type {
                 static const bool value = true;
