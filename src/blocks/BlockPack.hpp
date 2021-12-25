@@ -21,30 +21,27 @@ namespace ls {
                 int pars;
             };
 
-            // TODO: Check if SFINAE is still possible here; if not, delegate
-            //  to append.
-            template <typename... TTypes>
-            BlockPack(TTypes& ...blocks)
+            template<typename... TTypes>
+            explicit BlockPack(TTypes &...blocks)
             {
                 append(blocks...);
             }
 
-//            template <typename... TTypes, typename ::std::enable_if<!ls::aux::TemplateTraits::allBasedOf<BlockProto, typename ::std::decay<TTypes>::type ...>::value>::type>
-//            BlockPack(TTypes& ...blks)
-//            {
-//                static_assert(ls::aux::TemplateTraits::allBasedOf<BlockProto, typename ::std::decay<TTypes>::type ...>::value, "All elements of a BlockPack must be derived from BlockProto.");
-//            }
-
             template<typename TType, typename... TTypes>
-            void append(TType& block, TTypes& ...blocks)
+            void append(TType &block, TTypes &...blocks)
             {
                 append(block);
                 append(blocks...);
             }
 
             template<typename TType>
-            void append(TType& block)
+            void append(TType &block)
             {
+                static_assert(
+                        ::std::is_base_of<BlockProto, typename ::std::decay<TType>::type>::value,
+                        "All elements in BlockPack must be derived from BlockProto."
+                );
+
                 blocks.push_back(&block);
                 typedef ls::blocks::BlockTraits<typename ::std::decay<TType>::type> TDBlockTraits;
                 blockTraits.push_back(BlockTraits{
@@ -61,7 +58,7 @@ namespace ls {
                 return;
             }
 
-            ::std::vector<BlockProto*> blocks;
+            ::std::vector<BlockProto *> blocks;
             ::std::vector<BlockTraits> blockTraits;
 
         };
