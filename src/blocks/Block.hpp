@@ -25,9 +25,9 @@ namespace ls {
             //    using Outputs = std::tuple<TOutputs...>;
             using type = Block<std::tuple<TInputs...>, std::tuple<TOutputs...>, std::tuple<TParameters...>>;
             using InputsRaw = std::tuple<TInputs...>;
-            using Inputs = std::tuple<typename aux::TemplateTools::wrap<TInputs, Signal>::type...>;
+            using Inputs = std::tuple<typename ls::aux::TemplateTools::wrap<TInputs, Signal>::type...>;
             using OutputsRaw = std::tuple<TOutputs...>;
-            using Outputs = std::tuple<typename aux::TemplateTools::wrap<TOutputs, Signal>::type...>;
+            using Outputs = std::tuple<typename ls::aux::TemplateTools::wrap<TOutputs, Signal>::type...>;
             using Params = std::tuple<TParameters...>;
 
             using Equation = std::function<void (type&)>;
@@ -58,8 +58,8 @@ namespace ls {
                     BlockProto::outputPointers.push_back(sb);
                 };
 
-                aux::TemplateTools::Executors::forEachPointer(inputs, primeInputSignal);
-                aux::TemplateTools::Executors::forEachPointer(outputs, primeOutputSignal);
+                ls::aux::TemplateTools::Executors::forEachPointer(inputs, primeInputSignal);
+                ls::aux::TemplateTools::Executors::forEachPointer(outputs, primeOutputSignal);
             }
 
             //    void connect();

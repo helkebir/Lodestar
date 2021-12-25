@@ -42,6 +42,9 @@ namespace ls {
             template<class R, class... Ts>
             using allSame = allTrue<std::is_same<Ts, R>::value...>;
 
+            template<class R, class... Ts>
+            using allBasedOf = allTrue<std::is_base_of<R, Ts>::value...>;
+
             template<bool... bs>
             using anyTrue = std::integral_constant<bool, !allFalse<bs...>::value>;
 

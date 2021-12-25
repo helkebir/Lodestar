@@ -9,8 +9,8 @@ TEST_CASE("BlockTraits", "[blocks]")
 {
     typedef ls::blocks::BlockTraits<ls::blocks::std::ConstantBlock<double>> TDTraitsConstant;
 
-    /* This is a weird Catch2 quirk; linking error when the RHS is put in the
-     * REQUIRE statement.
+    /* This is a weird Catch2 quirk; linking error when the r-value is put in
+     * the REQUIRE statement.
      */
     bool a = (TDTraitsConstant::blockType == ls::blocks::BlockType::ConstantBlock);
     bool b = (TDTraitsConstant::kIns == 0);

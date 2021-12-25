@@ -8,6 +8,7 @@
 namespace ls {
     namespace blocks {
         enum class BlockType {
+            UnknownBlock,
             GenericBlock,
             ConstantBlock,
             ConverterBlock,

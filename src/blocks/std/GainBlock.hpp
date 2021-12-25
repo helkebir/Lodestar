@@ -132,7 +132,7 @@ namespace ls {
                 template<typename TTInput, typename TTOutput, typename TTGain>
                 struct integrity_check<1, TTInput, TTOutput, TTGain> {
                     static_assert(
-                            aux::TemplateTraits::allSame<TTInput, TTOutput, TTGain>::value,
+                            ls::aux::TemplateTraits::allSame<TTInput, TTOutput, TTGain>::value,
                             "Input, output, and gain type should be the same for a GainBlock.");
                     static constexpr bool value = true;
                 };

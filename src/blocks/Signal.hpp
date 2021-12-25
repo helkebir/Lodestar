@@ -143,17 +143,17 @@ namespace ls {
 
             bool isDynamicData() const
             {
-                return std::is_same<TObject, aux::DynamicData>::value;
+                return std::is_same<TObject, ls::aux::DynamicData>::value;
             }
 
             template <typename TInstance, typename TShadow = TObject>
-            typename std::enable_if<!std::is_same<TShadow, aux::DynamicData>::value, bool>::type isType() const
+            typename std::enable_if<!std::is_same<TShadow, ls::aux::DynamicData>::value, bool>::type isType() const
             {
                 return std::is_same<TInstance, TObject>::value;
             }
 
             template <typename TInstance, typename TShadow = TObject>
-            typename std::enable_if<std::is_same<TShadow, aux::DynamicData>::value, bool>::type isType() const
+            typename std::enable_if<std::is_same<TShadow, ls::aux::DynamicData>::value, bool>::type isType() const
             {
                 return object.data.template is<TInstance>();
             }
@@ -161,13 +161,13 @@ namespace ls {
             template <typename TInstance>
             static bool isSignal()
             {
-                return aux::TemplateTraits::isInstance<TInstance, Signal>::value;
+                return ls::aux::TemplateTraits::isInstance<TInstance, Signal>::value;
             }
 
             template <typename TInstance>
             static bool isSignal(const TInstance &)
             {
-                return aux::TemplateTraits::isInstance<TInstance, Signal>::value;
+                return ls::aux::TemplateTraits::isInstance<TInstance, Signal>::value;
             }
 
             bool connect(Signal<TObject> * other)
@@ -196,13 +196,13 @@ namespace ls {
             }
 
             template <typename TInstance>
-            static typename std::enable_if<aux::TemplateTraits::isInstance<TInstance, Signal>::value, TInstance>::type toSignal(const TInstance &obj)
+            static typename std::enable_if<ls::aux::TemplateTraits::isInstance<TInstance, Signal>::value, TInstance>::type toSignal(const TInstance &obj)
             {
                 return obj;
             }
 
             template <typename TInstance>
-            static typename std::enable_if<!aux::TemplateTraits::isInstance<TInstance, Signal>::value, Signal<TInstance>>::type toSignal(const TInstance &obj)
+            static typename std::enable_if<!ls::aux::TemplateTraits::isInstance<TInstance, Signal>::value, Signal<TInstance>>::type toSignal(const TInstance &obj)
             {
                 return Signal<TInstance>{obj};
             }

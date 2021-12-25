@@ -19,10 +19,10 @@ namespace ls {
 
             struct SumBlockOperatorHelper {
                 template<unsigned int N>
-                static typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
+                static typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
                 repeatTuple(SumBlockOperator value = SumBlockOperator::Plus)
                 {
-                    typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type tuple{};
+                    typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type tuple{};
                     repeatTupleImpl<N, N - 1>(tuple, value);
 
                     return tuple;
@@ -32,7 +32,7 @@ namespace ls {
                         typename ::std::enable_if<(TIdx >
                                                    0), bool>::type * = nullptr>
                 static void repeatTupleImpl(
-                        typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
+                        typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
                         SumBlockOperator value)
                 {
                     ::std::get<TIdx>(tuple) = value;
@@ -43,7 +43,7 @@ namespace ls {
                         typename ::std::enable_if<(TIdx ==
                                                    0), bool>::type * = nullptr>
                 static void repeatTupleImpl(
-                        typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
+                        typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
                         SumBlockOperator value)
                 {
                     ::std::get<0>(tuple) = value;
@@ -54,7 +54,7 @@ namespace ls {
                         TIdx <
                         0), bool>::type * = nullptr>
                 static void repeatTupleImpl(
-                        typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
+                        typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type &tuple,
                         SumBlockOperator value)
                 {
                     return;
@@ -74,16 +74,16 @@ namespace ls {
             template<typename TType, unsigned int N>
             class SumBlock :
                     public Block<
-                            typename aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
+                            typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                             ::std::tuple<TType>,
-                            typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
+                            typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
                     > {
             public:
                 using Base =
                 Block<
-                        typename aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
+                        typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                         ::std::tuple<TType>,
-                        typename aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
+                        typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
                 >;
 
                 using Ops = SumBlockOperator;
