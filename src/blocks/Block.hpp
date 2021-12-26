@@ -33,7 +33,7 @@ namespace ls {
          *
          * @brief Generic base template class for all tuple-based Block instances.
          *
-         * For the partial specialization that defined that implementation, see
+         * For the partial specialization that defines that implementation, see
          * @ref Block_implementation "Block implementation".
          *
          * @tparam TInputsList Inputs list parameter.
@@ -66,9 +66,9 @@ namespace ls {
          * @sa @ref Signal
          */
         template <typename... TInputs, typename... TOutputs, typename... TParameters>
+        /// @anchor Block_implementation
         class Block<std::tuple<TInputs...>, std::tuple<TOutputs...>, std::tuple<TParameters...>> : public BlockBase<Block<std::tuple<TInputs...>, std::tuple<TOutputs...>, std::tuple<TParameters...>>> {
         public:
-            /// @anchor Block_implementation
             //    using Inputs = std::tuple<TInputs...>;
             //    using Outputs = std::tuple<TOutputs...>;
             /// Using-declaration of the full @c Block type.
