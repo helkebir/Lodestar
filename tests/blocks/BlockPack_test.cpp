@@ -24,9 +24,9 @@ TEST_CASE("BlockPack", "[blocks]")
     REQUIRE(bp.blocks.size() == 5);
     REQUIRE(bp.blockTraits.size() == 5);
 
-    REQUIRE((bp.blockTraits[0].blockType == ls::blocks::BlockType::ConstantBlock));
-    REQUIRE((bp.blockTraits[1].blockType == ls::blocks::BlockType::GainBlock));
-    REQUIRE((bp.blockTraits[2].blockType == ls::blocks::BlockType::SignumBlock));
-    REQUIRE((bp.blockTraits[3].blockType == ls::blocks::BlockType::ConverterBlock));
-    REQUIRE((bp.blockTraits[4].blockType == ls::blocks::BlockType::SumBlock));
+    REQUIRE((bp.blockTraits[0]->blockType == ls::blocks::BlockType::ConstantBlock));
+    REQUIRE((bp.blockTraits[1]->blockType == ls::blocks::BlockType::GainBlock));
+    REQUIRE((bp.blockTraits[2]->blockType == ls::blocks::BlockType::SignumBlock));
+    REQUIRE((bp.blockTraits[3]->blockType == ls::blocks::BlockType::ConverterBlock));
+    REQUIRE((bp.blockTraits[4]->blockType == ls::blocks::BlockType::SumBlock));
 }

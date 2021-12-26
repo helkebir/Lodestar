@@ -9,9 +9,7 @@
 #include "blocks/std/SumBlock.hpp"
 #include "blocks/BlockUtilities.hpp"
 
-#include <iostream>
-
-TEST_CASE("")
+TEST_CASE("StronglyConnectedComponents", "[blocks][aux]")
 {
     ls::blocks::aux::DirectedGraph graph(7);
     graph.connect(0, 1);

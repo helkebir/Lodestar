@@ -13,19 +13,19 @@ namespace ls {
         namespace aux {
             class StronglyConnectedComponents {
             public:
-                static std::vector<std::vector<int>>
+                static ::std::vector<::std::vector<int>>
                 findComponents(const DirectedGraph &graph,
                                bool allowSingletons = false)
                 {
-                    std::vector<int> disc, low;
+                    ::std::vector<int> disc, low;
                     disc.reserve(graph.getSize());
                     low.reserve(graph.getSize());
 
-                    std::stack<int> stack;
-                    std::vector<bool> stackItem;
+                    ::std::stack<int> stack;
+                    ::std::vector<bool> stackItem;
                     stackItem.reserve(graph.getSize());
 
-                    std::vector<std::vector<int>> components;
+                    ::std::vector<::std::vector<int>> components;
 
                     for (int i = 0; i <
                                     graph.getSize(); i++) {    //initialize all elements
@@ -47,11 +47,11 @@ namespace ls {
                 // https://www.tutorialspoint.com/Tarjan-s-Algorithm-for-Strongly-Connected-Components
                 static void
                 findComponentsImpl(const DirectedGraph &graph, int u,
-                                   std::vector<int> &disc,
-                                   std::vector<int> &low,
-                                   std::stack<int> &stack,
-                                   std::vector<bool> &stackItem,
-                                   std::vector<std::vector<int>> &components,
+                                   ::std::vector<int> &disc,
+                                   ::std::vector<int> &low,
+                                   ::std::stack<int> &stack,
+                                   ::std::vector<bool> &stackItem,
+                                   ::std::vector<::std::vector<int>> &components,
                                    bool allowSingletons)
                 {
                     static int time = 0;
@@ -65,15 +65,15 @@ namespace ls {
                                 findComponentsImpl(graph, v, disc, low, stack,
                                                    stackItem, components,
                                                    allowSingletons);
-                                low[u] = std::min(low[u], low[v]);
+                                low[u] = ::std::min(low[u], low[v]);
                             } else if (stackItem[v])    //when v is in the stack, update low for u
-                                low[u] = std::min(low[u], disc[v]);
+                                low[u] = ::std::min(low[u], disc[v]);
                         }
                     }
 
                     int poppedItem = 0;
                     if (low[u] == disc[u]) {
-                        std::vector<int> chain;
+                        ::std::vector<int> chain;
 
                         while (stack.top() != u) {
                             poppedItem = stack.top();

@@ -6,8 +6,11 @@
 #define LODESTAR_BLOCKPACK_HPP
 
 #include "blocks/Block.hpp"
-#include "aux/TemplateTraits.hpp"
+#include "blocks/aux/DirectedGraph.hpp"
+#include <type_traits>
 #include <vector>
+#include <unordered_map>
+#include <memory>
 
 namespace ls {
     namespace blocks {
@@ -43,14 +46,17 @@ namespace ls {
                 );
 
                 blocks.push_back(&block);
-                typedef ls::blocks::BlockTraits<typename ::std::decay<TType>::type> TDBlockTraits;
-                blockTraits.push_back(BlockTraits{
-                        TDBlockTraits::blockType,
-                        TDBlockTraits::directFeedthrough,
-                        TDBlockTraits::kIns,
-                        TDBlockTraits::kOuts,
-                        TDBlockTraits::kPars
+//                typedef ls::blocks::BlockTraits<typename ::std::decay<TType>::type> TDBlockTraits;
+                auto bt = ::std::make_shared<BlockTraits>(BlockTraits{
+                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::blockType,
+                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::directFeedthrough,
+                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kIns,
+                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kOuts,
+                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kPars
                 });
+                blockTraits.push_back(bt);
+
+                traitsByPtr[&block] = bt;
             }
 
             void append()
@@ -58,9 +64,36 @@ namespace ls {
                 return;
             }
 
-            ::std::vector<BlockProto *> blocks;
-            ::std::vector<BlockTraits> blockTraits;
+            void makeGraph()
+            {
+                graph = ls::blocks::aux::DirectedGraph::fromBlocks(blocks);
+            }
 
+            bool contains(BlockProto * blk) const
+            {
+                return (traitsByPtr.find(blk) != traitsByPtr.end());
+            }
+
+            bool hasDirectFeedthrough(BlockProto * blk) const
+            {
+                if (contains(blk))
+                    return traitsByPtr.at(blk)->directFeedthrough;
+                else
+                    return false;
+            }
+
+            bool isDriving(BlockProto * blk1, BlockProto * blk2) const
+            {
+                if (contains(blk1) && contains(blk2))
+                    return graph.hasConnection(blk1->id, blk2->id);
+                else
+                    return false;
+            }
+
+            ::std::vector<BlockProto *> blocks;
+            ::std::vector<::std::shared_ptr<BlockTraits>> blockTraits;
+            ::std::unordered_map<BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
+            ls::blocks::aux::DirectedGraph graph;
         };
     }
 }
