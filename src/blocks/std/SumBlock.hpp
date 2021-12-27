@@ -129,6 +129,11 @@ namespace ls {
                         TIdx < N, bool>::type * = nullptr>
                 void setOperators(Ops op, TOperators... ops)
                 {
+                    static_assert(
+                            ls::aux::TemplateTraits::allSame<SumBlockOperator, TOperators...>::value,
+                            "Operators must all be SumBlockOperator values."
+                    );
+
                     ::std::get<TIdx>(this->params) = op;
 
                     return setOperators<TIdx + 1>(ops...);

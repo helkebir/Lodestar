@@ -11,74 +11,162 @@
 namespace ls {
     namespace blocks {
         namespace std {
+            /**
+             * @enum ls::blocks::std::GainBlockOperator
+             * @brief Operation types for @c GainBlock.
+             *
+             */
             enum class GainBlockOperator {
+                /// Left multiplication.
                 Left,
+                /// Right multiplication.
                 Right,
-                Convolve,
+                /// Linear convolution.
+                Convolution,
+                /// Elementwise multiplication.
                 ElementWise
             };
 
-            template<typename TInput, typename TOutput = TInput, typename TGain = TInput>
+            /**
+             * @brief Multiplies input by a value (gain).
+             * @ingroup blocks_module
+             *
+             * @details The output type is derived from @c TInput and @c TGain,
+             * as well as the type of multiplication through @c TOps.
+             *
+             * The following operation types are available:
+             * - @link GainBlockOperator::Left Left @endlink
+             * - @link GainBlockOperator::Right Right @endlink
+             * - @link GainBlockOperator::Convolution Convolution @endlink
+             * - @link GainBlockOperator::ElementWise Elementwise @endlink
+             *
+             * This class raises `static_assert`s if the gain and input are
+             * not multiplicable.
+             *
+             * @note This class is derived from
+             * @ref Block_implementation "Block implementation".
+             *
+             * @tparam TInput Input type.
+             * @tparam TGain Gain type.
+             * @tparam TOps Multiplication type.
+             */
+            template<typename TInput, typename TGain = TInput, GainBlockOperator TOps = GainBlockOperator::Left>
             class GainBlock :
                     public Block<
                             ::std::tuple<TInput>,
-                            ::std::tuple<TOutput>,
-                            ::std::tuple<TGain, GainBlockOperator>
+                            ::std::tuple<typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>::returnType>::returnType>,
+                            ::std::tuple<TGain>
                     > {
             public:
+                /// Output type trait.
+                using OutputTrait = typename ::std::conditional<TOps != GainBlockOperator::Right, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>>::type;
+                static_assert(OutputTrait::value, "Gain is not multiplicable with input.");
+                /// Sanitized output type trait.
+                using SanitizedOutputTrait = typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>::returnType>;
+
+                /// Output type.
+                using OutputType = typename SanitizedOutputTrait::returnType;
+
+                /// Base @c Block class type alias.
                 using Base =
                 Block<
                         ::std::tuple<TInput>,
-                        ::std::tuple<TOutput>,
-                        ::std::tuple<TGain, GainBlockOperator>
+                        ::std::tuple<OutputType>,
+                        ::std::tuple<TGain>
                 >;
 
+                /// Utility type alias for @c GainBlockOperator.
                 using Ops = GainBlockOperator;
 
+                /// Utility type alias for left multiplication.
                 static constexpr GainBlockOperator Left = Ops::Left;
+                /// Utility type alias for right multiplication.
                 static constexpr GainBlockOperator Right = Ops::Right;
-                static constexpr GainBlockOperator Convolve = Ops::Convolve;
+                /// Utility type alias for convolution.
+                static constexpr GainBlockOperator Convolution = Ops::Convolution;
+                /// Utility type alias for elementwise multiplication.
                 static constexpr GainBlockOperator ElementWise = Ops::ElementWise;
 
-                GainBlock(const Ops op = Left)
+                // TODO: Find way to potentially make operator compile-time
+                //  settable.
+//                GainBlock(const Ops op = Left)
+//                {
+//                    setOperator(op);
+//                    bindEquation();
+//                }
+//
+//                GainBlock(const TGain &gain, const Ops op = Left)
+//                {
+//                    setOperator(op);
+//                    this->template p<0>() = gain;
+//                    bindEquation();
+//                }
+
+                /**
+                 * Default constructor.
+                 */
+                GainBlock()
                 {
-                    setOperator(op);
                     bindEquation();
                 }
 
-                GainBlock(const TGain &gain, const Ops op = Left)
+                /**
+                 * Constructor with gain parameter setting.
+                 *
+                 * @param gain Gain to be set.
+                 */
+                GainBlock(const TGain &gain)
                 {
-                    setOperator(op);
                     this->template p<0>() = gain;
                     bindEquation();
                 }
 
+                /**
+                 * Sets gain.
+                 *
+                 * @param gain Gain to be set.
+                 */
                 void setGain(const TGain &gain)
                 {
                     this->template p<0>() = gain;
                 }
 
+                /**
+                 * Returns const reference to gain.
+                 *
+                 * @return Const reference to gain.
+                 */
                 const TGain &getGain() const
                 {
                     return this->template p<0>();
                 }
 
-                void setOperator(Ops op)
-                {
-                    this->template p<1>() = op;
-                }
+//                void setOperator(Ops op)
+//                {
+//                    this->template p<1>() = op;
+//                }
+//
+//                Ops getOperator()
+//                {
+//                    return this->template p<1>();
+//                }
 
-                Ops getOperator()
-                {
-                    return this->template p<1>();
-                }
-
+                /**
+                 * Returns reference to gain.
+                 *
+                 * @return Reference to gain.
+                 */
                 typename ::std::tuple_element<0, typename Base::Params>::type &
                 gain()
                 {
                     return this->template p<0>();
                 }
 
+                /**
+                 * Returns const reference to gain.
+                 *
+                 * @return Const reference to gain.
+                 */
                 const typename ::std::tuple_element<0, typename Base::Params>::type &
                 gain() const
                 {
@@ -86,71 +174,58 @@ namespace ls {
                 }
 
             protected:
+                /**
+                 * @brief Sets trigger function for non-right multiplication @c
+                 * TOps.
+                 *
+                 * @tparam TTOps Shadows @c TOps.
+                 * @return @c void if active.
+                 */
+                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps != Right>::type* = nullptr>
+                typename ::std::enable_if<TOps != Right>::type bindEquation()
+                {
+                    this->equation = [](Base &b) -> void
+                    {
+                        b.template o<0>().object =
+                                b.template p<0>() * b.template i<0>().object;
+                        b.template o<0>().propagate();
+                    };
+                }
+
+                /**
+                 * @brief Sets trigger function for right multiplication @c TOps.
+                 *
+                 * @tparam TTOps Shadows @c TOps.
+                 * @return @c void if active.
+                 */
+                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps == Right>::type* = nullptr>
                 void bindEquation()
                 {
-                    this->equation = ::std::bind(
-                            &GainBlock<TInput, TOutput, TGain>::triggerFunction,
-                            this,
-                            ::std::placeholders::_1
-                    );
+                    this->equation = [](Base &b) -> void
+                    {
+                        b.template o<0>().object =
+                                b.template i<0>().object * b.template p<0>();
+                        b.template o<0>().propagate();
+                    };
                 }
 
-                typename ::std::enable_if<true, void>::type
-                triggerFunction(Base &b)
-                {
-                    // TODO: Implement convolution.
-                    switch (getOperator()) {
-                        default:
-                        case Left:
-                            b.template o<0>() =
-                                    b.template p<0>() * b.template i<0>();
-                            break;
-                        case Right:
-                            b.template o<0>() =
-                                    b.template i<0>() * b.template p<0>();
-                            break;
-                    }
-                }
-
-                // Integrity checking
-
-                template<typename TTInput = TInput, typename TTOutput = TOutput, typename TTGain = TGain>
-                struct condition_number {
-                    static constexpr size_t value = 1;
-                };
-
-                template<typename TTInput>
-                struct condition_number<TTInput, TTInput, TTInput> {
-                    static constexpr size_t value = 0;
-                };
-
-                template<size_t TCondition = condition_number<TInput, TOutput, TGain>::value, typename TTInput = TInput, typename TTOutput = TOutput, typename TTGain = TGain>
-                struct integrity_check {
-                    static constexpr bool value = true;
-                };
-
-                template<typename TTInput, typename TTOutput, typename TTGain>
-                struct integrity_check<1, TTInput, TTOutput, TTGain> {
-                    static_assert(
-                            ls::aux::TemplateTraits::allSame<TTInput, TTOutput, TTGain>::value,
-                            "Input, output, and gain type should be the same for a GainBlock.");
-                    static constexpr bool value = true;
-                };
-
-                static_assert(integrity_check<>::value,
-                              "Integrity check failed.");
+                // TODO: Implement convolution and elementwise multiplication.
             };
-
-            // TODO: Add Eigen specialization with compile time checking of dimensions.
         }
 
-        template<typename TInput, typename TOutput, typename TGain>
-        class BlockTraits<std::GainBlock<TInput, TOutput, TGain>> {
+        /**
+         * @brief BlockTraits specialization for GainBlock.
+         *
+         * @tparam TInput Input type.
+         * @tparam TGain Gain type.
+         */
+        template<typename TInput, typename TGain>
+        class BlockTraits<std::GainBlock<TInput, TGain>> {
         public:
             static constexpr const BlockType blockType = BlockType::GainBlock;
             static constexpr const bool directFeedthrough = true;
 
-            using type = std::GainBlock<TInput, TOutput, TGain>;
+            using type = std::GainBlock<TInput, TGain>;
             using Base = typename type::Base;
 
             static const constexpr int kIns = type::Base::kIns;
