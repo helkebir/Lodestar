@@ -36,7 +36,7 @@ TEST_CASE("DiscreteStateSpaceBlock", "[blocks][std][systems]")
     REQUIRE((dssBlock.getSystem().getA() - A).isZero());
     REQUIRE((dssBlock.getSystem().getB() - B).isZero());
     REQUIRE((dssBlock.getSystem().getC() - C).isZero());
-    REQUIRE((dssBlock.getSystem().getD() - D).isZero());
+    REQUIRE(dssBlock.getSystem().getD().isZero());
 
     ls::blocks::std::ConstantBlock<decltype(u)> constantBlock(u);
 
