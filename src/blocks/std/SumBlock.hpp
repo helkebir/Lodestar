@@ -63,6 +63,7 @@ namespace ls {
                 static inline int interpret(SumBlockOperator value)
                 {
                     switch (value) {
+                        default:
                         case SumBlockOperator::Plus:
                             return 1;
                         case SumBlockOperator::Minus:

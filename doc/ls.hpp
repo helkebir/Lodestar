@@ -37,6 +37,12 @@
  * computations, simplifying operations, algebraic loop resolution, and more.
  */
 
+/**
+ * @defgroup examples_module Examples module
+ *
+ * @brief This module includes examples for @a Lodestar features.
+ */
+
 //-----------------------------------------------------------
 // DIRECTORIES
 //-----------------------------------------------------------
@@ -47,28 +53,88 @@
  */
 
 /**
+ * @dir src/analysis
+ * @brief Common analysis routines.
+ */
+
+/**
  * @dir src/aux
- * @brief Auxiliary functionality directory.
+ * @brief Common auxiliary routines.
  */
 
 /**
  * @dir src/blocks
- * @brief Functional blocks directory.
+ * @brief Functional blocks.
  */
 
 /**
  * @dir src/blocks/aux
- * @brief Standard functional blocks auxiliary functionality directory.
+ * @brief Standard functional blocks auxiliary routines.
  */
 
 /**
  * @dir src/blocks/std
- * @brief Standard functional blocks directory.
+ * @brief Standard functional blocks.
  */
 
 /**
  * @dir src/blocks/std/geometry
- * @brief Standard functional blocks (geometry-focus) directory.
+ * @brief Standard functional blocks (geometry-focus).
+ */
+
+/**
+ * @dir src/blocks/std/systems
+ * @brief Standard functional blocks (systems-focus).
+ */
+
+/**
+ * @dir src/control
+ * @brief Controller synthesis routines.
+ */
+
+/**
+ * @dir src/core
+ * @brief Common core routines.
+ */
+
+/**
+ * @dir src/data
+ * @brief Data manipulation routines.
+ */
+
+/**
+ * @dir src/filter
+ * @brief Signal filtering routines.
+ */
+
+/**
+ * @dir src/io
+ * @brief I/O interface routines.
+ */
+
+/**
+ * @dir src/primitive
+ * @brief Primitive math routines.
+ */
+
+/**
+ * @dir src/symbolic
+ * @brief Symbolic math routines.
+ */
+
+/**
+ * @dir src/synthesis
+ * @brief General synthesis routines.
+ */
+
+/**
+ * @dir src/systems
+ * @brief System manipulation routines.
+ */
+
+/**
+ * @dir src/time
+ * @brief Time-keeping routines.
  */
 
 //-----------------------------------------------------------

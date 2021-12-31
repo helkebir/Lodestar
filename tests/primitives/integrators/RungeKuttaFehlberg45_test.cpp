@@ -4,7 +4,6 @@
 
 #include "catchOnce.hpp"
 #include "primitives/integrators/RungeKuttaFehlberg45.hpp"
-#include <iostream>
 
 TEST_CASE("Runge-Kutta-Fehlberg 45", "[primitives][integrators]")
 {
@@ -28,8 +27,5 @@ TEST_CASE("Runge-Kutta-Fehlberg 45", "[primitives][integrators]")
         auto err = ls::primitives::RungeKuttaFehlberg45<double>::integrateEmbedded(f, t, y, h, N);
 
         REQUIRE(y == Approx(0.015625));
-
-        std::cout << "Local truncation error: " << err << std::endl;
-        std::cout << "Result: " << y << std::endl;
     }
 }

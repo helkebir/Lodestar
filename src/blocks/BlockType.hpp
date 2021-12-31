@@ -29,6 +29,8 @@ namespace ls {
             ConverterBlock,
             /// Demultiplexer block.
             DemuxBlock,
+            /// Discrete state-space block.
+            DiscreteStateSpaceBlock,
             /// Function block.
             FunctionBlock,
             /// Gain block.

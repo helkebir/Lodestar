@@ -60,6 +60,7 @@ namespace ls {
             switch (code) {
                 case StatusCode::Ok:
                     return "OK";
+                default:
                 case StatusCode::Unknown:
                     return "UNKNOWN";
             }

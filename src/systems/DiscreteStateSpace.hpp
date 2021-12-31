@@ -85,7 +85,7 @@ namespace ls {
             DiscreteStateSpace(const DiscreteStateSpace &other) :
                     StateSpace<TScalar, TStateDim, TInputDim, TOutputDim>(other)
             {
-                setDiscreteParams(other.dt_, other.isDiscrete_);
+                Base::setDiscreteParams(other.dt_, other.isDiscrete_);
             }
 
             /**

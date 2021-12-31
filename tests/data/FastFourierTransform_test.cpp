@@ -40,10 +40,10 @@ TEST_CASE("FastFourierTransform", "[data]")
     Eigen::VectorXd t_values(N);
     fft.inv(t_values, f_freq);
 
-    std::ofstream xrec("xrec.txt");
-    std::ofstream yrec("yrec.txt");
-    for (int u = 0; u < N; ++u) {
-        xrec << freq(u) << " " << std::abs(f_freq(u)) << "\n";
-        yrec << time(u) << " " << t_values(u) << "\n";
-    }
+//    std::ofstream xrec("xrec.txt");
+//    std::ofstream yrec("yrec.txt");
+//    for (int u = 0; u < N; ++u) {
+//        xrec << freq(u) << " " << std::abs(f_freq(u)) << "\n";
+//        yrec << time(u) << " " << t_values(u) << "\n";
+//    }
 }

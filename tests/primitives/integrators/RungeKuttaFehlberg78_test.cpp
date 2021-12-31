@@ -5,7 +5,6 @@
 #include "catchOnce.hpp"
 #include "primitives/integrators/RungeKuttaFehlberg78.hpp"
 #include <Eigen/Dense>
-#include <iostream>
 
 TEST_CASE("Runge-Kutta-Fehlberg 78", "[primitives][integrators]")
 {
@@ -40,8 +39,9 @@ TEST_CASE("Runge-Kutta-Fehlberg 78", "[primitives][integrators]")
         int N = 20;
         ls::primitives::RungeKuttaFehlberg78<TDStateVector>::integrateSimple(F, t, x, h, N);
 
-        std::cout << "Multivariate RKF78" << std::endl;
-        std::cout << "Result: " << x << std::endl;
+        REQUIRE(x(0) == Approx(0.125));
+        REQUIRE(x(1) == Approx(0.0416667));
+        REQUIRE(x(2) == Approx( 0.015625));
     }
 
     SECTION("Truncation error") {
@@ -51,8 +51,5 @@ TEST_CASE("Runge-Kutta-Fehlberg 78", "[primitives][integrators]")
         auto err = ls::primitives::RungeKuttaFehlberg78<double>::integrateEmbedded(f, t, y, h, N);
 
         REQUIRE(y == Approx(0.015625));
-
-        std::cout << "Local truncation error: " << err << std::endl;
-        std::cout << "Result: " << y << std::endl;
     }
 }

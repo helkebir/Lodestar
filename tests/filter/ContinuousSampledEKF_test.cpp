@@ -83,18 +83,18 @@ TEST_CASE("Continuous sampled extended Kalman filter", "[filter][ekf]")
     double t = 0;
     double h = 0.1;
 
-    for (int i = 0; i < 10; i++) {
-        ls::primitives::RungeKuttaFehlberg78<TDEkf::TDStateVector, TDEkf::scalar_type>::integrateSimple(func, t, xout,
-                                                                                                        h, 1);
-
-        std::cout << "State after t = " << t << ": " << xout << std::endl;
-    }
-
-    TDEkf::TDOutputVector z0;
-    z0.setZero();
-    z0.array() += 0.05;
-
-    param.step(u0, z0, 0.5);
-
-    std::cout << "State estimate at t = " << param.getCurrentTime() << ": " << param.getStateEstimate() << std::endl;
+//    for (int i = 0; i < 10; i++) {
+//        ls::primitives::RungeKuttaFehlberg78<TDEkf::TDStateVector, TDEkf::scalar_type>::integrateSimple(func, t, xout,
+//                                                                                                        h, 1);
+//
+//        std::cout << "State after t = " << t << ": " << xout << std::endl;
+//    }
+//
+//    TDEkf::TDOutputVector z0;
+//    z0.setZero();
+//    z0.array() += 0.05;
+//
+//    param.step(u0, z0, 0.5);
+//
+//    std::cout << "State estimate at t = " << param.getCurrentTime() << ": " << param.getStateEstimate() << std::endl;
 }
