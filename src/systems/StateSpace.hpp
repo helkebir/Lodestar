@@ -27,7 +27,12 @@ namespace ls {
                            C_(new TDOutputMatrix),
                            D_(new TDFeedforwardMatrix),
                            dt_(-1), isDiscrete_(false)
-            {};
+            {
+                A_->setIdentity();
+                B_->setIdentity();
+                C_->setIdentity();
+                D_->setZero();
+            };
 
             /**
              * @brief Construct a state space system with the given matrices.

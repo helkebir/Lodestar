@@ -47,13 +47,12 @@ TEST_CASE("DiscreteStateSpaceBlock", "[blocks][std][systems]")
     for (auto blk: blks)
         blk->trigger();
 
-    REQUIRE(dssBlock.o<0>().object(0) == Approx(0));
-    REQUIRE(dssBlock.o<0>().object(1) == Approx(0));
+    REQUIRE(dssBlock.o<0>().object.isZero());
 
     for (auto blk: blks)
         blk->trigger();
 
-    REQUIRE(dssBlock.o<0>().object(0) == Approx(0));
+    REQUIRE(dssBlock.o<0>().object(0) + 0.1 == Approx(0.1));
     REQUIRE(dssBlock.o<0>().object(1) == Approx(4));
 
     for (auto blk: blks)
