@@ -4,7 +4,6 @@
 
 #include "catchOnce.hpp"
 #include "primitives/integrators/BogackiShampine.hpp"
-#include <iostream>
 
 TEST_CASE("Bogacki-Shampine", "[primitives][integrators]")
 {
@@ -28,8 +27,5 @@ TEST_CASE("Bogacki-Shampine", "[primitives][integrators]")
         auto err = ls::primitives::BogackiShampine<double>::integrateEmbedded(f, t, y, h, N);
 
         REQUIRE(y == Approx(0.015625));
-
-        std::cout << "Local truncation error: " << err << std::endl;
-        std::cout << "Result: " << y << std::endl;
     }
 }

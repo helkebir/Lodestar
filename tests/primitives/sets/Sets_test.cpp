@@ -60,12 +60,12 @@ TEST_CASE("Sets", "[primitives][sets]")
     REQUIRE(emptySet.isSubset(emptySet));
     REQUIRE(emptySet.isSuperset(emptySet));
 
-    std::cout << "s.sdf(sval2) " << s.sdf(sval2) << std::endl;
-    std::cout << "s.sdf(sval3) " << s.sdf(sval3) << std::endl;
-    std::cout << "emptySet.sdf(sval3) " << emptySet.sdf(sval3) << std::endl;
-    std::cout << "sUnion2.sdf(sval3) " << sUnion2.sdf(sval3) << std::endl;
-    std::cout << "sUnion3.sdf(sval3) " << sUnion3.sdf(sval3) << std::endl;
-    std::cout << "relComplement.sdf(sval3) " << relComplement.sdf(sval3) << std::endl;
+//    std::cout << "s.sdf(sval2) " << s.sdf(sval2) << std::endl;
+//    std::cout << "s.sdf(sval3) " << s.sdf(sval3) << std::endl;
+//    std::cout << "emptySet.sdf(sval3) " << emptySet.sdf(sval3) << std::endl;
+//    std::cout << "sUnion2.sdf(sval3) " << sUnion2.sdf(sval3) << std::endl;
+//    std::cout << "sUnion3.sdf(sval3) " << sUnion3.sdf(sval3) << std::endl;
+//    std::cout << "relComplement.sdf(sval3) " << relComplement.sdf(sval3) << std::endl;
 
 //    std::cout << "sUnion3 contains sUnion2? " << (sUnion3.contains(sUnion2))
 }

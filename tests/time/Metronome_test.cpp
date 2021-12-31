@@ -6,7 +6,7 @@
 #include "time/Metronome.hpp"
 
 TEST_CASE("Metronome test", "[time]") {
-    auto metronome = ls::time::Metronome<TimeDuration::milliseconds>(1);
+    auto metronome = ls::time::Metronome<TimeDuration::milliseconds>(2);
     auto t = std::chrono::high_resolution_clock::now();
     const int N = 3;
     double elapsed;
@@ -16,6 +16,6 @@ TEST_CASE("Metronome test", "[time]") {
             elapsed = metronome.timeElapsed();
         }
 
-        REQUIRE(elapsed == Approx(1).epsilon(1e-4));
+        REQUIRE(elapsed == Approx(2).epsilon(1e-1));
     }
 }

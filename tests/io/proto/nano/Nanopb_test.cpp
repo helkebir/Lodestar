@@ -10,8 +10,6 @@
 
 #include "io/proto/nano/NanopbWrapper.hpp"
 
-#include <iostream>
-
 TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
     uint8_t buffer[256];
     bool status;
@@ -33,7 +31,7 @@ TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
 
         status = pb_encode_delimited(&stream, npb_Herald_fields, &herald);
         status = pb_encode_delimited(&stream, npb_Vector3d_fields, &v3d);
-        std::cout << "Bytes written: " << stream.bytes_written << std::endl;
+//        std::cout << "Bytes written: " << stream.bytes_written << std::endl;
 
         REQUIRE(status);
     }
@@ -56,7 +54,7 @@ TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
         }
 
 
-        std::cout << "Bytes read: " << sizeof(buffer) - stream.bytes_left << std::endl;
+//        std::cout << "Bytes read: " << sizeof(buffer) - stream.bytes_left << std::endl;
 
         REQUIRE(status);
 
@@ -92,6 +90,6 @@ TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
         REQUIRE(vec3(1) == 2);
         REQUIRE(vec3(2) == 3);
 
-        std::cout << "vec3 rows: " << vec3.rows() << std::endl;
+//        std::cout << "vec3 rows: " << vec3.rows() << std::endl;
     }
 }
