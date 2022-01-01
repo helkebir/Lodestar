@@ -5,6 +5,8 @@
 #ifndef LODESTAR_COMPILETIMEQUALIFIERS_HPP
 #define LODESTAR_COMPILETIMEQUALIFIERS_HPP
 
+#include <type_traits>
+
 #define LS_IS_DYNAMIC_DEFAULT(TSTATE, TINPUT, TOUTPUT) typename std::enable_if<((TSTATE < 0) || (TINPUT < 0) || (TOUTPUT < 0))>::type* = nullptr
 
 #define LS_ENABLE_IF_DYNAMIC_DEFAULT(TSTATE, TINPUT, TOUTPUT) template <typename std::enable_if<((TSTATE < 0) || (TINPUT < 0) || (TOUTPUT < 0)), int>::type = 0>
