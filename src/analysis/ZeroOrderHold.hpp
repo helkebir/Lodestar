@@ -22,6 +22,18 @@ namespace ls {
         public:
             template<typename TScalar = double, int TStateDim = Eigen::Dynamic, int TInputDim = Eigen::Dynamic, int TOutputDim = Eigen::Dynamic>
             struct mallocStruct {
+                template<int TTStateDim = TStateDim, int TTInputDim = TInputDim, int TTOutputDim = TOutputDim, typename ::std::enable_if<
+                        (TTStateDim >= 0) && (TTInputDim >= 0) && (TTOutputDim >= 0)>::type * = nullptr>
+                mallocStruct() : upperXM(decltype(upperXM)::Zero()), lowerXM(decltype(lowerXM)::Zero()),
+                                 XM(decltype(XM)::Zero()), XXM(
+                                decltype(XXM)::Zero())
+                {}
+
+                template<int TTStateDim = TStateDim, int TTInputDim = TInputDim, int TTOutputDim = TOutputDim, typename ::std::enable_if<
+                        (TTStateDim < 0) && (TTInputDim < 0) && (TTOutputDim < 0)>::type * = nullptr>
+                mallocStruct()
+                {}
+
                 Eigen::Matrix<TScalar, TStateDim, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> upperXM;
                 Eigen::Matrix<TScalar, TInputDim, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim)> lowerXM;
                 Eigen::Matrix<TScalar, LS_STATIC_UNLESS_DYNAMIC(TStateDim + TInputDim), LS_STATIC_UNLESS_DYNAMIC(
@@ -254,19 +266,19 @@ void ls::analysis::ZeroOrderHold::c2d(const ls::systems::StateSpace<TScalar, TSt
 {
     dt = abs(dt);
 
-    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0);
-    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (ss->getA());
-    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
+    memStruct->upperXM.template block<TStateDim, TStateDim>(0, 0);
+    memStruct->upperXM.template block<TStateDim, TStateDim>(0, 0) << (ss->getA());
+    memStruct->upperXM.template block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
 
     memStruct->lowerXM.setZero();
 
-    memStruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
-    memStruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
+    memStruct->XM.template block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
+    memStruct->XM.template block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
 
-    memStruct->XXM = (memStruct->XM * dt).exp().block<TStateDim, TStateDim + TInputDim>(0, 0);
+    memStruct->XXM = (memStruct->XM * dt).exp().template block<TStateDim, TStateDim + TInputDim>(0, 0);
 
-    out->setA(memStruct->XXM.block<TStateDim, TStateDim>(0, 0));
-    out->setB(memStruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
+    out->setA(memStruct->XXM.template block<TStateDim, TStateDim>(0, 0));
+    out->setB(memStruct->XXM.template block<TStateDim, TInputDim>(0, TStateDim));
     out->setDiscreteParams(dt, true);
 }
 
@@ -306,20 +318,20 @@ void ls::analysis::ZeroOrderHold::d2c(const ls::systems::StateSpace<TScalar, TSt
 {
     dt = abs(dt);
 
-    memStruct->upperXM.block<TStateDim, TStateDim>(0, 0) << (ss->getA());
-    memStruct->upperXM.block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
+    memStruct->upperXM.template block<TStateDim, TStateDim>(0, 0) << (ss->getA());
+    memStruct->upperXM.template block<TStateDim, TInputDim>(0, TStateDim) << (ss->getB());
 
     memStruct->lowerXM.setZero();
-    memStruct->lowerXM.block<TInputDim, TInputDim>(0, TStateDim)
+    memStruct->lowerXM.template block<TInputDim, TInputDim>(0, TStateDim)
             << Eigen::Matrix<TScalar, TInputDim, TInputDim>::Identity();
 
-    memStruct->XM.block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
-    memStruct->XM.block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
+    memStruct->XM.template block<TStateDim, TStateDim + TInputDim>(0, 0) << memStruct->upperXM;
+    memStruct->XM.template block<TInputDim, TStateDim + TInputDim>(TStateDim, 0) << memStruct->lowerXM;
 
-    memStruct->XXM = (memStruct->XM).log().block<TStateDim, TStateDim + TInputDim>(0, 0) / dt;
+    memStruct->XXM = (memStruct->XM).log().template block<TStateDim, TStateDim + TInputDim>(0, 0) / dt;
 
-    out->setA(memStruct->XXM.block<TStateDim, TStateDim>(0, 0));
-    out->setB(memStruct->XXM.block<TStateDim, TInputDim>(0, TStateDim));
+    out->setA(memStruct->XXM.template block<TStateDim, TStateDim>(0, 0));
+    out->setB(memStruct->XXM.template block<TStateDim, TInputDim>(0, TStateDim));
 }
 
 #endif //LODESTAR_ZEROORDERHOLD_HPP

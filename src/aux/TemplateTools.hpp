@@ -11,6 +11,13 @@ namespace ls {
     namespace aux {
         class TemplateTools {
         public:
+            template <class, class>
+            struct concatenate;
+            template <class... TFirst, class... TSecond>
+            struct concatenate<::std::tuple<TFirst...>, ::std::tuple<TSecond...>> {
+                using type = ::std::tuple<TFirst..., TSecond...>;
+            };
+
             template <typename TType, template <typename ...> class TWrapper, bool isWrapped = TemplateTraits::isInstance<TType, TWrapper>::value>
             struct wrap;
 

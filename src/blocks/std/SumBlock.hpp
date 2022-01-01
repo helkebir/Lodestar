@@ -9,6 +9,11 @@
 #include "blocks/Block.hpp"
 #include "aux/TemplateTools.hpp"
 
+namespace Eigen {
+    template<typename T>
+    class EigenBase;
+}
+
 namespace ls {
     namespace blocks {
         namespace std {
@@ -77,14 +82,14 @@ namespace ls {
                     public Block<
                             typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                             ::std::tuple<TType>,
-                            typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
+                            ::std::tuple<typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type, TType>
                     > {
             public:
                 using Base =
                 Block<
                         typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                         ::std::tuple<TType>,
-                        typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type
+                        ::std::tuple<typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type, TType>
                 >;
 
                 using Ops = SumBlockOperator;
@@ -106,7 +111,7 @@ namespace ls {
 
                 SumBlock()
                 {
-                    this->params = SumBlockOperatorHelper::repeatTuple<N>(
+                    ::std::get<0>(this->params) = SumBlockOperatorHelper::repeatTuple<N>(
                             SumBlockOperator::Plus);
                     bindEquation();
                     //        getInput<0>();
@@ -135,7 +140,7 @@ namespace ls {
                             "Operators must all be SumBlockOperator values."
                     );
 
-                    ::std::get<TIdx>(this->params) = op;
+                    ::std::get<TIdx>(::std::get<0>(this->params)) = op;
 
                     return setOperators<TIdx + 1>(ops...);
                 }
@@ -153,7 +158,7 @@ namespace ls {
                                 TIdx < N, bool>::type * = nullptr>
                 void setOperators(Ops op)
                 {
-                    ::std::get<TIdx>(this->params) = op;
+                    ::std::get<TIdx>(::std::get<0>(this->params)) = op;
                 }
 
                 template<int TIdx = 0, typename ::std::enable_if<
@@ -161,6 +166,12 @@ namespace ls {
                 void setOperators(Ops op)
                 {
                     return;
+                }
+
+                TType &
+                zero()
+                {
+                    return this->template p<1>();
                 }
 
             protected:
@@ -174,33 +185,33 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>() = sum();
+                    b.template o<0>() = sum(zero());
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
                 typename ::std::enable_if<(TIdx > 0), TType>::type
-                sum(TType value = 0)
+                sum(TType value)
                 {
                     return sum<TIdx - 1>(
                             value +
                             SumBlockOperatorHelper::interpret(
-                                    this->template p<TIdx>()) *
+                                    ::std::get<TIdx>(this->template p<0>())) *
                             this->template i<TIdx>());
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
                 typename ::std::enable_if<(TIdx == 0), TType>::type
-                sum(TType value = 0)
+                sum(TType value)
                 {
                     return value +
                            SumBlockOperatorHelper::interpret(
-                                   this->template p<TIdx>()) *
+                                   ::std::get<TIdx>(this->template p<0>())) *
                            this->template i<TIdx>();
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
                 typename ::std::enable_if<(TIdx < 0), TType>::type
-                sum(TType value = 0)
+                sum(TType value)
                 {
                     return value;
                 }
