@@ -77,14 +77,14 @@ namespace ls {
                     public Block<
                             typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                             ::std::tuple<TType>,
-                            ::std::tuple<typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type, TType>
+                            ::std::tuple<::std::array<SumBlockOperator, N>, TType>
                     > {
             public:
                 using Base =
                 Block<
                         typename ls::aux::TemplateTools::repeat<TType, N, ::std::tuple>::type,
                         ::std::tuple<TType>,
-                        ::std::tuple<typename ls::aux::TemplateTools::repeat<SumBlockOperator, N, ::std::tuple>::type, TType>
+                        ::std::tuple<::std::array<SumBlockOperator, N>, TType>
                 >;
 
                 using Ops = SumBlockOperator;
@@ -106,8 +106,7 @@ namespace ls {
 
                 SumBlock()
                 {
-                    ::std::get<0>(this->params) = SumBlockOperatorHelper::repeatTuple<N>(
-                            SumBlockOperator::Plus);
+                    (this->template p<0>()).fill(SumBlockOperator::Plus);
                     bindEquation();
                     //        getInput<0>();
                     //        getInput<0>();
@@ -120,8 +119,7 @@ namespace ls {
                 template<typename... TOperators>
                 SumBlock(Ops op, TOperators... ops)
                 {
-                    this->params = SumBlockOperatorHelper::repeatTuple<N>(
-                            SumBlockOperator::Plus);
+                    (this->template p<0>()).fill(SumBlockOperator::Plus);
                     setOperators(op, ops...);
                     bindEquation();
                 }
@@ -135,7 +133,7 @@ namespace ls {
                             "Operators must all be SumBlockOperator values."
                     );
 
-                    ::std::get<TIdx>(::std::get<0>(this->params)) = op;
+                    (this->template p<0>())[TIdx] = op;
 
                     return setOperators<TIdx + 1>(ops...);
                 }
@@ -153,7 +151,7 @@ namespace ls {
                                 TIdx < N, bool>::type * = nullptr>
                 void setOperators(Ops op)
                 {
-                    ::std::get<TIdx>(::std::get<0>(this->params)) = op;
+                    (this->template p<0>())[TIdx] = op;
                 }
 
                 template<int TIdx = 0, typename ::std::enable_if<
@@ -190,7 +188,7 @@ namespace ls {
                     return sum<TIdx - 1>(
                             value +
                             SumBlockOperatorHelper::interpret(
-                                    ::std::get<TIdx>(this->template p<0>())) *
+                                    (this->template p<0>())[TIdx]) *
                             this->template i<TIdx>());
                 }
 
@@ -200,7 +198,7 @@ namespace ls {
                 {
                     return value +
                            SumBlockOperatorHelper::interpret(
-                                   ::std::get<TIdx>(this->template p<0>())) *
+                                   (this->template p<0>())[TIdx]) *
                            this->template i<TIdx>();
                 }
 
@@ -246,7 +244,7 @@ namespace ls {
         template<typename TType, unsigned int N>
         const ::std::array<::std::string, BlockTraits<std::SumBlock<TType, N>>::kPars> BlockTraits<std::SumBlock<TType, N>>::parTypes =
                 {demangle(
-                        typeid(typename ls::aux::TemplateTools::repeat<std::SumBlockOperator, N, ::std::tuple>::type).name()
+                        typeid(::std::array<std::SumBlockOperator, N>).name()
                 ),
                  demangle(typeid(TType).name())};
 
