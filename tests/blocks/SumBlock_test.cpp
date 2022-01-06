@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/SumBlock.hpp"
+#include "Lodestar/blocks/std/SumBlock.hpp"
 
 
 TEST_CASE("SumBlock", "[blocks][std]")

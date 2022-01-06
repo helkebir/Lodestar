@@ -3,8 +3,8 @@
 //
 
 #include "catchOnce.hpp"
-#include "core/Status.hpp"
-#include "core/StatusOr.hpp"
+#include "Lodestar/core/Status.hpp"
+#include "Lodestar/core/StatusOr.hpp"
 
 TEST_CASE("Status", "[static][core]") {
 //    ls::core::Status status{};

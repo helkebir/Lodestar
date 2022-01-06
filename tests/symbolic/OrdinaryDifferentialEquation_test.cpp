@@ -5,7 +5,7 @@
 #ifdef LS_USE_GINAC
 
 #include "catchOnce.hpp"
-#include "symbolic/OrdinaryDifferentialEquation.hpp"
+#include "Lodestar/symbolic/OrdinaryDifferentialEquation.hpp"
 
 TEST_CASE("Ordinary differential equation", "[symbolic]")
 {

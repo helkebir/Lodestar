@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/integrators/RungeKuttaFehlberg45.hpp"
+#include "Lodestar/primitives/integrators/RungeKuttaFehlberg45.hpp"
 
 TEST_CASE("Runge-Kutta-Fehlberg 45", "[primitives][integrators]")
 {

@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/ReImToComplexBlock.hpp"
+#include "Lodestar/blocks/std/ReImToComplexBlock.hpp"
 
 
 TEST_CASE("ReImToComplexBlock", "[blocks][std]")

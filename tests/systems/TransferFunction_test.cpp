@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "systems/TransferFunction.hpp"
+#include "Lodestar/systems/TransferFunction.hpp"
 
 TEST_CASE("TransferFunction dynamic construction", "[systems][TransferFunction][dynamic][construction]")
 {

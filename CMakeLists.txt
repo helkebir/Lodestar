@@ -17,7 +17,7 @@ option(WITH_PROTOBUF "Use Protocol Buffers" OFF)
 option(WITH_NNG "Use NNG" ON)
 option(MAKE_STATIC_LIB "Make static library" ON)
 
-include_directories("src")
+include_directories("${CMAKE_SOURCE_DIR}")
 include_directories("dep")
 include_directories("tests")
 include_directories("dep/nanopb")
@@ -61,7 +61,7 @@ if (WITH_PROTOBUF)
     find_package(Protobuf REQUIRED)
     include_directories(${Protobuf_INCLUDE_DIRS})
 
-    #    FindProtobuf("${PROJECT_SOURCE_DIR}/src/io/proto")
+    #    FindProtobuf("${PROJECT_SOURCE_DIR}/Lodestar/io/proto")
 
     #    file(GLOB PROTOBUF_DEFINITION_FILES "*.proto")
     #    set(PROTOBUF_INPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/io/proto")
@@ -74,7 +74,7 @@ if (WITH_PROTOBUF)
     #                OUTPUT_VARIABLE PROTOBUF_OUTPUT_VARIABLE)
     #    endforeach()
 
-    file(GLOB PROTOBUF_INCLUDES "src/io/proto/*.pb.cc" "src/io/proto/*.hpp")
+    file(GLOB PROTOBUF_INCLUDES "Lodestar/io/proto/*.pb.cc" "Lodestar/io/proto/*.hpp")
 else ()
     UNSET(PROTOBUF_INCLUDES)
 endif ()
@@ -92,7 +92,7 @@ endif ()
 
 # Nanopb glob include
 
-file(GLOB PROTOBUF_INCLUDES "src/io/proto/nano/*.pb.c" "src/io/proto/nano/*.pb.h")
+file(GLOB PROTOBUF_INCLUDES "Lodestar/io/proto/nano/*.pb.c" "Lodestar/io/proto/nano/*.pb.h")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     MESSAGE("Building in debug mode.")
@@ -107,7 +107,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     FetchContent_MakeAvailable(Catch2)
 endif ()
 
-add_executable(Lodestar src/primitives/Integrator.hpp src/primitives/integrators/IntegratorNewton.hpp src/analysis/BilinearTransformation.cpp src/analysis/BilinearTransformation.hpp src/systems/SystemStateless.hpp src/systems/StateSpace.cpp src/systems/StateSpace.hpp src/analysis/ZeroOrderHold.cpp src/analysis/ZeroOrderHold.hpp src/analysis/LinearSystemInverse.cpp src/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.cpp src/systems/TransferFunction.cpp src/systems/TransferFunction.hpp src/LodestarErrors.hpp src/LodestarErrorNames.hpp src/io/EigenProtoIface.cpp src/io/EigenProtoIface.hpp src/io/ProtoIfaceABC.hpp src/aux/UnitLiterals.hpp src/systems/DiscreteStateSpace.cpp src/systems/DiscreteStateSpace.hpp src/systems/DiscreteSystem.cpp src/systems/DiscreteSystem.hpp src/io/ProtoWrapper.cpp src/io/ProtoWrapper.hpp src/control/FixedGain.cpp src/control/FixedGain.hpp src/io/ProtoTypeTrait.hpp src/systems/SystemStateful.hpp src/symbolic/OrdinaryDifferentialEquation.cpp src/symbolic/OrdinaryDifferentialEquation.hpp src/control/DiscreteLQR.cpp src/control/DiscreteLQR.hpp src/synthesis/AlgebraicRiccatiEquation.cpp src/synthesis/AlgebraicRiccatiEquation.hpp src/filter/DiscreteLQE.cpp src/filter/DiscreteLQE.hpp src/io/GiNaCProtoIface.cpp src/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} dep/nanopb/pb_common.c dep/nanopb/pb_common.h dep/nanopb/pb.h dep/nanopb/pb_decode.c dep/nanopb/pb_decode.h dep/nanopb/pb_encode.c dep/nanopb/pb_encode.h src/aux/CompileTimeQualifiers.hpp tests/TestMain.cpp tests/systems/StateSpace_test.cpp tests/primitives/integrators/IntegratorNewton_test.cpp tests/systems/TransferFunction_test.cpp tests/catchOnce.hpp src/aux/Conjunction.hpp src/aux/RecursionException.hpp tests/TestAuxFunctions.hpp src/aux/Repeat.hpp src/aux/Indices.hpp src/aux/AlgebraicOperators.hpp src/aux/OperationTypes.hpp src/aux/BinOpCheck.hpp src/aux/PairUp.hpp src/aux/TypeName.hpp src/aux/Pack.hpp src/time/Metronome.hpp src/time/TimeResolution.hpp tests/time/Metronome_test.cpp src/time/TimeDuration.hpp src/io/nng/Publisher.cpp src/io/nng/Publisher.hpp tests/io/proto/nano/Nanopb_test.cpp src/io/proto/nano/NanopbWrapper.hpp src/filter/SimpleMovingAverage.hpp src/aux/ArrayStack.hpp tests/aux/ArrayStack_test.cpp tests/filter/SimpleMovingAverage_test.cpp src/core/StatusOr.hpp src/core/Status.hpp tests/core/Status_test.cpp src/core/Status.cpp src/data/FastFourierTransform.cpp src/data/FastFourierTransform.hpp tests/data/FastFourierTransform_test.cpp src/primitives/differentiators/BackwardDifference.hpp tests/primitives/differentiators/BackwardDifference_test.cpp src/primitives/integrators/BogackiShampine.hpp src/primitives/integrators/ButcherTableau.hpp tests/primitives/integrators/ButcherTableau_test.cpp tests/primitives/integrators/BogackiShampine_test.cpp src/primitives/integrators/RungeKuttaFehlberg45.hpp tests/primitives/integrators/RungeKuttaFehlberg45_test.cpp src/primitives/integrators/RungeKuttaFehlberg78.hpp tests/primitives/integrators/RungeKuttaFehlberg78_test.cpp src/control/SampledPID.cpp src/control/SampledPID.hpp src/primitives/differentiators/AdaptiveBackwardDifference.hpp tests/primitives/differentiators/AdaptiveBackwardDifference_test.cpp src/primitives/sets/SetExpression.hpp src/primitives/sets/SetUnion.hpp src/primitives/sets/Singleton.hpp src/primitives/sets/SetEnum.hpp tests/primitives/sets/Sets_test.cpp src/primitives/sets/EmptySet.hpp src/primitives/sets/SetComplement.hpp src/symbolic/SymbolicFunctions.cpp src/symbolic/SymbolicFunctions.hpp src/filter/ContinuousSampledEKF.cpp src/filter/ContinuousSampledEKF.hpp tests/filter/ContinuousSampledEKF_test.cpp src/primitives/integrators/IntegratorsEnum.hpp tests/symbolic/OrdinaryDifferentialEquation_test.cpp tests/filter/CartPoleAuxFunctions.hpp src/control/ModelPredictiveControl.cpp src/control/ModelPredictiveControl.hpp src/GlobalConstants.hpp src/blocks/SignalBase.cpp src/blocks/SignalBase.hpp src/blocks/BlockProto.cpp src/blocks/BlockProto.hpp src/aux/DynamicDataTypes.hpp src/aux/Any.hpp src/aux/DynamicData.hpp src/aux/TemplateTraits.hpp src/blocks/Signal.cpp src/blocks/Signal.hpp src/aux/TemplateTools.hpp src/blocks/Block.cpp src/blocks/Block.hpp src/blocks/BlockBase.hpp src/blocks/BlockUtilities.hpp src/blocks/std/ConstantBlock.cpp src/blocks/std/ConstantBlock.hpp src/blocks/std/GainBlock.cpp src/blocks/std/GainBlock.hpp src/blocks/std/SignumBlock.cpp src/blocks/std/SignumBlock.hpp src/blocks/std/SumBlock.cpp src/blocks/std/SumBlock.hpp src/blocks/std/FunctionBlock.cpp src/blocks/std/FunctionBlock.hpp tests/blocks/Signal_test.cpp tests/aux/Any_test.cpp tests/aux/DynamicData_test.cpp tests/blocks/Block_test.cpp tests/blocks/SumBlock_test.cpp tests/blocks/GainBlock_test.cpp tests/blocks/SignumBlock_test.cpp tests/blocks/FunctionBlock_test.cpp tests/blocks/Blocks_test.cpp tests/blocks/ConstantBlock_test.cpp src/aux/DynamicDataTypes.cpp src/blocks/std/ConverterBlock.cpp src/blocks/std/ConverterBlock.hpp tests/blocks/ConverterBlock_test.cpp src/blocks/std/MuxBlock.cpp src/blocks/std/MuxBlock.hpp tests/blocks/MuxBlock_test.cpp src/blocks/std/DemuxBlock.cpp src/blocks/std/DemuxBlock.hpp tests/blocks/DemuxBlock_test.cpp src/blocks/std/ReImToComplexBlock.cpp src/blocks/std/ReImToComplexBlock.hpp tests/blocks/ReImToComplexBlock_test.cpp src/blocks/std/SaturationBlock.cpp src/blocks/std/SaturationBlock.hpp tests/blocks/SaturationBlock_test.cpp src/blocks/std/SwitchBlock.cpp src/blocks/std/SwitchBlock.hpp tests/blocks/SwitchBlock_test.cpp src/blocks/std/geometry/QuaternionBlock.cpp src/blocks/std/geometry/QuaternionBlock.hpp tests/blocks/geometry/QuaternionBlock_test.cpp src/blocks/BlockType.hpp src/blocks/BlockTraits.cpp src/blocks/BlockTraits.hpp tests/blocks/BlockTraits_test.cpp src/blocks/aux/DirectedGraph.cpp src/blocks/aux/DirectedGraph.hpp src/blocks/aux/StronglyConnectedComponents.cpp src/blocks/aux/StronglyConnectedComponents.hpp tests/blocks/aux/StronglyConnectedComponents_test.cpp src/blocks/BlockPack.cpp src/blocks/BlockPack.hpp tests/blocks/BlockPack_test.cpp tests/blocks/aux/DirectGraph_test.cpp src/blocks/aux/Executor.cpp src/blocks/aux/Executor.hpp tests/blocks/aux/Executor_test.cpp src/aux/DemangledType.cpp src/aux/DemangledType.hpp tests/aux/TemplateTraits_test.cpp src/blocks/std/systems/DiscreteStateSpaceBlock.cpp src/blocks/std/systems/DiscreteStateSpaceBlock.hpp tests/blocks/systems/DiscreteStateSpaceBlock_test.cpp src/aux/FunctionTraits.hpp)
+add_executable(Lodestar Lodestar/primitives/Integrator.hpp Lodestar/primitives/integrators/IntegratorNewton.hpp Lodestar/analysis/BilinearTransformation.cpp Lodestar/analysis/BilinearTransformation.hpp Lodestar/systems/SystemStateless.hpp Lodestar/systems/StateSpace.cpp Lodestar/systems/StateSpace.hpp Lodestar/analysis/ZeroOrderHold.cpp Lodestar/analysis/ZeroOrderHold.hpp Lodestar/analysis/LinearSystemInverse.cpp Lodestar/analysis/LinearSystemInverse.hpp tests/analysis/LinearSystemInverse_test.cpp Lodestar/systems/TransferFunction.cpp Lodestar/systems/TransferFunction.hpp Lodestar/LodestarErrors.hpp Lodestar/LodestarErrorNames.hpp Lodestar/io/EigenProtoIface.cpp Lodestar/io/EigenProtoIface.hpp Lodestar/io/ProtoIfaceABC.hpp Lodestar/aux/UnitLiterals.hpp Lodestar/systems/DiscreteStateSpace.cpp Lodestar/systems/DiscreteStateSpace.hpp Lodestar/systems/DiscreteSystem.cpp Lodestar/systems/DiscreteSystem.hpp Lodestar/io/ProtoWrapper.cpp Lodestar/io/ProtoWrapper.hpp Lodestar/control/FixedGain.cpp Lodestar/control/FixedGain.hpp Lodestar/io/ProtoTypeTrait.hpp Lodestar/systems/SystemStateful.hpp Lodestar/symbolic/OrdinaryDifferentialEquation.cpp Lodestar/symbolic/OrdinaryDifferentialEquation.hpp Lodestar/control/DiscreteLQR.cpp Lodestar/control/DiscreteLQR.hpp Lodestar/synthesis/AlgebraicRiccatiEquation.cpp Lodestar/synthesis/AlgebraicRiccatiEquation.hpp Lodestar/filter/DiscreteLQE.cpp Lodestar/filter/DiscreteLQE.hpp Lodestar/io/GiNaCProtoIface.cpp Lodestar/io/GiNaCProtoIface.hpp ${PROTOBUF_INCLUDES} dep/nanopb/pb_common.c dep/nanopb/pb_common.h dep/nanopb/pb.h dep/nanopb/pb_decode.c dep/nanopb/pb_decode.h dep/nanopb/pb_encode.c dep/nanopb/pb_encode.h Lodestar/aux/CompileTimeQualifiers.hpp tests/TestMain.cpp tests/systems/StateSpace_test.cpp tests/primitives/integrators/IntegratorNewton_test.cpp tests/systems/TransferFunction_test.cpp tests/catchOnce.hpp Lodestar/aux/Conjunction.hpp Lodestar/aux/RecursionException.hpp tests/TestAuxFunctions.hpp Lodestar/aux/Repeat.hpp Lodestar/aux/Indices.hpp Lodestar/aux/AlgebraicOperators.hpp Lodestar/aux/OperationTypes.hpp Lodestar/aux/BinOpCheck.hpp Lodestar/aux/PairUp.hpp Lodestar/aux/TypeName.hpp Lodestar/aux/Pack.hpp Lodestar/time/Metronome.hpp Lodestar/time/TimeResolution.hpp tests/time/Metronome_test.cpp Lodestar/time/TimeDuration.hpp Lodestar/io/nng/Publisher.cpp Lodestar/io/nng/Publisher.hpp tests/io/proto/nano/Nanopb_test.cpp Lodestar/io/proto/nano/NanopbWrapper.hpp Lodestar/filter/SimpleMovingAverage.hpp Lodestar/aux/ArrayStack.hpp tests/aux/ArrayStack_test.cpp tests/filter/SimpleMovingAverage_test.cpp Lodestar/core/StatusOr.hpp Lodestar/core/Status.hpp tests/core/Status_test.cpp Lodestar/core/Status.cpp Lodestar/data/FastFourierTransform.cpp Lodestar/data/FastFourierTransform.hpp tests/data/FastFourierTransform_test.cpp Lodestar/primitives/differentiators/BackwardDifference.hpp tests/primitives/differentiators/BackwardDifference_test.cpp Lodestar/primitives/integrators/BogackiShampine.hpp Lodestar/primitives/integrators/ButcherTableau.hpp tests/primitives/integrators/ButcherTableau_test.cpp tests/primitives/integrators/BogackiShampine_test.cpp Lodestar/primitives/integrators/RungeKuttaFehlberg45.hpp tests/primitives/integrators/RungeKuttaFehlberg45_test.cpp Lodestar/primitives/integrators/RungeKuttaFehlberg78.hpp tests/primitives/integrators/RungeKuttaFehlberg78_test.cpp Lodestar/control/SampledPID.cpp Lodestar/control/SampledPID.hpp Lodestar/primitives/differentiators/AdaptiveBackwardDifference.hpp tests/primitives/differentiators/AdaptiveBackwardDifference_test.cpp Lodestar/primitives/sets/SetExpression.hpp Lodestar/primitives/sets/SetUnion.hpp Lodestar/primitives/sets/Singleton.hpp Lodestar/primitives/sets/SetEnum.hpp tests/primitives/sets/Sets_test.cpp Lodestar/primitives/sets/EmptySet.hpp Lodestar/primitives/sets/SetComplement.hpp Lodestar/symbolic/SymbolicFunctions.cpp Lodestar/symbolic/SymbolicFunctions.hpp Lodestar/filter/ContinuousSampledEKF.cpp Lodestar/filter/ContinuousSampledEKF.hpp tests/filter/ContinuousSampledEKF_test.cpp Lodestar/primitives/integrators/IntegratorsEnum.hpp tests/symbolic/OrdinaryDifferentialEquation_test.cpp tests/filter/CartPoleAuxFunctions.hpp Lodestar/control/ModelPredictiveControl.cpp Lodestar/control/ModelPredictiveControl.hpp Lodestar/GlobalConstants.hpp Lodestar/blocks/SignalBase.cpp Lodestar/blocks/SignalBase.hpp Lodestar/blocks/BlockProto.cpp Lodestar/blocks/BlockProto.hpp Lodestar/aux/DynamicDataTypes.hpp Lodestar/aux/Any.hpp Lodestar/aux/DynamicData.hpp Lodestar/aux/TemplateTraits.hpp Lodestar/blocks/Signal.cpp Lodestar/blocks/Signal.hpp Lodestar/aux/TemplateTools.hpp Lodestar/blocks/Block.cpp Lodestar/blocks/Block.hpp Lodestar/blocks/BlockBase.hpp Lodestar/blocks/BlockUtilities.hpp Lodestar/blocks/std/ConstantBlock.cpp Lodestar/blocks/std/ConstantBlock.hpp Lodestar/blocks/std/GainBlock.cpp Lodestar/blocks/std/GainBlock.hpp Lodestar/blocks/std/SignumBlock.cpp Lodestar/blocks/std/SignumBlock.hpp Lodestar/blocks/std/SumBlock.cpp Lodestar/blocks/std/SumBlock.hpp Lodestar/blocks/std/FunctionBlock.cpp Lodestar/blocks/std/FunctionBlock.hpp tests/blocks/Signal_test.cpp tests/aux/Any_test.cpp tests/aux/DynamicData_test.cpp tests/blocks/Block_test.cpp tests/blocks/SumBlock_test.cpp tests/blocks/GainBlock_test.cpp tests/blocks/SignumBlock_test.cpp tests/blocks/FunctionBlock_test.cpp tests/blocks/Blocks_test.cpp tests/blocks/ConstantBlock_test.cpp Lodestar/aux/DynamicDataTypes.cpp Lodestar/blocks/std/ConverterBlock.cpp Lodestar/blocks/std/ConverterBlock.hpp tests/blocks/ConverterBlock_test.cpp Lodestar/blocks/std/MuxBlock.cpp Lodestar/blocks/std/MuxBlock.hpp tests/blocks/MuxBlock_test.cpp Lodestar/blocks/std/DemuxBlock.cpp Lodestar/blocks/std/DemuxBlock.hpp tests/blocks/DemuxBlock_test.cpp Lodestar/blocks/std/ReImToComplexBlock.cpp Lodestar/blocks/std/ReImToComplexBlock.hpp tests/blocks/ReImToComplexBlock_test.cpp Lodestar/blocks/std/SaturationBlock.cpp Lodestar/blocks/std/SaturationBlock.hpp tests/blocks/SaturationBlock_test.cpp Lodestar/blocks/std/SwitchBlock.cpp Lodestar/blocks/std/SwitchBlock.hpp tests/blocks/SwitchBlock_test.cpp Lodestar/blocks/std/geometry/QuaternionBlock.cpp Lodestar/blocks/std/geometry/QuaternionBlock.hpp tests/blocks/geometry/QuaternionBlock_test.cpp Lodestar/blocks/BlockType.hpp Lodestar/blocks/BlockTraits.cpp Lodestar/blocks/BlockTraits.hpp tests/blocks/BlockTraits_test.cpp Lodestar/blocks/aux/DirectedGraph.cpp Lodestar/blocks/aux/DirectedGraph.hpp Lodestar/blocks/aux/StronglyConnectedComponents.cpp Lodestar/blocks/aux/StronglyConnectedComponents.hpp tests/blocks/aux/StronglyConnectedComponents_test.cpp Lodestar/blocks/BlockPack.cpp Lodestar/blocks/BlockPack.hpp tests/blocks/BlockPack_test.cpp tests/blocks/aux/DirectGraph_test.cpp Lodestar/blocks/aux/Executor.cpp Lodestar/blocks/aux/Executor.hpp tests/blocks/aux/Executor_test.cpp Lodestar/aux/DemangledType.cpp Lodestar/aux/DemangledType.hpp tests/aux/TemplateTraits_test.cpp Lodestar/blocks/std/systems/DiscreteStateSpaceBlock.cpp Lodestar/blocks/std/systems/DiscreteStateSpaceBlock.hpp tests/blocks/systems/DiscreteStateSpaceBlock_test.cpp Lodestar/aux/FunctionTraits.hpp)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     target_link_libraries(Lodestar Catch2::Catch2)
@@ -127,45 +127,45 @@ if (WITH_NNG)
 endif ()
 
 if (MAKE_STATIC_LIB)
-    add_library(liblodestar STATIC src/primitives/Integrator.hpp
-            src/primitives/integrators/IntegratorNewton.hpp
-            src/analysis/BilinearTransformation.cpp
-            src/analysis/BilinearTransformation.hpp
-            src/systems/SystemStateless.hpp
-            src/systems/StateSpace.cpp
-            src/systems/StateSpace.hpp
-            src/analysis/ZeroOrderHold.cpp
-            src/analysis/ZeroOrderHold.hpp
-            src/analysis/LinearSystemInverse.cpp
-            src/analysis/LinearSystemInverse.hpp
-            src/systems/TransferFunction.cpp
-            src/systems/TransferFunction.hpp
-            src/LodestarErrors.hpp
-            src/LodestarErrorNames.hpp
-            src/io/EigenProtoIface.cpp
-            src/io/EigenProtoIface.hpp
-            src/io/ProtoIfaceABC.hpp
-            src/aux/UnitLiterals.hpp
-            src/systems/DiscreteStateSpace.cpp
-            src/systems/DiscreteStateSpace.hpp
-            src/systems/DiscreteSystem.cpp
-            src/systems/DiscreteSystem.hpp
-            src/io/ProtoWrapper.cpp
-            src/io/ProtoWrapper.hpp
-            src/control/FixedGain.cpp
-            src/control/FixedGain.hpp
-            src/io/ProtoTypeTrait.hpp
-            src/systems/SystemStateful.hpp
-            src/symbolic/OrdinaryDifferentialEquation.cpp
-            src/symbolic/OrdinaryDifferentialEquation.hpp
-            src/control/DiscreteLQR.cpp
-            src/control/DiscreteLQR.hpp
-            src/synthesis/AlgebraicRiccatiEquation.cpp
-            src/synthesis/AlgebraicRiccatiEquation.hpp
-            src/filter/DiscreteLQE.cpp
-            src/filter/DiscreteLQE.hpp
-            src/io/GiNaCProtoIface.cpp
-            src/io/GiNaCProtoIface.hpp
+    add_library(liblodestar STATIC Lodestar/primitives/Integrator.hpp
+            Lodestar/primitives/integrators/IntegratorNewton.hpp
+            Lodestar/analysis/BilinearTransformation.cpp
+            Lodestar/analysis/BilinearTransformation.hpp
+            Lodestar/systems/SystemStateless.hpp
+            Lodestar/systems/StateSpace.cpp
+            Lodestar/systems/StateSpace.hpp
+            Lodestar/analysis/ZeroOrderHold.cpp
+            Lodestar/analysis/ZeroOrderHold.hpp
+            Lodestar/analysis/LinearSystemInverse.cpp
+            Lodestar/analysis/LinearSystemInverse.hpp
+            Lodestar/systems/TransferFunction.cpp
+            Lodestar/systems/TransferFunction.hpp
+            Lodestar/LodestarErrors.hpp
+            Lodestar/LodestarErrorNames.hpp
+            Lodestar/io/EigenProtoIface.cpp
+            Lodestar/io/EigenProtoIface.hpp
+            Lodestar/io/ProtoIfaceABC.hpp
+            Lodestar/aux/UnitLiterals.hpp
+            Lodestar/systems/DiscreteStateSpace.cpp
+            Lodestar/systems/DiscreteStateSpace.hpp
+            Lodestar/systems/DiscreteSystem.cpp
+            Lodestar/systems/DiscreteSystem.hpp
+            Lodestar/io/ProtoWrapper.cpp
+            Lodestar/io/ProtoWrapper.hpp
+            Lodestar/control/FixedGain.cpp
+            Lodestar/control/FixedGain.hpp
+            Lodestar/io/ProtoTypeTrait.hpp
+            Lodestar/systems/SystemStateful.hpp
+            Lodestar/symbolic/OrdinaryDifferentialEquation.cpp
+            Lodestar/symbolic/OrdinaryDifferentialEquation.hpp
+            Lodestar/control/DiscreteLQR.cpp
+            Lodestar/control/DiscreteLQR.hpp
+            Lodestar/synthesis/AlgebraicRiccatiEquation.cpp
+            Lodestar/synthesis/AlgebraicRiccatiEquation.hpp
+            Lodestar/filter/DiscreteLQE.cpp
+            Lodestar/filter/DiscreteLQE.hpp
+            Lodestar/io/GiNaCProtoIface.cpp
+            Lodestar/io/GiNaCProtoIface.hpp
 #            ${PROTOBUF_INCLUDES}
 #            dep/nanopb/pb_common.c
 #            dep/nanopb/pb_common.h
@@ -174,48 +174,48 @@ if (MAKE_STATIC_LIB)
 #            dep/nanopb/pb_decode.h
 #            dep/nanopb/pb_encode.c
 #            dep/nanopb/pb_encode.h
-            src/aux/CompileTimeQualifiers.hpp
-            src/aux/Conjunction.hpp
-            src/aux/RecursionException.hpp
-            src/aux/Repeat.hpp
-            src/aux/Indices.hpp
-            src/aux/AlgebraicOperators.hpp
-            src/aux/OperationTypes.hpp
-            src/aux/BinOpCheck.hpp
-            src/aux/PairUp.hpp
-            src/aux/TypeName.hpp
-            src/aux/Pack.hpp
-            src/time/Metronome.hpp
-            src/time/TimeResolution.hpp
-            src/time/TimeDuration.hpp
-            src/io/nng/Publisher.cpp
-            src/io/nng/Publisher.hpp
-            src/io/proto/nano/NanopbWrapper.hpp
-            src/filter/SimpleMovingAverage.hpp
-            src/aux/ArrayStack.hpp
-            src/core/StatusOr.hpp
-            src/core/Status.hpp
-            src/core/Status.cpp
-            src/data/FastFourierTransform.cpp
-            src/data/FastFourierTransform.hpp
-            src/primitives/differentiators/BackwardDifference.hpp
-            src/primitives/integrators/BogackiShampine.hpp
-            src/primitives/integrators/ButcherTableau.hpp
-            src/primitives/integrators/RungeKuttaFehlberg45.hpp
-            src/primitives/integrators/RungeKuttaFehlberg78.hpp
-            src/control/SampledPID.cpp
-            src/control/SampledPID.hpp
-            src/primitives/differentiators/AdaptiveBackwardDifference.hpp
-            src/primitives/sets/SetExpression.hpp
-            src/primitives/sets/SetUnion.hpp
-            src/primitives/sets/Singleton.hpp
-            src/primitives/sets/SetEnum.hpp
-            src/primitives/sets/EmptySet.hpp
-            src/primitives/sets/SetComplement.hpp
-            src/symbolic/SymbolicFunctions.cpp
-            src/symbolic/SymbolicFunctions.hpp
-            src/filter/ContinuousSampledEKF.cpp
-            src/filter/ContinuousSampledEKF.hpp src/control/ModelPredictiveControl.cpp src/control/ModelPredictiveControl.hpp src/GlobalConstants.hpp src/blocks/SignalBase.cpp src/blocks/SignalBase.hpp src/blocks/BlockProto.cpp src/blocks/BlockProto.hpp src/aux/DynamicDataTypes.hpp src/aux/Any.hpp src/aux/DynamicData.hpp src/aux/TemplateTraits.hpp src/blocks/Signal.cpp src/blocks/Signal.hpp src/aux/TemplateTools.hpp src/blocks/Block.cpp src/blocks/Block.hpp src/blocks/BlockBase.hpp src/blocks/BlockUtilities.hpp src/blocks/std/ConstantBlock.cpp src/blocks/std/ConstantBlock.hpp src/blocks/std/GainBlock.cpp src/blocks/std/GainBlock.hpp src/blocks/std/SignumBlock.cpp src/blocks/std/SignumBlock.hpp src/blocks/std/SumBlock.cpp src/blocks/std/SumBlock.hpp src/blocks/std/FunctionBlock.cpp src/blocks/std/FunctionBlock.hpp src/aux/DynamicDataTypes.cpp src/blocks/std/ConverterBlock.cpp src/blocks/std/ConverterBlock.hpp src/blocks/std/MuxBlock.cpp src/blocks/std/MuxBlock.hpp src/blocks/std/DemuxBlock.cpp src/blocks/std/DemuxBlock.hpp src/blocks/std/ReImToComplexBlock.cpp src/blocks/std/ReImToComplexBlock.hpp src/blocks/std/SaturationBlock.cpp src/blocks/std/SaturationBlock.hpp src/blocks/std/SwitchBlock.cpp src/blocks/std/SwitchBlock.hpp src/blocks/std/geometry/QuaternionBlock.cpp src/blocks/std/geometry/QuaternionBlock.hpp src/blocks/BlockType.hpp src/blocks/BlockTraits.cpp src/blocks/BlockTraits.hpp src/blocks/aux/DirectedGraph.cpp src/blocks/aux/DirectedGraph.hpp src/blocks/aux/StronglyConnectedComponents.cpp src/blocks/aux/StronglyConnectedComponents.hpp src/blocks/BlockPack.cpp src/blocks/BlockPack.hpp src/blocks/aux/Executor.cpp src/blocks/aux/Executor.hpp src/aux/DemangledType.cpp src/aux/DemangledType.hpp src/blocks/std/systems/DiscreteStateSpaceBlock.cpp src/blocks/std/systems/DiscreteStateSpaceBlock.hpp src/aux/FunctionTraits.hpp)
+            Lodestar/aux/CompileTimeQualifiers.hpp
+            Lodestar/aux/Conjunction.hpp
+            Lodestar/aux/RecursionException.hpp
+            Lodestar/aux/Repeat.hpp
+            Lodestar/aux/Indices.hpp
+            Lodestar/aux/AlgebraicOperators.hpp
+            Lodestar/aux/OperationTypes.hpp
+            Lodestar/aux/BinOpCheck.hpp
+            Lodestar/aux/PairUp.hpp
+            Lodestar/aux/TypeName.hpp
+            Lodestar/aux/Pack.hpp
+            Lodestar/time/Metronome.hpp
+            Lodestar/time/TimeResolution.hpp
+            Lodestar/time/TimeDuration.hpp
+            Lodestar/io/nng/Publisher.cpp
+            Lodestar/io/nng/Publisher.hpp
+            Lodestar/io/proto/nano/NanopbWrapper.hpp
+            Lodestar/filter/SimpleMovingAverage.hpp
+            Lodestar/aux/ArrayStack.hpp
+            Lodestar/core/StatusOr.hpp
+            Lodestar/core/Status.hpp
+            Lodestar/core/Status.cpp
+            Lodestar/data/FastFourierTransform.cpp
+            Lodestar/data/FastFourierTransform.hpp
+            Lodestar/primitives/differentiators/BackwardDifference.hpp
+            Lodestar/primitives/integrators/BogackiShampine.hpp
+            Lodestar/primitives/integrators/ButcherTableau.hpp
+            Lodestar/primitives/integrators/RungeKuttaFehlberg45.hpp
+            Lodestar/primitives/integrators/RungeKuttaFehlberg78.hpp
+            Lodestar/control/SampledPID.cpp
+            Lodestar/control/SampledPID.hpp
+            Lodestar/primitives/differentiators/AdaptiveBackwardDifference.hpp
+            Lodestar/primitives/sets/SetExpression.hpp
+            Lodestar/primitives/sets/SetUnion.hpp
+            Lodestar/primitives/sets/Singleton.hpp
+            Lodestar/primitives/sets/SetEnum.hpp
+            Lodestar/primitives/sets/EmptySet.hpp
+            Lodestar/primitives/sets/SetComplement.hpp
+            Lodestar/symbolic/SymbolicFunctions.cpp
+            Lodestar/symbolic/SymbolicFunctions.hpp
+            Lodestar/filter/ContinuousSampledEKF.cpp
+            Lodestar/filter/ContinuousSampledEKF.hpp Lodestar/control/ModelPredictiveControl.cpp Lodestar/control/ModelPredictiveControl.hpp Lodestar/GlobalConstants.hpp Lodestar/blocks/SignalBase.cpp Lodestar/blocks/SignalBase.hpp Lodestar/blocks/BlockProto.cpp Lodestar/blocks/BlockProto.hpp Lodestar/aux/DynamicDataTypes.hpp Lodestar/aux/Any.hpp Lodestar/aux/DynamicData.hpp Lodestar/aux/TemplateTraits.hpp Lodestar/blocks/Signal.cpp Lodestar/blocks/Signal.hpp Lodestar/aux/TemplateTools.hpp Lodestar/blocks/Block.cpp Lodestar/blocks/Block.hpp Lodestar/blocks/BlockBase.hpp Lodestar/blocks/BlockUtilities.hpp Lodestar/blocks/std/ConstantBlock.cpp Lodestar/blocks/std/ConstantBlock.hpp Lodestar/blocks/std/GainBlock.cpp Lodestar/blocks/std/GainBlock.hpp Lodestar/blocks/std/SignumBlock.cpp Lodestar/blocks/std/SignumBlock.hpp Lodestar/blocks/std/SumBlock.cpp Lodestar/blocks/std/SumBlock.hpp Lodestar/blocks/std/FunctionBlock.cpp Lodestar/blocks/std/FunctionBlock.hpp Lodestar/aux/DynamicDataTypes.cpp Lodestar/blocks/std/ConverterBlock.cpp Lodestar/blocks/std/ConverterBlock.hpp Lodestar/blocks/std/MuxBlock.cpp Lodestar/blocks/std/MuxBlock.hpp Lodestar/blocks/std/DemuxBlock.cpp Lodestar/blocks/std/DemuxBlock.hpp Lodestar/blocks/std/ReImToComplexBlock.cpp Lodestar/blocks/std/ReImToComplexBlock.hpp Lodestar/blocks/std/SaturationBlock.cpp Lodestar/blocks/std/SaturationBlock.hpp Lodestar/blocks/std/SwitchBlock.cpp Lodestar/blocks/std/SwitchBlock.hpp Lodestar/blocks/std/geometry/QuaternionBlock.cpp Lodestar/blocks/std/geometry/QuaternionBlock.hpp Lodestar/blocks/BlockType.hpp Lodestar/blocks/BlockTraits.cpp Lodestar/blocks/BlockTraits.hpp Lodestar/blocks/aux/DirectedGraph.cpp Lodestar/blocks/aux/DirectedGraph.hpp Lodestar/blocks/aux/StronglyConnectedComponents.cpp Lodestar/blocks/aux/StronglyConnectedComponents.hpp Lodestar/blocks/BlockPack.cpp Lodestar/blocks/BlockPack.hpp Lodestar/blocks/aux/Executor.cpp Lodestar/blocks/aux/Executor.hpp Lodestar/aux/DemangledType.cpp Lodestar/aux/DemangledType.hpp Lodestar/blocks/std/systems/DiscreteStateSpaceBlock.cpp Lodestar/blocks/std/systems/DiscreteStateSpaceBlock.hpp Lodestar/aux/FunctionTraits.hpp)
 
 #    if (CMAKE_BUILD_TYPE MATCHES Debug)
 #        target_link_libraries(liblodestar Catch2::Catch2)
@@ -234,7 +234,7 @@ if (MAKE_STATIC_LIB)
 #        target_link_libraries(liblodestar nng pthread)
 #    endif ()
 
-    target_include_directories(liblodestar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_include_directories(liblodestar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Lodestar)
 
     set_target_properties(liblodestar PROPERTIES
             VERSION 0.0.1

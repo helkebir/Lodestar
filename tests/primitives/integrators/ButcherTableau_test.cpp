@@ -3,8 +3,8 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/integrators/ButcherTableau.hpp"
-#include "primitives/integrators/BogackiShampine.hpp"
+#include "Lodestar/primitives/integrators/ButcherTableau.hpp"
+#include "Lodestar/primitives/integrators/BogackiShampine.hpp"
 
 TEST_CASE("ButcherTableau", "[primitives][integrators]")
 {

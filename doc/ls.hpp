@@ -48,92 +48,92 @@
 //-----------------------------------------------------------
 
 /**
- * @dir src
+ * @dir Lodestar
  * @brief @a Lodestar source directory.
  */
 
 /**
- * @dir src/analysis
+ * @dir Lodestar/analysis
  * @brief Common analysis routines.
  */
 
 /**
- * @dir src/aux
+ * @dir Lodestar/aux
  * @brief Common auxiliary routines.
  */
 
 /**
- * @dir src/blocks
+ * @dir Lodestar/blocks
  * @brief Functional blocks.
  */
 
 /**
- * @dir src/blocks/aux
+ * @dir Lodestar/blocks/aux
  * @brief Standard functional blocks auxiliary routines.
  */
 
 /**
- * @dir src/blocks/std
+ * @dir Lodestar/blocks/std
  * @brief Standard functional blocks.
  */
 
 /**
- * @dir src/blocks/std/geometry
+ * @dir Lodestar/blocks/std/geometry
  * @brief Standard functional blocks (geometry-focus).
  */
 
 /**
- * @dir src/blocks/std/systems
+ * @dir Lodestar/blocks/std/systems
  * @brief Standard functional blocks (systems-focus).
  */
 
 /**
- * @dir src/control
+ * @dir Lodestar/control
  * @brief Controller synthesis routines.
  */
 
 /**
- * @dir src/core
+ * @dir Lodestar/core
  * @brief Common core routines.
  */
 
 /**
- * @dir src/data
+ * @dir Lodestar/data
  * @brief Data manipulation routines.
  */
 
 /**
- * @dir src/filter
+ * @dir Lodestar/filter
  * @brief Signal filtering routines.
  */
 
 /**
- * @dir src/io
+ * @dir Lodestar/io
  * @brief I/O interface routines.
  */
 
 /**
- * @dir src/primitive
+ * @dir Lodestar/primitive
  * @brief Primitive math routines.
  */
 
 /**
- * @dir src/symbolic
+ * @dir Lodestar/symbolic
  * @brief Symbolic math routines.
  */
 
 /**
- * @dir src/synthesis
+ * @dir Lodestar/synthesis
  * @brief General synthesis routines.
  */
 
 /**
- * @dir src/systems
+ * @dir Lodestar/systems
  * @brief System manipulation routines.
  */
 
 /**
- * @dir src/time
+ * @dir Lodestar/time
  * @brief Time-keeping routines.
  */
 

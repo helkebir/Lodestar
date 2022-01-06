@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "aux/DynamicData.hpp"
+#include "Lodestar/aux/DynamicData.hpp"
 
 
 TEST_CASE("DynamicData", "[aux]") {

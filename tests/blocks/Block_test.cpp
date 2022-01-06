@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/Block.hpp"
+#include "Lodestar/blocks/Block.hpp"
 
 using namespace ls::blocks;
 using namespace ls::aux;

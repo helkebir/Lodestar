@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "aux/ArrayStack.hpp"
+#include "Lodestar/aux/ArrayStack.hpp"
 
 TEST_CASE("ArrayStack init", "[aux][static]") {
     auto a = ls::aux::ArrayStack<double, 5>{};

@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/FunctionBlock.hpp"
+#include "Lodestar/blocks/std/FunctionBlock.hpp"
 
 
 TEST_CASE("FunctionBlock", "[blocks][std]")

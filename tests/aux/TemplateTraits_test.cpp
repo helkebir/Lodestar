@@ -4,7 +4,7 @@
 
 #include "catchOnce.hpp"
 
-#include "aux/TemplateTraits.hpp"
+#include "Lodestar/aux/TemplateTraits.hpp"
 #include "Eigen/Dense"
 
 TEST_CASE("TemplateTraits binary operators", "[aux]")

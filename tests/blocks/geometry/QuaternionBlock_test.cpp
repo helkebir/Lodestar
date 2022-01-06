@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/geometry/QuaternionBlock.hpp"
+#include "Lodestar/blocks/std/geometry/QuaternionBlock.hpp"
 
 TEST_CASE("QuaternionBlock", "[blocks][std][geometry]")
 {

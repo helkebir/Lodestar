@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/MuxBlock.hpp"
+#include "Lodestar/blocks/std/MuxBlock.hpp"
 
 
 TEST_CASE("MuxBlock", "[blocks][std]")

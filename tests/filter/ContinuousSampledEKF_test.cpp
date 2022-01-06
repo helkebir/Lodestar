@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "filter/ContinuousSampledEKF.hpp"
+#include "Lodestar/filter/ContinuousSampledEKF.hpp"
 #include <cmath>
 #include "CartPoleAuxFunctions.hpp"
 

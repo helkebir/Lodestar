@@ -3,13 +3,13 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/aux/DirectedGraph.hpp"
-#include "blocks/std/ConstantBlock.hpp"
-#include "blocks/std/ConverterBlock.hpp"
-#include "blocks/std/GainBlock.hpp"
-#include "blocks/std/SignumBlock.hpp"
-#include "blocks/std/SumBlock.hpp"
-#include "blocks/BlockUtilities.hpp"
+#include "Lodestar/blocks/aux/DirectedGraph.hpp"
+#include "Lodestar/blocks/std/ConstantBlock.hpp"
+#include "Lodestar/blocks/std/ConverterBlock.hpp"
+#include "Lodestar/blocks/std/GainBlock.hpp"
+#include "Lodestar/blocks/std/SignumBlock.hpp"
+#include "Lodestar/blocks/std/SumBlock.hpp"
+#include "Lodestar/blocks/BlockUtilities.hpp"
 
 TEST_CASE("DirectedGraph", "[blocks][aux]")
 {

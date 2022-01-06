@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/DemuxBlock.hpp"
+#include "Lodestar/blocks/std/DemuxBlock.hpp"
 #include <iostream>
 
 

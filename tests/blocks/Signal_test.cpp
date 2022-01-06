@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/Signal.hpp"
+#include "Lodestar/blocks/Signal.hpp"
 
 TEST_CASE("Signal", "[blocks][signal]") {
     ls::blocks::Signal<int> s1{2};

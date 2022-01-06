@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/differentiators/BackwardDifference.hpp"
+#include "Lodestar/primitives/differentiators/BackwardDifference.hpp"
 
 TEST_CASE("Backward difference", "[primitives][differentiators]")
 {

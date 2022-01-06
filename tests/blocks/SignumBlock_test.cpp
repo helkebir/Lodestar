@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/SignumBlock.hpp"
+#include "Lodestar/blocks/std/SignumBlock.hpp"
 
 
 TEST_CASE("SignumBlock", "[blocks][std]")

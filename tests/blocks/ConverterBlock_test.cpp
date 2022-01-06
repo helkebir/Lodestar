@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/ConverterBlock.hpp"
+#include "Lodestar/blocks/std/ConverterBlock.hpp"
 
 
 TEST_CASE("ConverterBlock", "[blocks][std]")

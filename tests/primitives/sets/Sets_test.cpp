@@ -3,10 +3,10 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/sets/SetExpression.hpp"
-#include "primitives/sets/SetUnion.hpp"
-#include "primitives/sets/Singleton.hpp"
-#include "primitives/sets/EmptySet.hpp"
+#include "Lodestar/primitives/sets/SetExpression.hpp"
+#include "Lodestar/primitives/sets/SetUnion.hpp"
+#include "Lodestar/primitives/sets/Singleton.hpp"
+#include "Lodestar/primitives/sets/EmptySet.hpp"
 
 #include <iostream>
 

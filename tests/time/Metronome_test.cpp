@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "time/Metronome.hpp"
+#include "Lodestar/time/Metronome.hpp"
 
 TEST_CASE("Metronome test", "[time]") {
     auto metronome = ls::time::Metronome<TimeDuration::milliseconds>(2);

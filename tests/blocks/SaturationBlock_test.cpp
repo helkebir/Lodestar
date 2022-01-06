@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/SaturationBlock.hpp"
+#include "Lodestar/blocks/std/SaturationBlock.hpp"
 
 
 TEST_CASE("SaturationBlock", "[blocks][std]")

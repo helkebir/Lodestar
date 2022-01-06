@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/SwitchBlock.hpp"
+#include "Lodestar/blocks/std/SwitchBlock.hpp"
 
 TEST_CASE("SwitchBlocks", "[blocks][std]")
 {

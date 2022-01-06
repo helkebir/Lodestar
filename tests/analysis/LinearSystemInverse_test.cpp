@@ -2,8 +2,8 @@
 // Created by Hamza El-Kebir on 4/17/21.
 //
 
-#include "analysis/LinearSystemInverse.hpp"
-#include "systems/StateSpace.hpp"
+#include "Lodestar/analysis/LinearSystemInverse.hpp"
+#include "Lodestar/systems/StateSpace.hpp"
 #include <Eigen/Dense>
 
 ls::systems::StateSpace<> linearSystemInverseExample()

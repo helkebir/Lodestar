@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/differentiators/AdaptiveBackwardDifference.hpp"
+#include "Lodestar/primitives/differentiators/AdaptiveBackwardDifference.hpp"
 #include <cmath>
 //#include <iostream>
 

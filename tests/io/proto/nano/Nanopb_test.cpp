@@ -3,12 +3,12 @@
 //
 
 #include "catchOnce.hpp"
-#include "io/proto/nano/Herald.pb.h"
-#include "io/proto/nano/Vector.pb.h"
+#include "Lodestar/io/proto/nano/Herald.pb.h"
+#include "Lodestar/io/proto/nano/Vector.pb.h"
 #include "pb_encode.h"
 #include "pb_decode.h"
 
-#include "io/proto/nano/NanopbWrapper.hpp"
+#include "Lodestar/io/proto/nano/NanopbWrapper.hpp"
 
 TEST_CASE("Nanopb encode/decode", "[static][nanopb]") {
     uint8_t buffer[256];

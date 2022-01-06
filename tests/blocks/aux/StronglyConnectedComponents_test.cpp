@@ -3,11 +3,11 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/aux/StronglyConnectedComponents.hpp"
-#include "blocks/std/ConstantBlock.hpp"
-#include "blocks/std/GainBlock.hpp"
-#include "blocks/std/SumBlock.hpp"
-#include "blocks/BlockUtilities.hpp"
+#include "Lodestar/blocks/aux/StronglyConnectedComponents.hpp"
+#include "Lodestar/blocks/std/ConstantBlock.hpp"
+#include "Lodestar/blocks/std/GainBlock.hpp"
+#include "Lodestar/blocks/std/SumBlock.hpp"
+#include "Lodestar/blocks/BlockUtilities.hpp"
 
 TEST_CASE("StronglyConnectedComponents", "[blocks][aux]")
 {

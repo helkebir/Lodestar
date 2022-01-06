@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/integrators/BogackiShampine.hpp"
+#include "Lodestar/primitives/integrators/BogackiShampine.hpp"
 
 TEST_CASE("Bogacki-Shampine", "[primitives][integrators]")
 {

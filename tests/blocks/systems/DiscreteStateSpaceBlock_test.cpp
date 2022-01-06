@@ -3,9 +3,9 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/systems/DiscreteStateSpaceBlock.hpp"
-#include "blocks/std/ConstantBlock.hpp"
-#include "blocks/BlockUtilities.hpp"
+#include "Lodestar/blocks/std/systems/DiscreteStateSpaceBlock.hpp"
+#include "Lodestar/blocks/std/ConstantBlock.hpp"
+#include "Lodestar/blocks/BlockUtilities.hpp"
 
 TEST_CASE("DiscreteStateSpaceBlock", "[blocks][std][systems]")
 {

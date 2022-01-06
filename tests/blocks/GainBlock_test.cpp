@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/GainBlock.hpp"
+#include "Lodestar/blocks/std/GainBlock.hpp"
 #include "Eigen/Dense"
 
 

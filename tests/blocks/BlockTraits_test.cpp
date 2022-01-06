@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "blocks/std/ConstantBlock.hpp"
+#include "Lodestar/blocks/std/ConstantBlock.hpp"
 
 TEST_CASE("BlockTraits", "[blocks]")
 {

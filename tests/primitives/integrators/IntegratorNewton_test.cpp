@@ -3,7 +3,7 @@
 //
 
 #include "catchOnce.hpp"
-#include "primitives/integrators/IntegratorNewton.hpp"
+#include "Lodestar/primitives/integrators/IntegratorNewton.hpp"
 
 template<typename S>
 void linear(ls::primitives::Integrator<S> *integrator)
