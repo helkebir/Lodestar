@@ -6,6 +6,8 @@
 #define LODESTAR_TEMPLATETOOLS_HPP
 
 #include "TemplateTraits.hpp"
+#include "Indices.hpp"
+#include <array>
 
 namespace ls {
     namespace aux {
@@ -57,6 +59,22 @@ namespace ls {
                 using type = TT<>;
             };
 
+            // https://stackoverflow.com/a/57757301
+            template <typename T, int ... Is>
+            constexpr static std::array<T, sizeof...(Is)>
+            create_array_impl(T value, IndexSequence<Is...>)
+            {
+                // cast Is to void to remove the warning: unused value
+                return {{(static_cast<void>(Is), value)...}};
+            }
+
+            template <int N, typename T>
+            constexpr static std::array<T, N>
+            create_array(const T& value)
+            {
+                return create_array_impl(value, (typename Indices<N>::type){});
+            }
+
             class Executors {
             public:
                 // https://stackoverflow.com/a/6894436
@@ -91,22 +109,22 @@ namespace ls {
                 template<int...> struct index_tuple{};
 
                 template<int I, typename IndexTuple, typename... Types>
-                struct make_indexes_impl;
+                struct make_indices_impl;
 
                 template<int I, int... Indexes, typename T, typename ... Types>
-                struct make_indexes_impl<I, index_tuple<Indexes...>, T, Types...>
+                struct make_indices_impl<I, index_tuple<Indexes...>, T, Types...>
                 {
-                    typedef typename make_indexes_impl<I + 1, index_tuple<Indexes..., I>, Types...>::type type;
+                    typedef typename make_indices_impl<I + 1, index_tuple<Indexes..., I>, Types...>::type type;
                 };
 
                 template<int I, int... Indexes>
-                struct make_indexes_impl<I, index_tuple<Indexes...> >
+                struct make_indices_impl<I, index_tuple<Indexes...> >
                 {
                     typedef index_tuple<Indexes...> type;
                 };
 
                 template<typename ... Types>
-                struct make_indexes : make_indexes_impl<0, index_tuple<>, Types...>
+                struct make_indices : make_indices_impl<0, index_tuple<>, Types...>
                 {};
 
             public:
@@ -121,13 +139,13 @@ namespace ls {
                 template<class Ret, class ... Args, template <typename...> class Wrapper>
                 static Ret applyWrapped(std::function<Ret(Args...)> &pf, const std::tuple<Wrapper<Args>...>&  tup)
                 {
-                    return applyWrapped_helper(pf, typename make_indexes<Args...>::type(), std::tuple<Wrapper<Args>...>(tup));
+                    return applyWrapped_helper(pf, typename make_indices<Args...>::type(), std::tuple<Wrapper<Args>...>(tup));
                 }
 
                 template<class Ret, class ... Args, template <typename...> class Wrapper>
                 static Ret applyWrapped(std::function<Ret(Args...)> &pf, std::tuple<Wrapper<Args>...>&&  tup)
                 {
-                    return applyWrapped_helper(pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Wrapper<Args>...>>(tup));
+                    return applyWrapped_helper(pf, typename make_indices<Args...>::type(), std::forward<std::tuple<Wrapper<Args>...>>(tup));
                 }
             };
         };

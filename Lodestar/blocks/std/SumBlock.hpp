@@ -9,11 +9,6 @@
 #include "Lodestar/blocks/Block.hpp"
 #include "Lodestar/aux/TemplateTools.hpp"
 
-namespace Eigen {
-    template<typename T>
-    class EigenBase;
-}
-
 namespace ls {
     namespace blocks {
         namespace std {
@@ -230,7 +225,34 @@ namespace ls {
             static const constexpr int kIns = type::Base::kIns;
             static const constexpr int kOuts = type::Base::kOuts;
             static const constexpr int kPars = type::Base::kPars;
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
         };
+
+        template<typename TType, unsigned int N>
+        const ::std::array<::std::string, BlockTraits<std::SumBlock<TType, N>>::kIns> BlockTraits<std::SumBlock<TType, N>>::inTypes =
+                ls::aux::TemplateTools::create_array<BlockTraits<std::SumBlock<TType, N>>::kIns>(
+                        demangle(typeid(TType).name())
+                );
+
+        template<typename TType, unsigned int N>
+        const ::std::array<::std::string, BlockTraits<std::SumBlock<TType, N>>::kOuts> BlockTraits<std::SumBlock<TType, N>>::outTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType, unsigned int N>
+        const ::std::array<::std::string, BlockTraits<std::SumBlock<TType, N>>::kPars> BlockTraits<std::SumBlock<TType, N>>::parTypes =
+                {demangle(
+                        typeid(typename ls::aux::TemplateTools::repeat<std::SumBlockOperator, N, ::std::tuple>::type).name()
+                ),
+                 demangle(typeid(TType).name())};
+
+        template<typename TType, unsigned int N>
+        const ::std::array<::std::string, 2> BlockTraits<std::SumBlock<TType, N>>::templateTypes =
+                {demangle(typeid(TType).name()), "unsigned int"};
     }
 }
 
