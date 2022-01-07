@@ -82,10 +82,28 @@ namespace ls {
                 kPars = Base::kPars
             };
 
-//            static const constexpr int kIns = type::Base::kIns;
-//            static const constexpr int kOuts = type::Base::kOuts;
-//            static const constexpr int kPars = type::Base::kPars;
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 1> templateTypes;
         };
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::ConstantBlock<TType>>::kIns> BlockTraits<std::ConstantBlock<TType>>::inTypes =
+                {};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::ConstantBlock<TType>>::kOuts> BlockTraits<std::ConstantBlock<TType>>::outTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::ConstantBlock<TType>>::kPars> BlockTraits<std::ConstantBlock<TType>>::parTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, 1> BlockTraits<std::ConstantBlock<TType>>::templateTypes =
+                {demangle(typeid(TType).name())};
     }
 }
 

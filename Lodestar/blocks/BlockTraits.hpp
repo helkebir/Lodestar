@@ -55,10 +55,14 @@ namespace ls {
             /// Number of parameters.
             static const constexpr int kPars = type::Base::kPars;
 
+            /// Input types (as strings).
             static const ::std::array<::std::string, kIns> inTypes;
+            /// Output types (as strings).
             static const ::std::array<::std::string, kOuts> outTypes;
+            /// Parameter types (as strings).
             static const ::std::array<::std::string, kPars> parTypes;
 
+            /// Template parameter types (as strings).
             static const ::std::array<::std::string, 1> templateTypes;
         };
 

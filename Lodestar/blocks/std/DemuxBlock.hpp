@@ -392,19 +392,48 @@ namespace ls {
             };
         }
 
-        template<typename TType, std::DemuxBlockOperator TOps>
-        class BlockTraits<std::DemuxBlock<TType, TOps>> {
+
+        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+        class BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>> {
         public:
             static constexpr const BlockType blockType = BlockType::DemuxBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
-            using type = std::DemuxBlock<TType, TOps>;
+            using type = std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+//            static const ::std::array<::std::string, 3> templateTypes;
         };
+
+        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kIns> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::inTypes =
+                {demangle(typeid(Eigen::Matrix<TScalar, TRows, TCols>).name())};
+
+        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kOuts> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::outTypes =
+            ls::aux::TemplateTools::create_array<BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kIns>(
+                    demangle(typeid(TScalar).name())
+            );
+
+        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kPars> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::parTypes =
+                {demangle(typeid(TOps).name())};
+
+//        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+//        const ::std::array<::std::string, 3> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::templateTypes =
+//                {demangle(typeid(TOps).name()), demangle(typeid(TOps).name())};
     }
 }
 

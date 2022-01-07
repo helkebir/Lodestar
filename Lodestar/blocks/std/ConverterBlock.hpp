@@ -55,15 +55,41 @@ namespace ls {
         class BlockTraits<std::ConverterBlock<TInput, TOutput>> {
         public:
             static constexpr const BlockType blockType = BlockType::ConverterBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
             using type = std::ConverterBlock<TInput, TOutput>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
         };
+
+        template<typename TInput, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::ConverterBlock<TInput, TOutput>>::kIns> BlockTraits<std::ConverterBlock<TInput, TOutput>>::inTypes =
+                {demangle(typeid(TInput).name())};
+
+        template<typename TInput, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::ConverterBlock<TInput, TOutput>>::kOuts> BlockTraits<std::ConverterBlock<TInput, TOutput>>::outTypes =
+                {demangle(typeid(TOutput).name())};
+
+        template<typename TInput, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::ConverterBlock<TInput, TOutput>>::kPars> BlockTraits<std::ConverterBlock<TInput, TOutput>>::parTypes =
+                {};
+
+        template<typename TInput, typename TOutput>
+        const ::std::array<::std::string, 2> BlockTraits<std::ConverterBlock<TInput, TOutput>>::templateTypes =
+                {demangle(typeid(TInput).name()), demangle(typeid(TOutput).name())};
     }
 }
 

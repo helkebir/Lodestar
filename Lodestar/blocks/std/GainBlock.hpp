@@ -219,19 +219,45 @@ namespace ls {
          * @tparam TInput Input type.
          * @tparam TGain Gain type.
          */
-        template<typename TInput, typename TGain>
-        class BlockTraits<std::GainBlock<TInput, TGain>> {
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
+        class BlockTraits<std::GainBlock<TInput, TGain, TOps>> {
         public:
             static constexpr const BlockType blockType = BlockType::GainBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
-            using type = std::GainBlock<TInput, TGain>;
+            using type = std::GainBlock<TInput, TGain, TOps>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 3> templateTypes;
         };
+
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kIns> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::inTypes =
+                {demangle(typeid(TInput).name())};
+
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kOuts> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::outTypes =
+                {demangle(typeid(std::GainBlock<TInput, TGain, TOps>::OutputType).name())};
+
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kPars> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::parTypes =
+                {demangle(typeid(TGain).name())};
+
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
+        const ::std::array<::std::string, 3> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::templateTypes =
+                {demangle(typeid(TInput).name()), demangle(typeid(TGain).name()), demangle(typeid(TOps).name())};
     }
 }
 
