@@ -11,8 +11,20 @@ namespace ls {
     namespace core {
         enum class StatusCode : int {
             Ok = 0,
-            Unknown = 1,
-            Internal = 2,
+            UnknownError,
+            InternalError,
+            NetworkError,
+            InvalidAddress,
+            NotInitializedError,
+            ResourceBusyError,
+            SafetyViolationError,
+            NotArmedError,
+            CommandExecutionException,
+            ConcurrentProcessError,
+            HardwareNotPresentError,
+            ControllerError,
+            RealtimeError,
+            InvalidInputError
         };
 
         // TODO: Add efficient way of encoding compile-time string messages with minimal overhead.
@@ -60,9 +72,34 @@ namespace ls {
             switch (code) {
                 case StatusCode::Ok:
                     return "OK";
-                default:
-                case StatusCode::Unknown:
-                    return "UNKNOWN";
+                case StatusCode::InternalError:
+                    return "InternalError";
+                case StatusCode::UnknownError:
+                    return "UnknownError";
+                case StatusCode::NetworkError:
+                    return "NetworkError";
+                case StatusCode::InvalidAddress:
+                    return "InvalidAddress";
+                case StatusCode::NotInitializedError:
+                    return "NotInitializedError";
+                case StatusCode::ResourceBusyError:
+                    return "ResourceBusyError";
+                case StatusCode::SafetyViolationError:
+                    return "SafetyViolationError";
+                case StatusCode::NotArmedError:
+                    return "NotArmedError";
+                case StatusCode::CommandExecutionException:
+                    return "CommandExecutionException";
+                case StatusCode::ConcurrentProcessError:
+                    return "ConcurrentProcessError";
+                case StatusCode::HardwareNotPresentError:
+                    return "HardwareNotPresentError";
+                case StatusCode::ControllerError:
+                    return "ControllerError";
+                case StatusCode::RealtimeError:
+                    return "RealtimeError";
+                case StatusCode::InvalidInputError:
+                    return "InvalidInputError";
             }
 
             return "UNKNOWN";
