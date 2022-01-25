@@ -1,0 +1,13 @@
+//
+// Created by Hamza El-Kebir on 1/6/22.
+//
+
+#ifndef LODESTAR_LODESTARCONFIG_HPP
+#define LODESTAR_LODESTARCONFIG_HPP
+
+#define LS_VERSION_MAJOR 0
+#define LS_VERSION_MINOR 0
+#define LS_VERSION_PATCH 1
+#define LS_VERSION_TWEAK 
+
+#endif //LODESTAR_LODESTARCONFIG_HPP

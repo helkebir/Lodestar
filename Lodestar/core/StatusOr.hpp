@@ -21,24 +21,24 @@ namespace ls {
 
             explicit StatusOr();
 
-            StatusOr(const Status &status);
+            explicit StatusOr(const Status &status);
 
-            StatusOr(const TType &value);
+            explicit StatusOr(const TType &value);
 
             StatusOr(const StatusOr &other);
 
             template<typename TTypeOther>
-            StatusOr(const StatusOr<TTypeOther> &other,
-                     typename std::enable_if<std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
+            explicit StatusOr(const StatusOr<TTypeOther> &other,
+                              typename std::enable_if<std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
 
             template<typename TTypeOther>
-            StatusOr(const StatusOr<TTypeOther> &other,
-                     typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
+            explicit StatusOr(const StatusOr<TTypeOther> &other,
+                              typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
 
             StatusOr &operator=(const StatusOr &other);
 
             template<typename TTypeOther>
-            typename std::enable_if<std::is_convertible<TTypeOther, TType>::value, StatusOr>::type &
+            typename std::enable_if<std::is_convertible<TTypeOther, TType>::value, StatusOr &>::type
             operator=(const StatusOr<TTypeOther> &other)
             {
                 status_ = other.status_;
@@ -49,10 +49,11 @@ namespace ls {
             }
 
             template<typename TTypeOther>
-            typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value, StatusOr>::type &
+            typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value, StatusOr &>::type
             operator=(const StatusOr<TTypeOther> &other)
             {
-                static_assert(std::is_convertible<TTypeOther, TType>::value, "StatusOr value must be convertible.");
+                static_assert(std::is_convertible<TTypeOther, TType>::value,
+                              "StatusOr value must be convertible.");
 
                 return *this;
             }
@@ -60,6 +61,8 @@ namespace ls {
             const Status &status() const;
 
             bool ok() const;
+
+            inline explicit operator bool() const;
 
             const TType &value() const;
 
@@ -93,7 +96,8 @@ namespace ls {
         }
 
         template<typename TType>
-        inline StatusOr<TType>::StatusOr(const StatusOr &other) : status_(other.status_), value_(other.value_)
+        inline StatusOr<TType>::StatusOr(const StatusOr &other) : status_(
+                other.status_), value_(other.value_)
         {}
 
         template<typename TType>
@@ -110,11 +114,13 @@ namespace ls {
         inline StatusOr<TType>::StatusOr(const StatusOr<TTypeOther> &other,
                                          typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value>::type *)
         {
-            static_assert(std::is_convertible<TTypeOther, TType>::value, "StatusOr value must be convertible.");
+            static_assert(std::is_convertible<TTypeOther, TType>::value,
+                          "StatusOr value must be convertible.");
         }
 
         template<typename TType>
-        inline StatusOr<TType> &StatusOr<TType>::operator=(const StatusOr &other)
+        inline StatusOr<TType> &
+        StatusOr<TType>::operator=(const StatusOr &other)
         {
             status_ = other.status_;
             value_ = other.value_;
@@ -124,15 +130,15 @@ namespace ls {
 
         template<typename TType>
         inline const Status &StatusOr<TType>::status() const
-        {
-            return status_;
-        }
+        { return status_; }
 
         template<typename TType>
         inline bool StatusOr<TType>::ok() const
-        {
-            return status_.ok();
-        }
+        { return status_.ok(); }
+
+        template<typename TType>
+        StatusOr<TType>::operator bool() const
+        { return ok(); }
 
         template<typename TType>
         const TType &StatusOr<TType>::value() const

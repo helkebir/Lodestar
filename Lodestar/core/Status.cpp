@@ -30,17 +30,17 @@ namespace ls {
         namespace util {
             Status OkStatus()
             {
-                return Status();
+                return {};
             }
 
             Status UnknownError()
             {
-                return Status(StatusCode::Unknown);
+                return {StatusCode::UnknownError};
             }
 
             Status InternalError()
             {
-                return Status(StatusCode::Internal);
+                return {StatusCode::InternalError};
             }
         }
     }
