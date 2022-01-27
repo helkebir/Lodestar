@@ -6,7 +6,7 @@
 #define LODESTAR_SIGNALBASE_HPP
 
 #include "Lodestar/GlobalConstants.hpp"
-#include <array>
+#include <set>
 
 namespace ls {
     namespace blocks {
@@ -30,10 +30,27 @@ namespace ls {
                 return ID++;
             }
 
-            int blockId;
+            unsigned int id() const
+            { return id_; }
 
-            int connectionNumber = 0;
-            std::array<SignalBase *, LS_MAX_CONNECTIONS> connectionPointers;
+            inline
+            SignalBase *getConnection(int idx)
+            {
+                if (idx < 0 || idx >= connectionNumber)
+                    return nullptr;
+
+                return *::std::next(connectionPtrs.begin(), idx);
+            }
+
+            int slotId; /// Slot index identifier (local counter from 0).
+
+            int blockId; /// Block index (global counter).
+
+            bool isInput; /// True if the signal is an input, false otherwise.
+
+            int connectionNumber = 0; /// Number of connections the SignalBase is currently engaged in.
+
+            ::std::set<SignalBase *> connectionPtrs; // Set containing SignalBase pointers that are connected.
         protected:
 
             static unsigned int ID;

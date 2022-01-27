@@ -116,13 +116,21 @@ namespace ls {
                 BlockProto::outs = kOuts;
                 BlockProto::pars = kPars;
 
+                int inputSlotCounter = 0;
                 auto primeInputSignal = [&](SignalBase *sb) {
                     sb->blockId = id;
+                    sb->slotId = inputSlotCounter++;
+                    sb->isInput = true;
+
                     BlockProto::inputPointers.push_back(sb);
                 };
 
+                int outputSlotCounter = 0;
                 auto primeOutputSignal = [&](SignalBase *sb) {
                     sb->blockId = id;
+                    sb->slotId = outputSlotCounter++;
+                    sb->isInput = false;
+
                     BlockProto::outputPointers.push_back(sb);
                 };
 

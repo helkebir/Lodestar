@@ -42,7 +42,11 @@ namespace ls {
                         // Input connections can be disregarded.
                         for (auto &output: block->outputPointers) {
                             for (int i=0; i < output->connectionNumber; i++) {
-                                SignalBase* connection = output->connectionPointers[i];
+                                SignalBase* connection = output->getConnection(i);
+
+                                if (connection == nullptr)
+                                    continue;
+
                                 if (connection->blockId >= n)
                                     n = (connection->blockId + 1);
 

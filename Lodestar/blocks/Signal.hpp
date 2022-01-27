@@ -8,7 +8,6 @@
 #include <type_traits>
 #include <iostream>
 #include <tuple>
-#include <array>
 
 #include "SignalBase.hpp"
 #include "BlockProto.hpp"
@@ -172,27 +171,61 @@ namespace ls {
 
             bool connect(Signal<TObject> * other)
             {
-                if (connectionNumber >= LS_MAX_CONNECTIONS - 1)
+                // If self is input, no connections can be made.
+                if (isInput)
                     return false;
 
-                SignalBase::connectionPointers[connectionNumber] = other;
-                connections[connectionNumber++] = other;
+                // If other is not input, no connections can be made.
+                if (!other->isInput)
+                    return false;
+
+                SignalBase::connectionPtrs.insert(other);
+                connectionNumber++;
             }
 
             bool connect(Signal<TObject> & other)
             {
-                if (connectionNumber >= LS_MAX_CONNECTIONS - 1)
+                // If self is input, no connections can be made.
+                if (isInput)
                     return false;
 
-                SignalBase::connectionPointers[connectionNumber] = &other;
-                connections[connectionNumber++] = &other;
+                // If other is not input, no connections can be made.
+                if (!other.isInput)
+                    return false;
+
+                SignalBase::connectionPtrs.insert(&other);
+                connectionNumber++;
                 return true;
+            }
+
+            bool disconnect(Signal<TObject> * other)
+            {
+                auto res = SignalBase::connectionPtrs.erase(other);
+
+                if (res == 1) {
+                    connectionNumber--;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            bool disconnect(Signal<TObject> & other)
+            {
+                auto res = SignalBase::connectionPtrs.erase(&other);
+
+                if (res == 1) {
+                    connectionNumber--;
+                    return true;
+                } else {
+                    return false;
+                }
             }
 
             void propagate()
             {
                 for (int i = 0; i < connectionNumber; i++)
-                    connections[i]->operator=(object);
+                    static_cast<Signal<TObject>*>(getConnection(i))->operator=(object);
             }
 
             template <typename TInstance>
@@ -208,8 +241,6 @@ namespace ls {
             }
 
             Object object;
-            std::array<Signal<Object>*, LS_MAX_CONNECTIONS> connections;
-            //    int connectionNumber = 0;
         };
 
         template<typename TObject1, typename TObject2>

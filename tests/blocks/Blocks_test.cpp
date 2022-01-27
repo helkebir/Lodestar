@@ -30,6 +30,14 @@ TEST_CASE("Blocks", "[blocks][block]")
     connect(blk2.o<0>(), blk3.i<0>());
     connect(blk3.o<0>(), blk4.i<1>());
 
+    REQUIRE(blk0.o<0>().getConnection(0)->blockId == blk1.id);
+    REQUIRE(blk0.o<0>().getConnection(0)->slotId == 0);
+    REQUIRE(!blk0.o<0>().isInput);
+
+    REQUIRE(blk3.o<0>().getConnection(0)->blockId == blk4.id);
+    REQUIRE(blk3.o<0>().getConnection(0)->slotId == 1);
+    REQUIRE(blk3.o<0>().getConnection(0)->isInput);
+
     std::vector<ls::blocks::BlockProto*> blks{&blk0, &blk1, &blk2, &blk3, &blk4};
 
     for (auto &blk : blks)
