@@ -75,15 +75,41 @@ namespace ls {
         class BlockTraits<std::SignumBlock<TType, TOutput>> {
         public:
             static constexpr const BlockType blockType = BlockType::SignumBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
             using type = std::SignumBlock<TType, TOutput>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
         };
+
+        template<typename TType, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::SignumBlock<TType, TOutput>>::kIns> BlockTraits<std::SignumBlock<TType, TOutput>>::inTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::SignumBlock<TType, TOutput>>::kOuts> BlockTraits<std::SignumBlock<TType, TOutput>>::outTypes =
+                {demangle(typeid(TOutput).name())};
+
+        template<typename TType, typename TOutput>
+        const ::std::array<::std::string, BlockTraits<std::SignumBlock<TType, TOutput>>::kPars> BlockTraits<std::SignumBlock<TType, TOutput>>::parTypes =
+                {};
+
+        template<typename TType, typename TOutput>
+        const ::std::array<::std::string, 2> BlockTraits<std::SignumBlock<TType, TOutput>>::templateTypes =
+                {demangle(typeid(TType).name()), demangle(typeid(TOutput).name())};
     }
 }
 

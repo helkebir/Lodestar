@@ -22,6 +22,10 @@ namespace ls {
                 int ins;
                 int outs;
                 int pars;
+                ::std::vector<::std::string> inTypes;
+                ::std::vector<::std::string> outTypes;
+                ::std::vector<::std::string> parTypes;
+                ::std::vector<::std::string> templateTypes;
             };
 
             template<typename... TTypes>
@@ -46,17 +50,27 @@ namespace ls {
                 );
 
                 blocks.push_back(&block);
+                using blockType = typename ::std::decay<TType>::type;
 //                typedef ls::blocks::BlockTraits<typename ::std::decay<TType>::type> TDBlockTraits;
                 auto bt = ::std::make_shared<BlockTraits>(BlockTraits{
-                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::blockType,
-                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::directFeedthrough,
-                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kIns,
-                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kOuts,
-                        ls::blocks::BlockTraits<typename ::std::decay<TType>::type>::kPars
+                        ls::blocks::BlockTraits<blockType>::blockType,
+                        ls::blocks::BlockTraits<blockType>::directFeedthrough,
+                        ls::blocks::BlockTraits<blockType>::kIns,
+                        ls::blocks::BlockTraits<blockType>::kOuts,
+                        ls::blocks::BlockTraits<blockType>::kPars,
+                        ::std::vector<::std::string>{ls::blocks::BlockTraits<blockType>::inTypes.begin(),
+                                                     ls::blocks::BlockTraits<blockType>::inTypes.end()},
+                        ::std::vector<::std::string>{ls::blocks::BlockTraits<blockType>::outTypes.begin(),
+                                                     ls::blocks::BlockTraits<blockType>::outTypes.end()},
+                        ::std::vector<::std::string>{ls::blocks::BlockTraits<blockType>::parTypes.begin(),
+                                                     ls::blocks::BlockTraits<blockType>::parTypes.end()},
+                        ::std::vector<::std::string>{ls::blocks::BlockTraits<blockType>::templateTypes.begin(),
+                                                     ls::blocks::BlockTraits<blockType>::templateTypes.end()}
                 });
                 blockTraits.push_back(bt);
 
                 traitsByPtr[&block] = bt;
+                blockById[static_cast<BlockProto *>(&block)->id] = &block;
             }
 
             void append()
@@ -64,35 +78,26 @@ namespace ls {
                 return;
             }
 
-            void makeGraph()
-            {
-                graph = ls::blocks::aux::DirectedGraph::fromBlocks(blocks);
-            }
+            void makeGraph();
 
-            bool contains(BlockProto * blk) const
-            {
-                return (traitsByPtr.find(blk) != traitsByPtr.end());
-            }
+            bool contains(BlockProto *blk) const;
 
-            bool hasDirectFeedthrough(BlockProto * blk) const
-            {
-                if (contains(blk))
-                    return traitsByPtr.at(blk)->directFeedthrough;
-                else
-                    return false;
-            }
+            bool contains(unsigned int idx) const;
 
-            bool isDriving(BlockProto * blk1, BlockProto * blk2) const
-            {
-                if (contains(blk1) && contains(blk2))
-                    return graph.hasConnection(blk1->id, blk2->id);
-                else
-                    return false;
-            }
+            bool hasDirectFeedthrough(BlockProto *blk) const;
+
+            bool isDriving(BlockProto *blk1, BlockProto *blk2) const;
+
+            ::std::shared_ptr<BlockTraits> getTraitsByPtr(BlockProto *ptr);
+
+            ::std::shared_ptr<BlockTraits> getTraitsById(unsigned int id);
+
+            BlockProto *getBlockById(unsigned int id);
 
             ::std::vector<BlockProto *> blocks;
             ::std::vector<::std::shared_ptr<BlockTraits>> blockTraits;
             ::std::unordered_map<BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
+            ::std::unordered_map<unsigned int, BlockProto *> blockById;
             ls::blocks::aux::DirectedGraph graph;
         };
     }

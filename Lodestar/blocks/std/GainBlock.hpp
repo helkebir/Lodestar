@@ -249,7 +249,7 @@ namespace ls {
 
         template<typename TInput, typename TGain, std::GainBlockOperator TOps>
         const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kOuts> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::outTypes =
-                {demangle(typeid(std::GainBlock<TInput, TGain, TOps>::OutputType).name())};
+                {demangle(typeid(typename std::GainBlock<TInput, TGain, TOps>::OutputType).name())};
 
         template<typename TInput, typename TGain, std::GainBlockOperator TOps>
         const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kPars> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::parTypes =

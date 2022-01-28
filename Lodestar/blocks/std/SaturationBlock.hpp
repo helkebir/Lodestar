@@ -641,21 +641,49 @@ namespace ls {
             using SaturationBlockDynamic = SaturationBlock<TType, TOps, SaturationBlockParameter::AdditionalInput>;
         }
 
-        template<typename TType,
-                std::SaturationBlockOperator TOps,
-                std::SaturationBlockParameter TPar>
-        class BlockTraits<std::SaturationBlock<TType, TOps, TPar>> {
+        template<typename TType, std::SaturationBlockOperator TOps>
+        class BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>> {
         public:
             static constexpr const BlockType blockType = BlockType::SaturationBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
-            using type = std::SaturationBlock<TType, TOps, TPar>;
+            using type = std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 3> templateTypes;
         };
+
+        template<typename TType, std::SaturationBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::kIns>
+                BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::inTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType, std::SaturationBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::kOuts>
+                BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::outTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType, std::SaturationBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::kPars>
+                BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::parTypes =
+                {demangle(typeid(TType).name()), demangle(typeid(TType).name())};
+
+        template<typename TType, std::SaturationBlockOperator TOps>
+        const ::std::array<::std::string, 3>
+                BlockTraits<std::SaturationBlock<TType, TOps, std::SaturationBlockParameter::Parametric>>::templateTypes =
+                {demangle(typeid(TType).name()), demangle(typeid(std::SaturationBlockOperator).name()), demangle(typeid(std::SaturationBlockParameter).name())};
     }
 }
 

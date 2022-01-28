@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <iostream>
 #include <tuple>
+#include <cassert>
 
 #include "SignalBase.hpp"
 #include "BlockProto.hpp"
@@ -181,6 +182,13 @@ namespace ls {
 
                 SignalBase::connectionPtrs.insert(other);
                 connectionNumber++;
+
+                other->connectionPtrs.insert(this);
+                other->connectionNumber++;
+
+                static_assert(other->connectionNumber < 2, "There cannot be multiple connections to an input slot.");
+
+                return true;
             }
 
             bool connect(Signal<TObject> & other)
@@ -195,37 +203,50 @@ namespace ls {
 
                 SignalBase::connectionPtrs.insert(&other);
                 connectionNumber++;
+
+                other.connectionPtrs.insert(this);
+                other.connectionNumber++;
+
+                assert(other.connectionNumber < 2 && "There cannot be multiple connections to an input slot.");
+
                 return true;
             }
 
             bool disconnect(Signal<TObject> * other)
             {
-                auto res = SignalBase::connectionPtrs.erase(other);
+                auto res1 = SignalBase::connectionPtrs.erase(other);
+                auto res2 = other->connectionPtrs.erase(this);
 
-                if (res == 1) {
+                if ((res1 == 1) && (res2 == 1)) {
                     connectionNumber--;
+                    other->connectionNumber--;
+
                     return true;
-                } else {
-                    return false;
                 }
+
+                return false;
             }
 
             bool disconnect(Signal<TObject> & other)
             {
-                auto res = SignalBase::connectionPtrs.erase(&other);
+                auto res1 = SignalBase::connectionPtrs.erase(&other);
+                auto res2 = other.connectionPtrs.erase(this);
 
-                if (res == 1) {
+                if ((res1 == 1) && (res2 == 1)) {
                     connectionNumber--;
+                    other.connectionNumber--;
+
                     return true;
-                } else {
-                    return false;
                 }
+
+                return false;
             }
 
             void propagate()
             {
-                for (int i = 0; i < connectionNumber; i++)
-                    static_cast<Signal<TObject>*>(getConnection(i))->operator=(object);
+                if (!isInput)
+                    for (int i = 0; i < connectionNumber; i++)
+                        static_cast<Signal<TObject>*>(getConnection(i))->operator=(object);
             }
 
             template <typename TInstance>

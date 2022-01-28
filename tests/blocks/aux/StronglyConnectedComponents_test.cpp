@@ -8,6 +8,7 @@
 #include "Lodestar/blocks/std/GainBlock.hpp"
 #include "Lodestar/blocks/std/SumBlock.hpp"
 #include "Lodestar/blocks/BlockUtilities.hpp"
+#include "Lodestar/blocks/BlockPack.hpp"
 
 TEST_CASE("StronglyConnectedComponents", "[blocks][aux]")
 {
@@ -49,25 +50,28 @@ TEST_CASE("StronglyConnectedComponents", "[blocks][aux]")
 TEST_CASE("StronglyConnectedComponents applied", "[blocks][aux]")
 {
     auto blkConst = ls::blocks::std::ConstantBlock<double>{3};
-    auto blkSum = ls::blocks::std::SumBlock<double, 2>{};
+    auto blkConst2 = ls::blocks::std::ConstantBlock<double>{1};
+    auto blkSum = ls::blocks::std::SumBlock<double, 3>{};
     auto blkGain = ls::blocks::std::GainBlock<double>{2};
     auto blkGain2 = ls::blocks::std::GainBlock<double>{4};
 
     connect(blkConst.o<0>(), blkSum.i<0>());
+    connect(blkConst2.o<0>(), blkSum.i<1>());
     connect(blkSum.o<0>(), blkGain.i<0>());
-    connect(blkGain.o<0>(), blkSum.i<1>());
+    connect(blkGain.o<0>(), blkSum.i<2>());
     connect(blkGain.o<0>(), blkGain2.i<0>());
     /*
-     * c        s       g1     g2
-     * 0 -----> 1 ----> 2 ---->3
+     *          c2
+     *          |
+     * c1       v s     g1     g2
+     * 0 -----> 2 ----> 3 ---->4
      *          ^       |
      *          +-------+
      */
 
-    std::vector<ls::blocks::BlockProto *> blks = {&blkConst, &blkSum, &blkGain,
-                                                  &blkGain2};
+    ls::blocks::BlockPack bp(blkConst, blkConst2, blkSum, blkGain, blkGain2);
 
-    auto graph = ls::blocks::aux::DirectedGraph::fromBlocks(blks);
+    auto graph = ls::blocks::aux::DirectedGraph::fromBlocks(bp.blocks);
 
     auto components =
             ls::blocks::aux::StronglyConnectedComponents::findComponents(graph);
@@ -85,4 +89,39 @@ TEST_CASE("StronglyConnectedComponents applied", "[blocks][aux]")
     bool verdict = (hasSum && hasGain);
 
     REQUIRE(verdict);
+
+    auto contains = [](const ::std::vector<int> &v, int val) -> bool {
+        return (std::find(v.begin(), v.end(), val) != v.end());
+    };
+
+    auto containsBlock = [](const ::std::vector<ls::blocks::BlockProto *> &v, ls::blocks::BlockProto * val) -> bool {
+        return (std::find(v.begin(), v.end(), val) != v.end());
+    };
+
+    ::std::vector<ls::blocks::BlockProto *> externalInputs, externalOutputs;
+
+    for (auto id: components[0]) {
+        for (auto inputs : bp.blockById[id]->inputPointers)
+            for (auto inputSlot : inputs->connectionPtrs)
+                if (contains(components[0], inputSlot->blockId))
+                    continue;
+                else if (bp.getBlockById(inputSlot->blockId) != nullptr)
+                    if (!containsBlock(externalInputs, bp.getBlockById(inputSlot->blockId)))
+                        externalInputs.push_back(bp.getBlockById(inputSlot->blockId));
+
+        for (auto outputs : bp.blockById[id]->outputPointers)
+            for (auto outputSlot : outputs->connectionPtrs)
+                if (contains(components[0], outputSlot->blockId))
+                    continue;
+                else if (bp.getBlockById(outputSlot->blockId) != nullptr)
+                    if (!containsBlock(externalOutputs, bp.getBlockById(outputSlot->blockId)))
+                        externalOutputs.push_back(bp.getBlockById(outputSlot->blockId));
+    }
+
+    REQUIRE(externalInputs.size() == 2);
+    REQUIRE(externalInputs[0]->id == blkConst.id);
+    REQUIRE(externalInputs[1]->id == blkConst2.id);
+
+    REQUIRE(externalOutputs.size() == 1);
+    REQUIRE(externalOutputs[0]->id == blkGain2.id);
 }
