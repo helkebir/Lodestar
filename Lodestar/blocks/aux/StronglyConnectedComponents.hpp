@@ -43,6 +43,10 @@ namespace ls {
 
                     bool intersects(int idx1, int idx2) const;
 
+                    bool isAlgebraicLoop(const BlockPack &bp, int componentIdx = 0) const;
+
+                    bool containsAlgebraicLoops(const BlockPack &bp) const;
+
                     ::std::vector<const BlockProto *> extractBlocks(const ::std::vector<FullConnection> &connections) const;
                 };
 

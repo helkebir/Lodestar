@@ -27,6 +27,11 @@ bool ls::blocks::BlockPack::hasDirectFeedthrough(ls::blocks::BlockProto *blk) co
         return false;
 }
 
+bool ls::blocks::BlockPack::hasDirectFeedthrough(ls::blocks::BlockProto &blk) const
+{
+    return hasDirectFeedthrough(&blk);
+}
+
 bool ls::blocks::BlockPack::isDriving(ls::blocks::BlockProto *blk1, ls::blocks::BlockProto *blk2) const
 {
     if (contains(blk1) && contains(blk2))
@@ -35,15 +40,21 @@ bool ls::blocks::BlockPack::isDriving(ls::blocks::BlockProto *blk1, ls::blocks::
         return false;
 }
 
-std::shared_ptr<ls::blocks::BlockPack::BlockTraits> ls::blocks::BlockPack::getTraitsByPtr(ls::blocks::BlockProto *ptr)
+bool ls::blocks::BlockPack::isDriving(ls::blocks::BlockProto &blk1, ls::blocks::BlockProto &blk2) const
+{
+    return isDriving(&blk1, &blk2);
+}
+
+std::shared_ptr<ls::blocks::BlockPack::BlockTraits>
+ls::blocks::BlockPack::getTraitsByPtr(const ls::blocks::BlockProto *ptr) const
 {
     if (traitsByPtr.find(ptr) != traitsByPtr.end())
-        return traitsByPtr[ptr];
+        return traitsByPtr.at(ptr);
 
     return nullptr;
 }
 
-std::shared_ptr<ls::blocks::BlockPack::BlockTraits> ls::blocks::BlockPack::getTraitsById(unsigned int id)
+std::shared_ptr<ls::blocks::BlockPack::BlockTraits> ls::blocks::BlockPack::getTraitsById(unsigned int id) const
 {
     auto blk = getBlockById(id);
 

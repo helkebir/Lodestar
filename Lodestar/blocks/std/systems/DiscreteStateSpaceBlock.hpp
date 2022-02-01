@@ -351,23 +351,254 @@ namespace ls {
             };
         }
 
+        // TODO: Check if partial specialization are needed for both feedthrough cases.
         template<typename TScalar, int NState, int NInput, int NOutput, std::DiscreteStateSpaceBlockFeedthrough TFeedthroughOps>
         class BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>> {
         public:
             static constexpr const BlockType blockType = BlockType::DiscreteStateSpaceBlock;
-            static constexpr const bool directFeedthrough = (TFeedthroughOps == std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough);
+            enum {
+                directFeedthrough = (TFeedthroughOps == std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough)
+            };
 
             using type = std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
 
-            static const constexpr int kNState = type::kNState;
-            static const constexpr int kNInput = type::kNInput;
-            static const constexpr int kNOutput = type::kNOutput;
+            enum {
+                kNState = type::kNState,
+                kNInput = type::kNInput,
+                kNOutput = type::kNOutput
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 5> templateTypes;
         };
+
+        template<typename TScalar, int NState, int NInput, int NOutput, std::DiscreteStateSpaceBlockFeedthrough TFeedthroughOps>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::kIns> BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::inTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NInput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput, std::DiscreteStateSpaceBlockFeedthrough TFeedthroughOps>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::kOuts> BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::outTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput, std::DiscreteStateSpaceBlockFeedthrough TFeedthroughOps>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::kPars> BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::parTypes =
+                { demangle(typeid(ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput, std::DiscreteStateSpaceBlockFeedthrough TFeedthroughOps>
+        const ::std::array<::std::string, 5> BlockTraits<std::DiscreteStateSpaceBlock<TScalar, TFeedthroughOps, NState, NInput, NOutput>>::templateTypes =
+                { demangle(typeid(TScalar).name()), demangle(typeid(NState).name()), demangle(typeid(NInput).name()), demangle(typeid(NOutput).name()), demangle(typeid(TFeedthroughOps).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        class BlockTraits<std::DiscreteStateSpaceBlock<
+                          ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >> {
+        public:
+            static constexpr const BlockType blockType = BlockType::DiscreteStateSpaceBlock;
+            enum {
+                directFeedthrough = false
+            };
+
+            using type = std::DiscreteStateSpaceBlock<
+                    ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                    std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                    0,
+                    0,
+                    0
+            >;
+            using Base = typename type::Base;
+
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            enum {
+                kNState = type::kNState,
+                kNInput = type::kNInput,
+                kNOutput = type::kNOutput
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
+        };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::kIns> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::inTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NInput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::kOuts> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::outTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::kPars> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::parTypes =
+                { demangle(typeid(ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, 2> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough,
+                0,
+                0,
+                0
+        >>::templateTypes =
+                { demangle(typeid(ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>).name()), demangle(typeid(std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough).name()) };
+
+        // Has feedthrough
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        class BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >> {
+        public:
+            static constexpr const BlockType blockType = BlockType::DiscreteStateSpaceBlock;
+            enum {
+                directFeedthrough = true
+            };
+
+            using type = std::DiscreteStateSpaceBlock<
+                    ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                    std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                    0,
+                    0,
+                    0
+            >;
+            using Base = typename type::Base;
+
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            enum {
+                kNState = type::kNState,
+                kNInput = type::kNInput,
+                kNOutput = type::kNOutput
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
+        };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::kIns> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::inTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NInput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::kOuts> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::outTypes =
+                { demangle(typeid(Eigen::Vector<TScalar, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::kPars> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::parTypes =
+                { demangle(typeid(ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>).name()) };
+
+        template<typename TScalar, int NState, int NInput, int NOutput>
+        const ::std::array<::std::string, 2> BlockTraits<std::DiscreteStateSpaceBlock<
+                ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>,
+                std::DiscreteStateSpaceBlockFeedthrough::HasFeedthrough,
+                0,
+                0,
+                0
+        >>::templateTypes =
+                { demangle(typeid(ls::systems::DiscreteStateSpace<TScalar, NState, NInput, NOutput>).name()), demangle(typeid(std::DiscreteStateSpaceBlockFeedthrough::NoFeedthrough).name()) };
     }
 }
 

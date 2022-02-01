@@ -86,11 +86,15 @@ namespace ls {
 
             bool hasDirectFeedthrough(BlockProto *blk) const;
 
+            bool hasDirectFeedthrough(BlockProto &blk) const;
+
             bool isDriving(BlockProto *blk1, BlockProto *blk2) const;
 
-            ::std::shared_ptr<BlockTraits> getTraitsByPtr(BlockProto *ptr);
+            bool isDriving(BlockProto &blk1, BlockProto &blk2) const;
 
-            ::std::shared_ptr<BlockTraits> getTraitsById(unsigned int id);
+            ::std::shared_ptr<BlockTraits> getTraitsByPtr(const BlockProto *ptr) const;
+
+            ::std::shared_ptr<BlockTraits> getTraitsById(unsigned int id) const;
 
             BlockProto *getBlockById(unsigned int id);
 
@@ -98,7 +102,7 @@ namespace ls {
 
             ::std::vector<BlockProto *> blocks;
             ::std::vector<::std::shared_ptr<BlockTraits>> blockTraits;
-            ::std::unordered_map<BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
+            ::std::unordered_map<const BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
             ::std::unordered_map<unsigned int, BlockProto *> blockById;
             ls::blocks::aux::DirectedGraph graph;
         };

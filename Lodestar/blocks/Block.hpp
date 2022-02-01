@@ -12,6 +12,13 @@
 #include "Signal.hpp"
 #include "BlockTraits.hpp"
 #include "Lodestar/aux/TemplateTools.hpp"
+#include "Lodestar/aux/AlwaysFalse.hpp"
+
+#ifdef LS_USE_GINAC
+
+#include <ginac/ginac.h>
+
+#endif
 
 namespace ls {
     /**
@@ -93,12 +100,11 @@ namespace ls {
             /// Using-declaration of the trigger equation function type.
             using Equation = ::std::function<void(type &)>;
 
-            /// Number of input slots.
-            static const int kIns;
-            /// Number of output slots.
-            static const int kOuts;
-            /// Number of parameter slots.
-            static const int kPars;
+            enum {
+                kIns = sizeof...(TInputs), /// Number of input slots.
+                kOuts = sizeof...(TOutputs), /// Number of output slots.
+                kPars = sizeof...(TParameters) /// Number of parameter slots.
+            };
 
             /// Globally unique identifier.
             const unsigned int id;
@@ -475,6 +481,72 @@ namespace ls {
                     return equation(*this);
             }
 
+#ifdef LS_USE_GINAC
+
+            ::std::array<GiNaC::symbol, kIns> &inputSymbols()
+            {
+                static ::std::array<GiNaC::symbol, kIns> arr;
+
+                for (int i = 0; i < kIns; i++)
+                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_i" + ::std::to_string(i) + "__",
+                                           "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                           "}"};
+
+                return &arr;
+            }
+
+            ::std::array<GiNaC::symbol, kOuts> &outputSymbols()
+            {
+                static ::std::array<GiNaC::symbol, kOuts> arr;
+
+                for (int i = 0; i < kOuts; i++)
+                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_o" + ::std::to_string(i) + "__",
+                                           "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                           "}"};
+
+                return &arr;
+            }
+
+            ::std::array<GiNaC::symbol, kPars> &parameterSymbols()
+            {
+                static ::std::array<GiNaC::symbol, kPars> arr;
+
+                for (int i = 0; i < kPars; i++)
+                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_p" + ::std::to_string(i) + "__",
+                                           "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                           "}"};
+
+                return &arr;
+            }
+
+#else
+
+            ::std::array<int, kIns> &inputSymbols()
+            {
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+
+                static ::std::array<GiNaC::symbol, kIns> arr;
+                return &arr;
+            }
+
+            ::std::array<int, kIns> &outputSymbols()
+            {
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+
+                static ::std::array<GiNaC::symbol, kIns> arr;
+                return &arr;
+            }
+
+            ::std::array<int, kIns> &parameterSymbols()
+            {
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+
+                static ::std::array<GiNaC::symbol, kIns> arr;
+                return &arr;
+            }
+
+#endif
+
             /// Input signals.
             Inputs inputs;
             /// Output signals.
@@ -484,33 +556,6 @@ namespace ls {
             /// Trigger function.
             Equation equation;
         };
-
-        template<typename... TInputs,
-                typename... TOutputs,
-                typename... TParameters>
-        constexpr const int Block<
-                ::std::tuple<TInputs...>,
-                ::std::tuple<TOutputs...>,
-                ::std::tuple<TParameters...>
-        >::kIns = sizeof...(TInputs);
-
-        template<typename... TInputs,
-                typename... TOutputs,
-                typename... TParameters>
-        constexpr const int Block<
-                ::std::tuple<TInputs...>,
-                ::std::tuple<TOutputs...>,
-                ::std::tuple<TParameters...>
-        >::kOuts = sizeof...(TOutputs);
-
-        template<typename... TInputs,
-                typename... TOutputs,
-                typename... TParameters>
-        constexpr const int Block<
-                ::std::tuple<TInputs...>,
-                ::std::tuple<TOutputs...>,
-                ::std::tuple<TParameters...>
-        >::kPars = sizeof...(TParameters);
 
         template<typename... TInputs,
                 typename... TOutputs,

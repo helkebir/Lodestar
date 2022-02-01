@@ -170,7 +170,7 @@ ls::blocks::aux::StronglyConnectedComponents::SCCResult::extractBlocks(
         const ::std::vector<FullConnection> &connections) const
 {
     ::std::set<const BlockProto *> blks;
-    for (auto &connection : connections) {
+    for (auto &connection: connections) {
         blks.insert(connection.src);
         blks.insert(connection.dst);
     }
@@ -178,10 +178,33 @@ ls::blocks::aux::StronglyConnectedComponents::SCCResult::extractBlocks(
     std::vector<const BlockProto *> res;
     res.reserve(blks.size());
 
-    for (auto blk : blks)
+    for (auto blk: blks)
         res.push_back(blk);
 
     return res;
+}
+
+bool ls::blocks::aux::StronglyConnectedComponents::SCCResult::isAlgebraicLoop(const ls::blocks::BlockPack &bp,
+                                                                              int componentIdx) const
+{
+//    for (auto id : components[componentIdx])
+//        if (!bp.getTraitsById(id)->directFeedthrough)
+//            return false;
+//
+//    return true;
+
+    return ::std::all_of(components[componentIdx].begin(), components[componentIdx].end(),
+                         [&](int id) -> bool { return bp.getTraitsById(id)->directFeedthrough; });
+}
+
+bool
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::containsAlgebraicLoops(const ls::blocks::BlockPack &bp) const
+{
+    for (int i = 0; i < components.size(); i++)
+        if (isAlgebraicLoop(bp, i))
+            return true;
+
+    return false;
 }
 
 ls::blocks::aux::StronglyConnectedComponents::SCCResult

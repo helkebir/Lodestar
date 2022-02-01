@@ -33,7 +33,7 @@ namespace ls {
             template<typename TScalar, int TRows, int TCols, MuxBlockOperator TOps>
             class MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps> :
                     public Block<
-                            typename aux::TemplateTools::repeat<TScalar,
+                            typename ls::aux::TemplateTools::repeat<TScalar,
                                     TRows * TCols, ::std::tuple>::type,
                             ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
                             ::std::tuple<MuxBlockOperator>
@@ -41,7 +41,7 @@ namespace ls {
             public:
                 using Base =
                 Block<
-                        typename aux::TemplateTools::repeat<TScalar,
+                        typename ls::aux::TemplateTools::repeat<TScalar,
                                 TRows * TCols, ::std::tuple>::type,
                         ::std::tuple<Eigen::Matrix<TScalar, TRows, TCols>>,
                         ::std::tuple<MuxBlockOperator>
@@ -394,19 +394,47 @@ namespace ls {
             };
         }
 
-        template<typename TType, std::MuxBlockOperator TOps>
-        class BlockTraits<std::MuxBlock<TType, TOps>> {
+        template<typename TScalar, int TRows, int TCols, std::MuxBlockOperator TOps>
+        class BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>> {
         public:
             static constexpr const BlockType blockType = BlockType::MuxBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
-            using type = std::MuxBlock<TType, TOps>;
+            using type = std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
         };
+
+        template<typename TScalar, int TRows, int TCols, std::MuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kIns> BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::inTypes =
+                ls::aux::TemplateTools::create_array<TRows * TCols>(
+                        demangle(typeid(TScalar).name())
+                );
+
+        template<typename TScalar, int TRows, int TCols, std::MuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kOuts> BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::outTypes =
+                { demangle(typeid(Eigen::Matrix<TScalar, TRows, TCols>).name()) };
+
+        template<typename TScalar, int TRows, int TCols, std::MuxBlockOperator TOps>
+        const ::std::array<::std::string, BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kPars> BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::parTypes =
+                { demangle(typeid(TOps).name()) };
+
+        template<typename TScalar, int TRows, int TCols, std::MuxBlockOperator TOps>
+        const ::std::array<::std::string, 2> BlockTraits<std::MuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::templateTypes =
+                { demangle(typeid(Eigen::Matrix<TScalar, TRows, TCols>).name()), demangle(typeid(TOps).name()) };
     }
 }
 

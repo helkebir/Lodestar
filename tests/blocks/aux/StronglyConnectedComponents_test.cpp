@@ -76,6 +76,10 @@ TEST_CASE("StronglyConnectedComponents applied", "[blocks][aux]")
     auto components =
             ls::blocks::aux::StronglyConnectedComponents::findComponents(graph);
 
+    REQUIRE(components.components.size() == 1);
+    REQUIRE(components.isAlgebraicLoop(bp, 0));
+    REQUIRE(components.containsAlgebraicLoops(bp));
+
     bool hasSum = false;
     bool hasGain = false;
 
@@ -137,6 +141,10 @@ TEST_CASE("StronglyConnectedComponents applied 2", "[blocks][aux]")
 
     auto components =
             ls::blocks::aux::StronglyConnectedComponents::findComponents(graph);
+
+    REQUIRE(components.components.size() == 1);
+    REQUIRE(components.isAlgebraicLoop(bp, 0));
+    REQUIRE(components.containsAlgebraicLoops(bp));
 
     bool hasSum = false;
     bool hasGain = false;
@@ -220,6 +228,9 @@ TEST_CASE("StronglyConnectedComponents applied 3", "[blocks][aux]")
             ls::blocks::aux::StronglyConnectedComponents::findComponents(graph);
 
     REQUIRE(components.components.size() == 1);
+
+    REQUIRE(components.isAlgebraicLoop(bp, 0));
+    REQUIRE(components.containsAlgebraicLoops(bp));
 
     bool hasSum = false;
     bool hasGain = false;
