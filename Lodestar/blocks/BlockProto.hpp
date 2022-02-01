@@ -19,7 +19,7 @@ namespace ls {
             using empty = std::tuple<>; /// Utility using declaration for empty slot bank.
 
             std::vector<SignalBase *>
-                    inputPointers{},  /// Vector of input signal pointers.
+            inputPointers{},  /// Vector of input signal pointers.
             outputPointers{}; /// Vector of output signal pointers.
 
             const unsigned int id; /// Unique Block ID.

@@ -31,9 +31,16 @@ namespace ls {
                 static DirectedGraph
                 fromBlocks(const ::std::vector<BlockProto *> &blocks);
 
+                static DirectedGraph
+                fromBlocks(const ::std::vector<const BlockProto *> &blocks);
+
                 template <int N>
                 static DirectedGraph
                 fromBlocks(const ::std::array<BlockProto *, N> &blocks);
+
+                template <int N>
+                static DirectedGraph
+                fromBlocks(const ::std::array<const BlockProto *, N> &blocks);
 
                 int &get(int src, int dst);
 

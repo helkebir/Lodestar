@@ -6,6 +6,17 @@
 
 ls::blocks::aux::DirectedGraph ls::blocks::aux::DirectedGraph::fromBlocks(const std::vector<BlockProto *> &blocks)
 {
+    ::std::vector<const BlockProto *> blks;
+    blks.reserve(blocks.size());
+
+    for (auto blk : blocks)
+        blks.push_back(blk);
+
+    return fromBlocks(blks);
+}
+
+ls::blocks::aux::DirectedGraph ls::blocks::aux::DirectedGraph::fromBlocks(const std::vector<const BlockProto *> &blocks)
+{
     ::std::vector<Eigen::Triplet<int>> triplets;
 
     int n = 0;
@@ -40,6 +51,16 @@ ls::blocks::aux::DirectedGraph ls::blocks::aux::DirectedGraph::fromBlocks(const 
 
 template<int N>
 ls::blocks::aux::DirectedGraph ls::blocks::aux::DirectedGraph::fromBlocks(const std::array<BlockProto *, N> &blocks)
+{
+    ::std::array<const BlockProto *, N> blks;
+    for (int i = 0; i < blocks.size(); i++)
+        blks[i] = blocks[i];
+
+    return fromBlocks(blks);
+}
+
+template<int N>
+ls::blocks::aux::DirectedGraph ls::blocks::aux::DirectedGraph::fromBlocks(const std::array<const BlockProto *, N> &blocks)
 {
     ::std::vector<Eigen::Triplet<int>> triplets;
 

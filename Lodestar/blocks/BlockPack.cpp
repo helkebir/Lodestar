@@ -60,3 +60,11 @@ ls::blocks::BlockProto *ls::blocks::BlockPack::getBlockById(unsigned int id)
 
     return nullptr;
 }
+
+const ls::blocks::BlockProto *ls::blocks::BlockPack::getBlockById(unsigned int id) const
+{
+    if (blockById.find(id) != blockById.end())
+        return blockById.at(id);
+
+    return nullptr;
+}

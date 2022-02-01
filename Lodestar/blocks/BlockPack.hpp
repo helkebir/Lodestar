@@ -94,6 +94,8 @@ namespace ls {
 
             BlockProto *getBlockById(unsigned int id);
 
+            const BlockProto *getBlockById(unsigned int id) const;
+
             ::std::vector<BlockProto *> blocks;
             ::std::vector<::std::shared_ptr<BlockTraits>> blockTraits;
             ::std::unordered_map<BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
