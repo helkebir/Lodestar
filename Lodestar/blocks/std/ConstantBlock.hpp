@@ -48,6 +48,131 @@ namespace ls {
                     return this->template p<0>();
                 }
 
+#ifdef LS_USE_GINAC
+
+                const ::std::array<GiNaC::ex, Base::kIns> &inputSymbols()
+                {
+                    static ::std::array<GiNaC::ex, Base::kIns> arr;
+                    static bool isInit = false;
+
+                    if (!isInit) {
+                        for (int i = 0; i < Base::kIns; i++) {
+                            if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::value) {
+                                GiNaC::lst input;
+                                for (int ii = 0; ii <
+                                                 ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::rows; ii++) {
+                                    GiNaC::lst row;
+                                    for (int jj = 0; jj <
+                                                     ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::cols; jj++) {
+                                        GiNaC::symbol entry{
+                                                "blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i) +
+                                                "_r_" + ::std::to_string(ii) + "_c_" + ::std::to_string(jj),
+                                                "\\text{BLK}^{i, " + ::std::to_string(i) + ", " + ::std::to_string(ii) +
+                                                ", " + ::std::to_string(jj) + "}_{" + ::std::to_string(this->id) + "}"};
+
+                                        row.append(entry);
+                                    }
+                                    input.append(row);
+                                }
+
+                                arr[i] = GiNaC::lst_to_matrix(input);
+                            } else {
+                                arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i),
+                                                       "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                                       ::std::to_string(this->id) +
+                                                       "}"};
+                            }
+                        }
+
+                        isInit = true;
+                    }
+
+                    return arr;
+                }
+
+                const ::std::array<GiNaC::ex, Base::kOuts> &outputSymbols()
+                {
+                    static ::std::array<GiNaC::ex, Base::kOuts> arr;
+                    static bool isInit = false;
+
+                    if (!isInit) {
+                        for (int i = 0; i < Base::kOuts; i++) {
+                            if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::value) {
+                                GiNaC::lst output;
+                                for (int ii = 0; ii <
+                                                 ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::rows; ii++) {
+                                    GiNaC::lst row;
+                                    for (int jj = 0; jj <
+                                                     ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::cols; jj++) {
+                                        GiNaC::symbol entry{
+                                                "blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i) +
+                                                "_r_" + ::std::to_string(ii) + "_c_" + ::std::to_string(jj),
+                                                "\\text{BLK}^{i, " + ::std::to_string(i) + ", " + ::std::to_string(ii) +
+                                                ", " + ::std::to_string(jj) + "}_{" + ::std::to_string(this->id) + "}"};
+
+                                        row.append(entry);
+                                    }
+                                    output.append(row);
+                                }
+
+                                arr[i] = GiNaC::lst_to_matrix(output);
+                            } else {
+                                arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
+                                                       "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                                       ::std::to_string(this->id) +
+                                                       "}"};
+                            }
+                        }
+
+                        isInit = true;
+                    }
+
+                    return arr;
+                }
+
+                const ::std::array<GiNaC::ex, 1> &parameterSymbols()
+                {
+                    static ::std::array<GiNaC::ex, 1> arr;
+                    static bool isInit = false;
+
+                    if (!isInit) {
+
+                        int i = 0;
+
+                        if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::value) {
+                            GiNaC::lst output;
+                            for (int ii = 0;
+                                 ii < ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::rows; ii++) {
+                                GiNaC::lst row;
+                                for (int jj = 0; jj <
+                                                 ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TType>::cols; jj++) {
+                                    GiNaC::symbol entry{
+                                            "blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i) + "_r_" +
+                                            ::std::to_string(ii) + "_c_" + ::std::to_string(jj),
+                                            "\\text{BLK}^{i, " + ::std::to_string(i) + ", " + ::std::to_string(ii) +
+                                            ", " + ::std::to_string(jj) + "}_{" + ::std::to_string(this->id) + "}"};
+
+                                    row.append(entry);
+                                }
+                                output.append(row);
+                            }
+
+                            arr[i] = GiNaC::lst_to_matrix(output);
+                        } else {
+                            arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
+                                                   "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                                   ::std::to_string(this->id) +
+                                                   "}"};
+                        }
+
+                        isInit = true;
+                    }
+
+                    return arr;
+                }
+
+#endif
+
             protected:
                 void bindEquation()
                 {
@@ -56,6 +181,20 @@ namespace ls {
                             this,
                             ::std::placeholders::_1
                     );
+
+#ifdef LS_USE_GINAC
+                    GiNaC::function_options fops("blkf" + ::std::to_string(this->id) + "__", this->blkFunc_NPARAMS);
+                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
+                        return GiNaC::ex{this->parameterSymbols()[0]};
+                    };
+
+                    fops.eval_func(ls::blocks::symbolicEval);
+
+
+                    this->serial = GiNaC::function::register_new(
+                            fops
+                    );
+#endif
                 }
 
                 void triggerFunction(Base &b)

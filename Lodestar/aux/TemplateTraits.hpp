@@ -112,7 +112,12 @@ namespace ls {
                  */
                 template<typename T>
                 struct parseMatrixLike : ::std::false_type {
+                    using scalar = T;
 
+                    enum {
+                        rows = 0,
+                        cols = 0
+                    };
                 };
 
                 /**
@@ -124,12 +129,14 @@ namespace ls {
                  * @tparam TCols Number of columns.
                  * @tparam TOtherParams Parameter pack containing other parameters.
                  */
-                template<template<typename, int...> class TWrapper, typename TScalar, int TRows, int TCols, int... TOtherParams>
+                template<template<typename, int, int, int...> class TWrapper, typename TScalar, int TRows, int TCols, int... TOtherParams>
                 struct parseMatrixLike<TWrapper<TScalar, TRows, TCols, TOtherParams...>>
                         : ::std::true_type {
                     using scalar = TScalar;
-                    static constexpr const int rows = TRows;
-                    static constexpr const int cols = TCols;
+                    enum {
+                        rows = TRows,
+                        cols = TCols
+                    };
 
                     template<typename UScalar, int URows, int UCols, int... UOtherParams>
                     using wrapper = TWrapper<UScalar, URows, UCols, UOtherParams...>;

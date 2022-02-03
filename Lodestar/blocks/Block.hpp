@@ -144,6 +144,12 @@ namespace ls {
                                                                   primeInputSignal);
                 ls::aux::TemplateTools::Executors::forEachPointer(outputs,
                                                                   primeOutputSignal);
+
+//#ifdef LS_USE_GINAC
+//                serial = GiNaC::function::register_new(
+//                        GiNaC::function_options("blkf" + ::std::to_string(id) + "__", blkFunc_NPARAMS)
+//                );
+//#endif
             }
 
             //    void connect();
@@ -483,66 +489,119 @@ namespace ls {
 
 #ifdef LS_USE_GINAC
 
-            ::std::array<GiNaC::symbol, kIns> &inputSymbols()
+            const ::std::array<GiNaC::ex, kIns> &inputSymbols()
             {
-                static ::std::array<GiNaC::symbol, kIns> arr;
+                static ::std::array<GiNaC::ex, kIns> arr;
+                static bool isInit = false;
 
-                for (int i = 0; i < kIns; i++)
-                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_i" + ::std::to_string(i) + "__",
-                                           "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
-                                           "}"};
+                if (!isInit) {
+                    for (int i = 0; i < kIns; i++)
+                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_i_" + ::std::to_string(i),
+                                               "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                               "}"};
 
-                return &arr;
+                    isInit = true;
+                }
+
+                return arr;
             }
 
-            ::std::array<GiNaC::symbol, kOuts> &outputSymbols()
+            const ::std::array<GiNaC::ex, kOuts> &outputSymbols()
             {
-                static ::std::array<GiNaC::symbol, kOuts> arr;
+                static ::std::array<GiNaC::ex, kOuts> arr;
+                static bool isInit = false;
 
-                for (int i = 0; i < kOuts; i++)
-                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_o" + ::std::to_string(i) + "__",
-                                           "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
-                                           "}"};
+                if (!isInit) {
+                    for (int i = 0; i < kOuts; i++)
+                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_o_" + ::std::to_string(i),
+                                               "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                               "}"};
 
-                return &arr;
+                    isInit = true;
+                }
+
+                return arr;
             }
 
-            ::std::array<GiNaC::symbol, kPars> &parameterSymbols()
+            const ::std::array<GiNaC::ex, kPars> &parameterSymbols()
             {
-                static ::std::array<GiNaC::symbol, kPars> arr;
+                static ::std::array<GiNaC::ex, kPars> arr;
+                static bool isInit = false;
 
-                for (int i = 0; i < kPars; i++)
-                    arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_p" + ::std::to_string(i) + "__",
-                                           "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
-                                           "}"};
+                if (!isInit) {
+                    for (int i = 0; i < kPars; i++)
+                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_p_" + ::std::to_string(i),
+                                               "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
+                                               "}"};
 
-                return &arr;
+                    isInit = true;
+                }
+
+                return arr;
             }
 
+            unsigned serial;
+
+//            GiNaC::function_options & getFunctionOptions()
+//            {
+//                static ::std::vector<GiNaC::function_options> fops{};
+//                fops = GiNaC::function::get_registered_functions();
+//
+//                return fops[serial];
+//            }
+
+            static const unsigned blkFunc_NPARAMS = 1;
+
+            const GiNaC::function blkf(const ::std::vector<GiNaC::ex> &exvec, bool appendId = true)
+            {
+                if (appendId) {
+                    ::std::vector<GiNaC::ex> exvec2{exvec};
+                    exvec2.push_back(GiNaC::numeric{id});
+
+                    return GiNaC::function(serial, exvec2);
+                }
+
+                return GiNaC::function(serial, exvec);
+            }
+
+            template<typename ...T, typename ::std::enable_if<sizeof...(T) == kIns>::type * = nullptr>
+            const GiNaC::function blkf(const T &...p)
+            {
+                return GiNaC::function(serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)..., GiNaC::numeric{id}});
+            }
+
+            template<typename ...T, typename ::std::enable_if<sizeof...(T) != kIns>::type * = nullptr>
+            const GiNaC::function blkf(const T &...p)
+            {
+                static_assert(sizeof...(T) == blkFunc_NPARAMS,
+                              "Incorrect number of arguments provided to symbolic function.");
+
+                return GiNaC::function(serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)...});
+            }
 #else
 
             ::std::array<int, kIns> &inputSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
                 static ::std::array<GiNaC::symbol, kIns> arr;
-                return &arr;
+                return arr;
             }
 
             ::std::array<int, kIns> &outputSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
                 static ::std::array<GiNaC::symbol, kIns> arr;
-                return &arr;
+                return arr;
             }
 
             ::std::array<int, kIns> &parameterSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
                 static ::std::array<GiNaC::symbol, kIns> arr;
-                return &arr;
+                return arr;
             }
 
 #endif
@@ -582,6 +641,85 @@ namespace ls {
             static const constexpr int kOuts = type::Base::kOuts;
             static const constexpr int kPars = type::Base::kPars;
         };
+
+#ifdef LS_USE_GINAC
+        static ::std::unordered_map<unsigned int, ::std::function<GiNaC::ex(::std::vector<GiNaC::ex>)>>
+        symbolicEvalFunctionMap{}, symbolicEvalfFunctionMap{}, symbolicConjugateFunctionMap{}, symbolicRealFunctionMap{},
+        symbolicImagFunctionMap{}, symbolicExpandFunctionMap{}, symbolicDerivFunctionMap{}, symbolicExplDerivFunctionMap{},
+        symbolicPowerFunctionMap{}, symbolicSeriesFunctionMap{}, symbolicPrintFunctionMap{}, symbolicInfoFunctionMap{};
+
+        static GiNaC::ex symbolicEval(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicEvalFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicEvalf(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicEvalfFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicConjugate(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicConjugateFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicReal(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicRealFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicImag(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicImagFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicExpand(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicExpandFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicDeriv(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicDerivFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicExplDeriv(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicExplDerivFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicPower(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicPowerFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicSeries(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicSeriesFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicPrint(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicPrintFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+
+        static GiNaC::ex symbolicInfo(const ::std::vector<GiNaC::ex> &args)
+        {
+            return symbolicInfoFunctionMap[GiNaC::ex_to<GiNaC::numeric>(args.back()).to_int()](
+                    ::std::vector<GiNaC::ex>{args.begin(), args.end() - 1});
+        }
+#endif
     }
 }
 
