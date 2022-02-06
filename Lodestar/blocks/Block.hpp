@@ -107,7 +107,8 @@ namespace ls {
             };
 
             /// Globally unique identifier.
-            const unsigned int id;
+//            const unsigned int id;
+            using BlockProto::id;
 
             /**
              * @brief Default constructor.
@@ -116,7 +117,7 @@ namespace ls {
              * assigned.
              */
             Block() : inputs(Inputs{}), outputs(Outputs{}), params(Params{}),
-                      equation{}, id(BlockProto::id)
+                      equation{}
             {
                 BlockProto::ins = kIns;
                 BlockProto::outs = kOuts;
@@ -491,56 +492,45 @@ namespace ls {
 
             const ::std::array<GiNaC::ex, kIns> &inputSymbols()
             {
-                static ::std::array<GiNaC::ex, kIns> arr;
-                static bool isInit = false;
-
-                if (!isInit) {
+                if (!isInitInput_) {
                     for (int i = 0; i < kIns; i++)
-                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_i_" + ::std::to_string(i),
+                        inputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_i_" + ::std::to_string(i),
                                                "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
                                                "}"};
 
-                    isInit = true;
+                    isInitInput_ = true;
                 }
 
-                return arr;
+                return inputSymbols_;
             }
 
             const ::std::array<GiNaC::ex, kOuts> &outputSymbols()
             {
-                static ::std::array<GiNaC::ex, kOuts> arr;
-                static bool isInit = false;
-
-                if (!isInit) {
+                if (!isInitOutput_) {
                     for (int i = 0; i < kOuts; i++)
-                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_o_" + ::std::to_string(i),
+                        outputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_o_" + ::std::to_string(i),
                                                "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
                                                "}"};
 
-                    isInit = true;
+                    isInitOutput_ = true;
                 }
 
-                return arr;
+                return outputSymbols_;
             }
 
             const ::std::array<GiNaC::ex, kPars> &parameterSymbols()
             {
-                static ::std::array<GiNaC::ex, kPars> arr;
-                static bool isInit = false;
-
-                if (!isInit) {
+                if (!isInitParameter_) {
                     for (int i = 0; i < kPars; i++)
-                        arr[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_p_" + ::std::to_string(i),
+                        parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(id) + "_p_" + ::std::to_string(i),
                                                "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" + ::std::to_string(id) +
                                                "}"};
 
-                    isInit = true;
+                    isInitParameter_ = true;
                 }
 
-                return arr;
+                return parameterSymbols_;
             }
-
-            unsigned serial;
 
 //            GiNaC::function_options & getFunctionOptions()
 //            {
@@ -552,22 +542,10 @@ namespace ls {
 
             static const unsigned blkFunc_NPARAMS = 1;
 
-            const GiNaC::function blkf(const ::std::vector<GiNaC::ex> &exvec, bool appendId = true)
-            {
-                if (appendId) {
-                    ::std::vector<GiNaC::ex> exvec2{exvec};
-                    exvec2.push_back(GiNaC::numeric{id});
-
-                    return GiNaC::function(serial, exvec2);
-                }
-
-                return GiNaC::function(serial, exvec);
-            }
-
             template<typename ...T, typename ::std::enable_if<sizeof...(T) == kIns>::type * = nullptr>
             const GiNaC::function blkf(const T &...p)
             {
-                return GiNaC::function(serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)..., GiNaC::numeric{id}});
+                return GiNaC::function(BlockProto::serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)..., GiNaC::numeric{id}});
             }
 
             template<typename ...T, typename ::std::enable_if<sizeof...(T) != kIns>::type * = nullptr>
@@ -576,7 +554,7 @@ namespace ls {
                 static_assert(sizeof...(T) == blkFunc_NPARAMS,
                               "Incorrect number of arguments provided to symbolic function.");
 
-                return GiNaC::function(serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)...});
+                return GiNaC::function(BlockProto::serial, ::std::vector<GiNaC::ex>{GiNaC::ex(p)...});
             }
 #else
 
@@ -614,6 +592,17 @@ namespace ls {
             Params params;
             /// Trigger function.
             Equation equation;
+
+#ifdef LS_USE_GINAC
+        protected:
+            bool isInitInput_ = false;
+            bool isInitOutput_ = false;
+            bool isInitParameter_ = false;
+
+            ::std::array<GiNaC::ex, kIns> inputSymbols_;
+            ::std::array<GiNaC::ex, kOuts> outputSymbols_;
+            ::std::array<GiNaC::ex, kPars> parameterSymbols_;
+#endif
         };
 
         template<typename... TInputs,

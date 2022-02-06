@@ -45,7 +45,7 @@ bool ls::blocks::BlockPack::isDriving(ls::blocks::BlockProto &blk1, ls::blocks::
     return isDriving(&blk1, &blk2);
 }
 
-std::shared_ptr<ls::blocks::BlockPack::BlockTraits>
+std::shared_ptr <ls::blocks::BlockPack::BlockTraits>
 ls::blocks::BlockPack::getTraitsByPtr(const ls::blocks::BlockProto *ptr) const
 {
     if (traitsByPtr.find(ptr) != traitsByPtr.end())
@@ -54,7 +54,7 @@ ls::blocks::BlockPack::getTraitsByPtr(const ls::blocks::BlockProto *ptr) const
     return nullptr;
 }
 
-std::shared_ptr<ls::blocks::BlockPack::BlockTraits> ls::blocks::BlockPack::getTraitsById(unsigned int id) const
+std::shared_ptr <ls::blocks::BlockPack::BlockTraits> ls::blocks::BlockPack::getTraitsById(unsigned int id) const
 {
     auto blk = getBlockById(id);
 
@@ -79,3 +79,93 @@ const ls::blocks::BlockProto *ls::blocks::BlockPack::getBlockById(unsigned int i
 
     return nullptr;
 }
+
+#ifdef LS_USE_GINAC
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getInputSymbolsByPtr(const ls::blocks::BlockProto *ptr) const
+{
+    if (inputSymbolsByPtr.find(ptr) != inputSymbolsByPtr.end())
+        return inputSymbolsByPtr.at(ptr);
+
+    return nullptr;
+}
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getOutputSymbolsByPtr(const ls::blocks::BlockProto *ptr) const
+{
+    if (outputSymbolsByPtr.find(ptr) != outputSymbolsByPtr.end())
+        return outputSymbolsByPtr.at(ptr);
+
+    return nullptr;
+}
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getParameterSymbolsByPtr(const ls::blocks::BlockProto *ptr) const
+{
+    if (parameterSymbolsByPtr.find(ptr) != parameterSymbolsByPtr.end())
+        return parameterSymbolsByPtr.at(ptr);
+
+    return nullptr;
+}
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getInputSymbolsById(unsigned int id) const
+{
+    auto blk = getBlockById(id);
+
+    if (blk == nullptr)
+        return nullptr;
+
+    return getInputSymbolsByPtr(blk);
+}
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getOutputSymbolsById(unsigned int id) const
+{
+    auto blk = getBlockById(id);
+
+    if (blk == nullptr)
+        return nullptr;
+
+    return getOutputSymbolsByPtr(blk);
+}
+
+::std::shared_ptr<::std::vector < GiNaC::ex>>
+
+ls::blocks::BlockPack::getParameterSymbolsById(unsigned int id) const
+{
+    auto blk = getBlockById(id);
+
+    if (blk == nullptr)
+        return nullptr;
+
+    return getParameterSymbolsByPtr(blk);
+}
+
+::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>>
+ls::blocks::BlockPack::getSymbolicFunctionByPtr(const ls::blocks::BlockProto *ptr) const
+{
+    if (symbolicFunctionByPtr.find(ptr) != symbolicFunctionByPtr.end())
+        return symbolicFunctionByPtr.at(ptr);
+
+    return nullptr;
+}
+
+::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>>
+ls::blocks::BlockPack::getSymbolicFunctionById(unsigned int id) const
+{
+    auto blk = getBlockById(id);
+
+    if (blk == nullptr)
+        return nullptr;
+
+    return getSymbolicFunctionByPtr(blk);
+}
+
+#endif

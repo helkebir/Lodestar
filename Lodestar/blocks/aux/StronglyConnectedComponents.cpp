@@ -207,6 +207,272 @@ ls::blocks::aux::StronglyConnectedComponents::SCCResult::containsAlgebraicLoops(
     return false;
 }
 
+::std::size_t ls::blocks::aux::StronglyConnectedComponents::SCCResult::getComponentLength(int componentIdx) const
+{
+    return components[0].size();
+}
+
+#ifdef LS_USE_GINAC
+
+GiNaC::lst
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getSymbolicEquationList(const ls::blocks::BlockPack &bp,
+                                                                                 int componentIdx) const
+{
+    GiNaC::lst l;
+
+    auto internalIO = getInternalIO(bp, componentIdx);
+    auto externalIO = getExternalIO(bp, componentIdx);
+
+    auto interconnections = getInterconnectionEquationList(bp, componentIdx);
+    auto blockEqs = getBlockEquationList(bp, componentIdx);
+
+    for (auto &iconn: interconnections)
+        l.append(iconn);
+
+    for (auto &eq: blockEqs)
+        l.append(eq);
+
+    return l;
+}
+
+GiNaC::lst
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getInterconnectionEquationList(const ls::blocks::BlockPack &bp,
+                                                                                        int componentIdx) const
+{
+    auto internalIO = getInternalIO(bp, componentIdx);
+
+    GiNaC::lst l;
+
+    for (auto &iconn: internalIO)
+        l.append((*bp.getInputSymbolsByPtr(iconn.dst))[iconn.dstSlot]
+                 ==
+                 (*bp.getOutputSymbolsByPtr(iconn.src))[iconn.srcSlot]);
+
+    return l;
+}
+
+GiNaC::lst
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getBlockEquationList(const ls::blocks::BlockPack &bp,
+                                                                              int componentIdx) const
+{
+    GiNaC::lst l;
+
+    for (auto id: components[componentIdx]) {
+        int i = 0;
+        auto f = (*bp.getSymbolicFunctionById(id))(*bp.getInputSymbolsById(id)).eval().evalm();
+
+        for (auto &output: *bp.getOutputSymbolsById(id)) {
+            if (GiNaC::is_a<GiNaC::lst>(f))
+                l.append(output == f[i]);
+            else
+                l.append(output == f);
+
+            i++;
+        }
+    }
+
+    return l;
+}
+
+GiNaC::lst ls::blocks::aux::StronglyConnectedComponents::SCCResult::getKnownSymbolList(const ls::blocks::BlockPack &bp,
+                                                                                       int componentIdx) const
+{
+    GiNaC::lst l;
+
+    // All external inputs are known. We do not care about external outputs, since they can be computed from the loop's
+    // internal unknowns.
+
+    auto externalIO = getExternalIO(bp, componentIdx);
+
+    for (auto &iconn: externalIO.first) {
+        auto inputs = bp.getInputSymbolsByPtr(iconn.dst);
+        auto iSymb = (*inputs)[iconn.dstSlot];
+        if (GiNaC::is_a<GiNaC::symbol>(iSymb))
+            l.append(iSymb);
+        else if (GiNaC::is_a<GiNaC::lst>(iSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(iSymb), l);
+        else if (GiNaC::is_a<GiNaC::matrix>(iSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(iSymb), l);
+    }
+
+    // All internal parameters are known.
+
+    auto internalIO = getInternalIO(bp, componentIdx);
+
+    for (auto &iconn: internalIO) {
+        for (const auto &pSymb: *bp.getParameterSymbolsByPtr(iconn.src)) {
+            if (GiNaC::is_a<GiNaC::symbol>(pSymb))
+                l.append(pSymb);
+            else if (GiNaC::is_a<GiNaC::lst>(pSymb))
+                expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(pSymb), l);
+            else if (GiNaC::is_a<GiNaC::matrix>(pSymb))
+                expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(pSymb), l);
+        }
+    }
+
+    return l;
+}
+
+GiNaC::lst
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getUnknownSymbolList(const ls::blocks::BlockPack &bp,
+                                                                              int componentIdx) const
+{
+    GiNaC::lst l;
+
+    // All the loop's internal inputs and outputs are unknown.
+
+    auto internalIO = getInternalIO(bp, componentIdx);
+
+    for (auto &iconn: internalIO) {
+        auto outputs = bp.getOutputSymbolsByPtr(iconn.src);
+        auto oSymb = (*outputs)[iconn.srcSlot];
+        if (GiNaC::is_a<GiNaC::symbol>(oSymb))
+            l.append(oSymb);
+        else if (GiNaC::is_a<GiNaC::lst>(oSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(oSymb), l);
+        else if (GiNaC::is_a<GiNaC::matrix>(oSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(oSymb), l);
+
+        auto inputs = bp.getInputSymbolsByPtr(iconn.dst);
+        auto iSymb = (*inputs)[iconn.dstSlot];
+        if (GiNaC::is_a<GiNaC::symbol>(iSymb))
+            l.append(iSymb);
+        else if (GiNaC::is_a<GiNaC::lst>(iSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(iSymb), l);
+        else if (GiNaC::is_a<GiNaC::matrix>(iSymb))
+            expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(iSymb), l);
+    }
+
+    return l;
+}
+
+::std::pair<GiNaC::lst, GiNaC::lst>
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getAlgebraicEquations(const ls::blocks::BlockPack &bp,
+                                                                               int componentIdx) const
+{
+    GiNaC::lst l, unknowns;
+
+    auto eqs = getSymbolicEquationList(bp, componentIdx);
+    auto allUnknowns = getUnknownSymbolList(bp, componentIdx);
+    const auto N = getComponentLength(componentIdx);
+
+    ::std::vector<GiNaC::ex> knowns;
+
+    ::std::function<void(GiNaC::ex)> expandUnknown;
+    expandUnknown = [&](GiNaC::ex unknown) {
+        GiNaC::ex eq = unknown;
+
+        for (int i = 0; i < N; i++)
+            substituteExpressions(eq, eqs);
+
+        knowns.push_back(unknown);
+        if (!(eq - unknown).is_zero()) {
+            l.append(eq - unknown);
+            unknowns.append(unknown);
+        }
+
+        for (auto unknown2: allUnknowns) {
+            if ((::std::find(knowns.begin(), knowns.end(), unknown2) == knowns.end()) &&
+                eq.has(unknown2))
+                expandUnknown(unknown2);
+        }
+    };
+
+    expandUnknown(allUnknowns[0]);
+
+    return {l, unknowns};
+}
+
+GiNaC::matrix
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::getAlgebraicEquationsJacobian(const GiNaC::lst &eqs,
+                                                                                       const GiNaC::lst &vars)
+{
+    GiNaC::matrix jac(eqs.nops(), vars.nops());
+
+    int i = 0;
+    int j = 0;
+    for (auto &eq: eqs) {
+        j = 0;
+
+        for (auto &var: vars) {
+            jac(i, j) = eq.diff(GiNaC::ex_to<GiNaC::symbol>(var));
+
+            j++;
+        }
+
+        i++;
+    }
+
+    return jac;
+}
+
+::std::pair<GiNaC::matrix, GiNaC::matrix>
+ls::blocks::aux::StronglyConnectedComponents::SCCResult::solveAlgebraicEquationsNewtonRaphson(const GiNaC::lst &eqs,
+                                                                                              const GiNaC::matrix &jac,
+                                                                                              const GiNaC::lst &vars)
+{
+    GiNaC::matrix rhs(jac.rows(), 1), delta(jac.rows(), 1);
+
+    int i = 0;
+
+    for (auto &eq: eqs) {
+        rhs(i, 0) = -eq;
+        delta(i, 0) = GiNaC::symbol("d" + GiNaC::ex_to<GiNaC::symbol>(vars[i]).get_name(),
+                                    "d" + GiNaC::ex_to<GiNaC::symbol>(vars[i]).get_TeX_name());
+
+        i++;
+    }
+
+    return {jac.solve(delta, rhs), delta};
+}
+
+void ls::blocks::aux::StronglyConnectedComponents::SCCResult::expandListToSymbols(const GiNaC::lst &l, GiNaC::lst &g)
+{
+    for (auto &ex: l) {
+        if (GiNaC::is_a<GiNaC::symbol>(ex)) {
+            g.append(ex);
+        } else if (GiNaC::is_a<GiNaC::lst>(ex)) {
+            expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(ex), g);
+        } else if (GiNaC::is_a<GiNaC::matrix>(ex)) {
+            expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(ex), g);
+        }
+    }
+}
+
+void ls::blocks::aux::StronglyConnectedComponents::SCCResult::expandListToSymbols(const GiNaC::matrix &l, GiNaC::lst &g)
+{
+    for (int i = 0; i < l.rows(); i++) {
+        for (int j = 0; j < l.cols(); i++) {
+            if (GiNaC::is_a<GiNaC::symbol>(l(i, j)))
+                g.append(l(i, j));
+            else if (GiNaC::is_a<GiNaC::lst>(l(i, j)))
+                expandListToSymbols(GiNaC::ex_to<GiNaC::lst>(l(i, j)), g);
+            else if (GiNaC::is_a<GiNaC::matrix>(l(i, j)))
+                expandListToSymbols(GiNaC::ex_to<GiNaC::matrix>(l(i, j)), g);
+        }
+    }
+}
+
+void ls::blocks::aux::StronglyConnectedComponents::SCCResult::substituteExpressions(GiNaC::ex &ex, GiNaC::lst &subs)
+{
+    for (auto &rel: subs) {
+        if (GiNaC::is_a<GiNaC::matrix>(rel.lhs())) {
+            auto m = GiNaC::ex_to<GiNaC::matrix>(rel.lhs());
+
+            for (int ii = 0; ii < m.rows(); ii++) {
+                for (int jj = 0; jj < m.cols(); jj++) {
+                    ex = ex.subs(m(ii, jj) == GiNaC::ex_to<GiNaC::matrix>(rel.rhs())(ii, jj));
+                }
+            }
+        } else {
+            ex = ex.subs(rel);
+        }
+    }
+}
+
+
+#endif
+
 ls::blocks::aux::StronglyConnectedComponents::SCCResult
 ls::blocks::aux::StronglyConnectedComponents::findComponents(
         const ls::blocks::aux::DirectedGraph &graph, bool allowSingletons)

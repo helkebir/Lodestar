@@ -48,6 +48,35 @@ namespace ls {
                     bool containsAlgebraicLoops(const BlockPack &bp) const;
 
                     ::std::vector<const BlockProto *> extractBlocks(const ::std::vector<FullConnection> &connections) const;
+
+                    ::std::size_t getComponentLength(int componentIdx = 0) const;
+
+#ifdef LS_USE_GINAC
+                    GiNaC::lst getSymbolicEquationList(const BlockPack &bp, int componentIdx = 0) const;
+
+                    GiNaC::lst getInterconnectionEquationList(const BlockPack &bp, int componentIdx = 0) const;
+
+                    GiNaC::lst getBlockEquationList(const BlockPack &bp, int componentIdx = 0) const;
+
+                    GiNaC::lst getKnownSymbolList(const BlockPack &bp, int componentIdx = 0) const;
+
+                    GiNaC::lst getUnknownSymbolList(const BlockPack &bp, int componentIdx = 0) const;
+
+                    ::std::pair<GiNaC::lst, GiNaC::lst>
+                    getAlgebraicEquations(const BlockPack &bp, int componentIdx = 0) const;
+
+                    static GiNaC::matrix
+                    getAlgebraicEquationsJacobian(const GiNaC::lst &eqs, const GiNaC::lst &vars);
+
+                    static ::std::pair<GiNaC::matrix, GiNaC::matrix>
+                    solveAlgebraicEquationsNewtonRaphson(const GiNaC::lst &eqs, const GiNaC::matrix &jac, const GiNaC::lst &vars);
+
+                    static void expandListToSymbols(const GiNaC::lst &l, GiNaC::lst &g);
+
+                    static void expandListToSymbols(const GiNaC::matrix &l, GiNaC::lst &g);
+
+                    static void substituteExpressions(GiNaC::ex &ex, GiNaC::lst &subs);
+#endif
                 };
 
                 static SCCResult

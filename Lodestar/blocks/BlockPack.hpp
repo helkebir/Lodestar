@@ -69,6 +69,29 @@ namespace ls {
                 });
                 blockTraits.push_back(bt);
 
+#ifdef LS_USE_GINAC
+                auto iSymbs = ::std::make_shared<::std::vector<GiNaC::ex>>(block.inputSymbols().begin(),
+                                                                           block.inputSymbols().end());
+                auto oSymbs = ::std::make_shared<::std::vector<GiNaC::ex>>(block.outputSymbols().begin(),
+                                                                           block.outputSymbols().end());
+                auto pSymbs = ::std::make_shared<::std::vector<GiNaC::ex>>(block.parameterSymbols().begin(),
+                                                                           block.parameterSymbols().end());
+
+                inputSymbols.push_back(iSymbs);
+                outputSymbols.push_back(iSymbs);
+                parameterSymbols.push_back(iSymbs);
+
+                inputSymbolsByPtr[&block] = iSymbs;
+                outputSymbolsByPtr[&block] = oSymbs;
+                parameterSymbolsByPtr[&block] = pSymbs;
+
+                auto f = ::std::make_shared<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>>(::std::bind(
+                        &BlockProto::blkf, &block, ::std::placeholders::_1, true));
+
+                symbolicFunctions.push_back(f);
+                symbolicFunctionByPtr[&block] = f;
+#endif
+
                 traitsByPtr[&block] = bt;
                 blockById[static_cast<BlockProto *>(&block)->id] = &block;
             }
@@ -105,6 +128,32 @@ namespace ls {
             ::std::unordered_map<const BlockProto *, ::std::shared_ptr<BlockTraits>> traitsByPtr;
             ::std::unordered_map<unsigned int, BlockProto *> blockById;
             ls::blocks::aux::DirectedGraph graph;
+
+#ifdef LS_USE_GINAC
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getInputSymbolsByPtr(const BlockProto *ptr) const;
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getOutputSymbolsByPtr(const BlockProto *ptr) const;
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getParameterSymbolsByPtr(const BlockProto *ptr) const;
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getInputSymbolsById(unsigned int id) const;
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getOutputSymbolsById(unsigned int id) const;
+
+            ::std::shared_ptr<::std::vector<GiNaC::ex>> getParameterSymbolsById(unsigned int id) const;
+
+            ::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>> getSymbolicFunctionByPtr(const BlockProto *ptr) const;
+
+            ::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>> getSymbolicFunctionById(unsigned int id) const;
+
+            ::std::vector<::std::shared_ptr<::std::vector<GiNaC::ex>>> inputSymbols, outputSymbols, parameterSymbols;
+            ::std::unordered_map<const BlockProto *, ::std::shared_ptr<::std::vector<GiNaC::ex>>> inputSymbolsByPtr, outputSymbolsByPtr, parameterSymbolsByPtr;
+
+            ::std::vector<::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>>> symbolicFunctions;
+
+            ::std::unordered_map<const BlockProto *, ::std::shared_ptr<::std::function<const GiNaC::function(const ::std::vector<GiNaC::ex> &exvec)>>> symbolicFunctionByPtr;
+#endif
         };
     }
 }

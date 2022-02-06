@@ -177,10 +177,7 @@ namespace ls {
 
                 const ::std::array<GiNaC::ex, Base::kIns> &inputSymbols()
                 {
-                    static ::std::array<GiNaC::ex, Base::kIns> arr;
-                    static bool isInit = false;
-
-                    if (!isInit) {
+                    if (!this->isInitInput_) {
                         for (int i = 0; i < Base::kIns; i++) {
                             if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TInput>::value) {
                                 GiNaC::lst input;
@@ -200,27 +197,24 @@ namespace ls {
                                     input.append(row);
                                 }
 
-                                arr[i] = GiNaC::lst_to_matrix(input);
+                                this->inputSymbols_[i] = GiNaC::lst_to_matrix(input);
                             } else {
-                                arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i),
+                                this->inputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i),
                                                        "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
                                                        ::std::to_string(this->id) +
                                                        "}"};
                             }
                         }
 
-                        isInit = true;
+                        this->isInitInput_ = true;
                     }
 
-                    return arr;
+                    return this->inputSymbols_;
                 }
 
                 const ::std::array<GiNaC::ex, Base::kOuts> &outputSymbols()
                 {
-                    static ::std::array<GiNaC::ex, Base::kOuts> arr;
-                    static bool isInit = false;
-
-                    if (!isInit) {
+                    if (!this->isInitOutput_) {
                         for (int i = 0; i < Base::kOuts; i++) {
                             if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<OutputType>::value) {
                                 GiNaC::lst output;
@@ -240,27 +234,24 @@ namespace ls {
                                     output.append(row);
                                 }
 
-                                arr[i] = GiNaC::lst_to_matrix(output);
+                                this->outputSymbols_[i] = GiNaC::lst_to_matrix(output);
                             } else {
-                                arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
+                                this->outputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
                                                        "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
                                                        ::std::to_string(this->id) +
                                                        "}"};
                             }
                         }
 
-                        isInit = true;
+                        this->isInitOutput_ = true;
                     }
 
-                    return arr;
+                    return this->outputSymbols_;
                 }
 
                 const ::std::array<GiNaC::ex, Base::kPars> &parameterSymbols()
                 {
-                    static ::std::array<GiNaC::ex, Base::kPars> arr;
-                    static bool isInit = false;
-
-                    if (!isInit) {
+                    if (!this->isInitParameter_) {
                         for (int i = 0; i < Base::kPars; i++) {
                             if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TGain>::value) {
                                 GiNaC::lst par;
@@ -280,19 +271,19 @@ namespace ls {
                                     par.append(row);
                                 }
 
-                                arr[i] = GiNaC::lst_to_matrix(par);
+                                this->parameterSymbols_[i] = GiNaC::lst_to_matrix(par);
                             } else {
-                                arr[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
+                                this->parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
                                                        "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
                                                        ::std::to_string(this->id) +
                                                        "}"};
                             }
                         }
 
-                        isInit = true;
+                        this->isInitParameter_ = true;
                     }
 
-                    return arr;
+                    return this->parameterSymbols_;
                 }
 
 #endif

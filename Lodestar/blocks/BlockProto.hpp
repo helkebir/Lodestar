@@ -8,6 +8,9 @@
 #include "SignalBase.hpp"
 #include <vector>
 #include <tuple>
+#ifdef LS_USE_GINAC
+#include <ginac/ginac.h>
+#endif
 
 namespace ls {
     namespace blocks {
@@ -65,6 +68,22 @@ namespace ls {
             {
                 ++objects_alive;
             }
+
+#ifdef LS_USE_GINAC
+            unsigned serial;
+
+            const GiNaC::function blkf(const ::std::vector<GiNaC::ex> &exvec, bool appendId = true)
+            {
+                if (appendId) {
+                    ::std::vector<GiNaC::ex> exvec2{exvec};
+                    exvec2.push_back(GiNaC::numeric{id});
+
+                    return GiNaC::function(serial, exvec2);
+                }
+
+                return GiNaC::function(serial, exvec);
+            }
+#endif
 
         protected:
             int prio_ = -1;

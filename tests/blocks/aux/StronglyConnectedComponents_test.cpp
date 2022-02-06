@@ -231,6 +231,7 @@ TEST_CASE("StronglyConnectedComponents applied 3", "[blocks][aux]")
 
     REQUIRE(components.isAlgebraicLoop(bp, 0));
     REQUIRE(components.containsAlgebraicLoops(bp));
+    REQUIRE(components.getComponentLength(0) == 4);
 
     bool hasSum = false;
     bool hasGain = false;
@@ -288,3 +289,146 @@ TEST_CASE("StronglyConnectedComponents applied 3", "[blocks][aux]")
     //    REQUIRE(components.intersects(0, 1));
     //    REQUIRE(components.isSubset(0, 1));
 }
+
+#ifdef LS_USE_GINAC
+
+TEST_CASE("StronglyConnectedComponents symbolic", "[blocks][aux]")
+{
+    auto blkConst = ls::blocks::std::ConstantBlock<double>{3};
+    auto blkConst2 = ls::blocks::std::ConstantBlock<double>{1};
+    auto blkSum = ls::blocks::std::SumBlock<double, 3>{};
+    auto blkSum2 = ls::blocks::std::SumBlock<double, 2>{};
+    auto blkGain = ls::blocks::std::GainBlock<double>{2};
+    auto blkGain2 = ls::blocks::std::GainBlock<double>{4};
+
+    connect(blkConst.o<0>(), blkSum.i<0>());
+    connect(blkConst2.o<0>(), blkSum.i<1>());
+    connect(blkSum.o<0>(), blkSum2.i<0>());
+    connect(blkSum2.o<0>(), blkGain.i<0>());
+    connect(blkGain.o<0>(), blkSum2.i<1>());
+    connect(blkGain.o<0>(), blkGain2.i<0>());
+    connect(blkGain2.o<0>(), blkSum.i<2>());
+    /*
+     *          c2
+     *          |
+     * c1       v s1  s2    g1     g2
+     * * -----> * --->*---> * ---->*
+     *          ^     ^     |      |
+     *          |     +-----+      |
+     *          +------------------+
+     */
+
+    ls::blocks::BlockPack bp(blkConst, blkConst2, blkSum, blkSum2, blkGain, blkGain2);
+
+    auto graph = ls::blocks::aux::DirectedGraph::fromBlocks(bp.blocks);
+
+//    ::std::cout << graph.adj() << ::std::endl;
+
+    auto components =
+            ls::blocks::aux::StronglyConnectedComponents::findComponents(graph);
+
+    REQUIRE(components.components.size() == 1);
+
+    REQUIRE(components.isAlgebraicLoop(bp, 0));
+    REQUIRE(components.containsAlgebraicLoops(bp));
+    REQUIRE(components.getComponentLength(0) == 4);
+
+    ::std::cout << "--------------------------------" << ::std::endl;
+    ::std::cout << "blkConst: " << blkConst.id << ::std::endl;
+    ::std::cout << "blkConst2: " << blkConst2.id << ::std::endl;
+    ::std::cout << "blkSum: " << blkSum.id << ::std::endl;
+    ::std::cout << "blkSum2: " << blkSum2.id << ::std::endl;
+    ::std::cout << "blkGain: " << blkGain.id << ::std::endl;
+    ::std::cout << "blkGain2: " << blkGain2.id << ::std::endl;
+    ::std::cout << "--------------------------------" << ::std::endl;
+
+    for (auto iSymb : *bp.inputSymbols[2]) {
+        ::std::cout << iSymb << ::std::endl;
+    }
+
+    ::std::cout << "------------" << ::std::endl;
+
+    for (auto iSymb : blkSum.inputSymbols()) {
+        ::std::cout << iSymb << ::std::endl;
+    }
+
+    ::std::cout << "Known symbols:" << ::std::endl;
+    ::std::cout << components.getKnownSymbolList(bp, 0) << ::std::endl;
+
+    ::std::cout << "Unknown symbols:" << ::std::endl;
+    ::std::cout << components.getUnknownSymbolList(bp, 0) << ::std::endl;
+
+    ::std::cout << "Equations:" << ::std::endl;
+    ::std::cout << components.getSymbolicEquationList(bp, 0) << ::std::endl;
+
+    auto eqs = components.getAlgebraicEquations(bp, 0);
+    ::std::cout << "Algebraic equations:" << ::std::endl;
+    ::std::cout << eqs.first << ::std::endl;
+    ::std::cout << "Unknowns:" << ::std::endl;
+    ::std::cout << eqs.second << ::std::endl;
+    ::std::cout << "Algebraic equations Jacobian:" << ::std::endl;
+    auto jac = decltype(components)::getAlgebraicEquationsJacobian(eqs.first, eqs.second);
+    ::std::cout << jac << ::std::endl;
+
+    auto nrIteration = decltype(components)::solveAlgebraicEquationsNewtonRaphson(eqs.first, jac, eqs.second);
+    ::std::cout << "Newton-Raphson iteration:" << ::std::endl;
+    ::std::cout << nrIteration.first << ::std::endl;
+
+    bool hasSum = false;
+    bool hasGain = false;
+
+    for (auto &component: components.components) {
+        for (auto id: component) {
+            if (id == blkSum.id) hasSum = true;
+            if (id == blkGain.id) hasGain = true;
+        }
+    }
+
+    bool verdict = (hasSum && hasGain);
+
+    REQUIRE(verdict);
+
+    auto externalIO = components.getExternalIO(bp, 0);
+
+    REQUIRE(externalIO.first.size() == 2);
+    REQUIRE(((externalIO.first[0].src->id == blkConst.id && externalIO.first[1].src->id == blkConst2.id) ||
+             (externalIO.first[1].src->id == blkConst.id && externalIO.first[2].src->id == blkConst2.id)));
+
+    REQUIRE(externalIO.second.empty());
+
+    auto internalIO = components.getInternalIO(bp, 0);
+
+    REQUIRE(internalIO.size() == 5);
+
+    for (const auto &input : internalIO) {
+        if (input.src->id == blkSum.id)
+            REQUIRE(((input.dst->id == blkSum2.id) && (input.dstSlot == 0)));
+        if (input.src->id == blkSum2.id)
+            REQUIRE(((input.dst->id == blkGain.id) && (input.dstSlot == 0)));
+        if (input.src->id == blkGain.id) {
+            if (input.dst->id == blkSum2.id)
+                REQUIRE(input.dstSlot == 1);
+            else if (input.dst->id == blkGain2.id)
+                REQUIRE(input.dstSlot == 0);
+        } if (input.src->id == blkGain2.id)
+            REQUIRE(((input.dst->id == blkSum.id) && (input.dstSlot == 2)));
+    }
+
+//    REQUIRE(components.components.size() == 2);
+
+    auto subgraph = ls::blocks::aux::DirectedGraph::fromBlocks(components.extractBlocks(internalIO));
+
+    auto subcomponents =
+            ls::blocks::aux::StronglyConnectedComponents::findComponents(subgraph);
+
+    REQUIRE(subcomponents.components.size() == 1);
+
+//    ::std::cout << subgraph.adj() << ::std::endl;
+
+//    ::std::cout << subcomponents.components[0].size() << ::std::endl;
+
+    //    REQUIRE(components.intersects(0, 1));
+    //    REQUIRE(components.isSubset(0, 1));
+}
+
+#endif
