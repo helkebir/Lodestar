@@ -15,21 +15,46 @@ namespace ls {
         namespace aux {
             class Executor {
             public:
-                Executor() = default;
-
-                Executor(ls::blocks::BlockPack bp) : blockPack(::std::move(bp))
+                Executor() : blockPack(), executionOrder(1)
                 {}
 
-                void computeExecutionOrder();
+                Executor(ls::blocks::BlockPack bp) : blockPack(::std::move(bp)), executionOrder(bp.blocks)
+                {}
 
-                void applyExecutionOrder();
+                // FIXME: For some reason, these two functions cannot be put in the source file, since the copy
+                //  assignment will not work otherwise. Segfault with __memmove_avx_unaligned_erms is thrown in both GCC
+                //  and Clang in that case.
+                void computeExecutionOrder()
+                {
+                    executionOrder = blockPack.blocks;
+
+                    ::std::sort(executionOrder.begin(),
+                                executionOrder.end(),
+                                [&](
+                                        BlockProto *a,
+                                        BlockProto *b) {
+                                    return order(a, b);
+                                });
+
+                    ::std::reverse(executionOrder.begin(),
+                                   executionOrder.end());
+                }
+
+                void applyExecutionOrder()
+                {
+                    int i = 0;
+                    for (auto &blk: executionOrder) {
+                        blk->setPriority(i);
+                        i++;
+                    }
+                }
 
                 bool order(BlockProto *blk1, BlockProto *blk2) const;
 
                 void trigger();
 
                 ls::blocks::BlockPack blockPack;
-                ::std::vector<BlockProto *> executionOrder;
+                ::std::vector<BlockProto *> executionOrder{};
             };
         }
     }
