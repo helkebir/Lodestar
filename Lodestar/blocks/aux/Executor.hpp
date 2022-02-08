@@ -51,7 +51,12 @@ namespace ls {
 
                 bool order(BlockProto *blk1, BlockProto *blk2) const;
 
-                void trigger();
+                // NOTE: Yet another segfault here if this were defined in the source file.
+                void trigger()
+                {
+                    for (auto blk: executionOrder)
+                        blk->trigger();
+                }
 
                 ls::blocks::BlockPack blockPack;
                 ::std::vector<BlockProto *> executionOrder{};

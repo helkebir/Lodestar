@@ -31,8 +31,8 @@ bool ls::blocks::aux::Executor::order(ls::blocks::BlockProto *blk1, ls::blocks::
     return !res;
 }
 
-void ls::blocks::aux::Executor::trigger()
-{
-    for (auto blk: executionOrder)
-        blk->trigger();
-}
+//void ls::blocks::aux::Executor::trigger()
+//{
+//    for (auto blk: executionOrder)
+//        blk->trigger();
+//}
