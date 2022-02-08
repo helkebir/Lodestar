@@ -560,25 +560,25 @@ namespace ls {
 
             ::std::array<int, kIns> &inputSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<int, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
-                static ::std::array<GiNaC::symbol, kIns> arr;
+                static ::std::array<int, kIns> arr;
                 return arr;
             }
 
             ::std::array<int, kIns> &outputSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<int, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
-                static ::std::array<GiNaC::symbol, kIns> arr;
+                static ::std::array<int, kIns> arr;
                 return arr;
             }
 
             ::std::array<int, kIns> &parameterSymbols()
             {
-                static_assert(always_false<::std::array<GiNaC::symbol, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
+                static_assert(always_false<::std::array<int, kIns>>::value, "GiNaC use is not enabled. Please compile with LS_USE_GINAC flag.");
 
-                static ::std::array<GiNaC::symbol, kIns> arr;
+                static ::std::array<int, kIns> arr;
                 return arr;
             }
 

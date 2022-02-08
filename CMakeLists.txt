@@ -18,13 +18,18 @@ include_directories("${CMAKE_SOURCE_DIR}")
 include_directories("dep")
 include_directories("tests")
 include_directories("dep/nanopb")
+include_directories("dep/ersatz")
+include_directories("dep/ersatz/ersatz/dep")
 
 remove_definitions(LS_USE_GINAC)
 
 file(GLOB_RECURSE LODESTAR_HEADERS "Lodestar/*.hpp")
 file(GLOB_RECURSE LODESTAR_SOURCES "Lodestar/*.cpp")
 
-add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS})
+file(GLOB_RECURSE ERSATZ_HEADERS "dep/ersatz/ersatz/*.hpp")
+file(GLOB_RECURSE ERSATZ_SOURCES "dep/ersatz/ersatz/*.cpp")
+
+add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS} ${ERSATZ_SOURCES} ${ERSATZ_HEADERS})
 set_target_properties(Lodestar PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(Lodestar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Lodestar)
@@ -41,6 +46,8 @@ foreach ( file ${LODESTAR_HEADERS} )
 endforeach()
 install(TARGETS Lodestar DESTINATION lib)
 install(DIRECTORY dep/Eigen/ DESTINATION include/Lodestar/Eigen)
+install(DIRECTORY dep/ersatz/ersatz DESTINATION include/Lodestar/ersatz)
+install(DIRECTORY dep/ersatz/ersatz/dep/fmt DESTINATION include/Lodestar/fmt)
 install(DIRECTORY dep/unsupported/ DESTINATION include/Lodestar/unsupported)
 install(FILES cmake/config/LodestarConfig.cmake DESTINATION lib/cmake/Lodestar)
 
