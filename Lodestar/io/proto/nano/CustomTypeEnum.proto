@@ -1,7 +1,0 @@
-syntax = "proto2";
-
-package npb;
-
-enum CustomTypeEnum {
-  None_t = 0;
-}

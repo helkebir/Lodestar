@@ -23,13 +23,16 @@ include_directories("dep/ersatz/ersatz/dep")
 
 remove_definitions(LS_USE_GINAC)
 
-file(GLOB_RECURSE LODESTAR_HEADERS "Lodestar/*.hpp")
-file(GLOB_RECURSE LODESTAR_SOURCES "Lodestar/*.cpp")
+file(GLOB_RECURSE LODESTAR_HEADERS "Lodestar/*.hpp" "Lodestar/*.pb.h")
+file(GLOB_RECURSE LODESTAR_SOURCES "Lodestar/*.cpp" "Lodestar/*.pb.c")
 
 file(GLOB_RECURSE ERSATZ_HEADERS "dep/ersatz/ersatz/*.hpp")
 file(GLOB_RECURSE ERSATZ_SOURCES "dep/ersatz/ersatz/*.cpp")
 
-add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS} ${ERSATZ_SOURCES} ${ERSATZ_HEADERS})
+file(GLOB_RECURSE NANOPB_BASE_HEADERS "dep/nanopb/*.h")
+file(GLOB_RECURSE NANOPB_BASE_SOURCES "dep/nanopb/*.c")
+
+add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS} ${ERSATZ_SOURCES} ${ERSATZ_HEADERS} ${NANOPB_BASE_SOURCES} ${NANOPB_BASE_HEADERS})
 set_target_properties(Lodestar PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(Lodestar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Lodestar)
@@ -47,6 +50,7 @@ endforeach()
 install(TARGETS Lodestar DESTINATION lib)
 install(DIRECTORY dep/Eigen/ DESTINATION include/Lodestar/Eigen)
 install(DIRECTORY dep/ersatz/ersatz DESTINATION include/Lodestar/ersatz)
+install(DIRECTORY dep/nanopb/ DESTINATION include/Lodestar)
 install(DIRECTORY dep/ersatz/ersatz/dep/fmt DESTINATION include/Lodestar/fmt)
 install(DIRECTORY dep/unsupported/ DESTINATION include/Lodestar/unsupported)
 install(FILES cmake/config/LodestarConfig.cmake DESTINATION lib/cmake/Lodestar)
@@ -90,7 +94,7 @@ if (WITH_PROTOBUF)
     find_package(Protobuf REQUIRED)
     include_directories(${Protobuf_INCLUDE_DIRS})
 
-    file(GLOB PROTOBUF_INCLUDES "Lodestar/io/proto/*.pb.cc" "Lodestar/io/proto/*.hpp")
+    file(GLOB PROTOBUF_INCLUDES "Lodestar/io/proto/*.pb.c" "Lodestar/io/proto/*.pb.h" "Lodestar/io/proto/*.hpp")
 
     target_link_libraries(Lodestar ${Protobuf_LIBRARIES})
 else ()
@@ -111,7 +115,7 @@ if (WITH_NNG)
 endif ()
 
 # Nanopb glob include
-file(GLOB NANOPB_INCLUDES "dep/nanopb/pb*.c" "dep/nanopb/pb*.h" "Lodestar/io/proto/nano/*.pb.c" "Lodestar/io/proto/nano/*.pb.h")
+file(GLOB NANOPB_INCLUDES "dep/nanopb/pb*.c" "dep/nanopb/pb*.h" "Lodestar/io/proto/*.pb.c" "Lodestar/io/proto/*.pb.h" "Lodestar/io/proto/nano/*.pb.c" "Lodestar/io/proto/nano/*.pb.h")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     MESSAGE("Building in debug mode.")

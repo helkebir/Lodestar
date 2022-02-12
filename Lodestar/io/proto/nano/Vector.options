@@ -1,9 +1,0 @@
-*2*.coeff  fixed_count:true max_count:2
-*3*.coeff  fixed_count:true max_count:3
-*4*.coeff  fixed_count:true max_count:4
-*6*.coeff  fixed_count:true max_count:6
-*8*.coeff  fixed_count:true max_count:8
-*12*.coeff  fixed_count:true max_count:12
-*16*.coeff  fixed_count:true max_count:16
-*32*.coeff  fixed_count:true max_count:32
-*64*.coeff  fixed_count:true max_count:64

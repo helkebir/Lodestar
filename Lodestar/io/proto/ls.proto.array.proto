@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package ls.proto;
+
+message ArrayBool {
+  required int32 size = 1;
+  repeated bool values = 2;
+}
+
+message ArrayBytes {
+  required int32 size = 1;
+  repeated bytes values = 2;
+}
+
+message ArrayDouble {
+  required int32 size = 1;
+  repeated double values = 2;
+}
+
+message ArrayFloat {
+  required int32 size = 1;
+  repeated float values = 2;
+}
+
+message ArrayInt32 {
+  required int32 size = 1;
+  repeated int32 values = 2;
+}
+
+message ArrayUInt32 {
+  required int32 size = 1;
+  repeated uint32 values = 2;
+}
+
+message ArrayInt64 {
+  required int32 size = 1;
+  repeated int64 values = 2;
+}
+
+message ArrayUInt64 {
+  required int32 size = 1;
+  repeated uint64 values = 2;
+}

@@ -46,7 +46,9 @@ namespace ls {
             /// Summation block.
             SumBlock,
             /// Switch (manual) block.
-            SwitchBlock
+            SwitchBlock,
+            /// Protocol Buffers output block.
+            ProtoMsgOutBlock
         };
     }
 }

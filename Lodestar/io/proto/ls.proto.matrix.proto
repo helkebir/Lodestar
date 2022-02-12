@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package ls.proto;
+
+import "ls.proto.types.proto";
+
+enum MatrixOrdering {
+  colMajor = 0;
+  rowMajor = 1;
+}
+
+message MatrixHerald {
+  required Type type = 1;
+  required int32 rows = 2;
+  required int32 cols = 3;
+  optional MatrixOrdering ordering = 4;
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package ls.proto;
+
+enum Type {
+    unknown_t = 0;
+    bool_t = 1;
+    int_t = 2;
+    int32_t = 3;
+    uint32_t = 4;
+    int64_t = 5;
+    uint64_t = 6;
+    double_t = 7;
+    float_t = 8;
+    char_t = 9;
+    matrix_t = 10;
+    vector_t = 11;
+}

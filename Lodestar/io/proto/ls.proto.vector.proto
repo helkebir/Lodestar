@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package ls.proto;
+
+import "ls.proto.types.proto";
+
+enum VectorType {
+  rowVector = 0;
+  colVector = 1;
+}
+
+message VectorHerald {
+  required Type type = 1;
+  required int32 size = 2;
+  optional VectorType vectorType = 4;
+}

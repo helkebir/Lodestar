@@ -59,7 +59,7 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>() = aux::TemplateTools::Executors::applyWrapped(
+                    b.template o<0>() = ls::aux::TemplateTools::Executors::applyWrapped(
                             b.template p<0>(),
                             b.inputs);
                 }
