@@ -19,6 +19,7 @@ include_directories("dep")
 include_directories("tests")
 include_directories("dep/nanopb")
 include_directories("dep/ersatz")
+include_directories("dep/ersatz/ersatz")
 include_directories("dep/ersatz/ersatz/dep")
 
 remove_definitions(LS_USE_GINAC)
