@@ -6,9 +6,14 @@
 #define LODESTAR_EXECUTOR_HPP
 
 #include "Lodestar/blocks/BlockPack.hpp"
+#include "Lodestar/blocks/aux/StronglyConnectedComponents.hpp"
 
 #include <utility>
 #include <algorithm>
+
+#define FMT_HEADER_ONLY
+
+#include <fmt/format.h>
 
 namespace ls {
     namespace blocks {
@@ -18,7 +23,8 @@ namespace ls {
                 Executor() : blockPack(), executionOrder(1)
                 {}
 
-                Executor(ls::blocks::BlockPack bp) : blockPack(::std::move(bp)), executionOrder(bp.blocks)
+                Executor(ls::blocks::BlockPack bp) : blockPack(::std::move(bp)),
+                                                     executionOrder(bp.blocks)
                 {}
 
                 // FIXME: For some reason, these two functions cannot be put in the source file, since the copy
@@ -27,6 +33,7 @@ namespace ls {
                 void computeExecutionOrder()
                 {
                     executionOrder = blockPack.blocks;
+                    components = StronglyConnectedComponents::findComponents(blockPack.graph);
 
                     ::std::sort(executionOrder.begin(),
                                 executionOrder.end(),
@@ -60,6 +67,25 @@ namespace ls {
 
                 ls::blocks::BlockPack blockPack;
                 ::std::vector<BlockProto *> executionOrder{};
+                ls::blocks::aux::StronglyConnectedComponents::SCCResult components;
+
+                void
+                makeDotFile(::std::stringstream &ss, bool lineLabels = true,
+                            bool slotLabels = false, float rankSep = 2,
+                            float nodeSep = 2);
+
+            protected:
+                static bool
+                replace(::std::string &str, const ::std::string &from,
+                        const ::std::string &to)
+                {
+                    size_t start_pos = str.find(from);
+                    if (start_pos == ::std::string::npos)
+                        return false;
+                    str.replace(start_pos, from.length(), to);
+                    return true;
+                }
+
             };
         }
     }

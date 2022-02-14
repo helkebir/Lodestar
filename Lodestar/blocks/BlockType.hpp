@@ -5,6 +5,10 @@
 #ifndef LODESTAR_BLOCKTYPE_HPP
 #define LODESTAR_BLOCKTYPE_HPP
 
+#define ADD_BLOCKTYPE_CASE(TYPE) case BlockType::TYPE: return #TYPE
+
+#include <string>
+
 namespace ls {
     namespace blocks {
         /**
@@ -50,6 +54,31 @@ namespace ls {
             /// Protocol Buffers output block.
             ProtoMsgOutBlock
         };
+
+        static
+        ::std::string blockTypeToString(const BlockType type)
+        {
+            switch (type) {
+                default:
+                    return "UnknownBlock";
+                ADD_BLOCKTYPE_CASE(GenericBlock);
+                ADD_BLOCKTYPE_CASE(ConstantBlock);
+                ADD_BLOCKTYPE_CASE(ConverterBlock);
+                ADD_BLOCKTYPE_CASE(DemuxBlock);
+                ADD_BLOCKTYPE_CASE(DiscreteStateSpaceBlock);
+                ADD_BLOCKTYPE_CASE(FunctionBlock);
+                ADD_BLOCKTYPE_CASE(GainBlock);
+                ADD_BLOCKTYPE_CASE(MuxBlock);
+                ADD_BLOCKTYPE_CASE(ReImToComplexBlock);
+                ADD_BLOCKTYPE_CASE(SaturationBlock);
+                ADD_BLOCKTYPE_CASE(SignumBlock);
+                ADD_BLOCKTYPE_CASE(SumBlock);
+                ADD_BLOCKTYPE_CASE(SwitchBlock);
+                ADD_BLOCKTYPE_CASE(ProtoMsgOutBlock);
+            }
+
+            return "UnknownBlock";
+        }
     }
 }
 

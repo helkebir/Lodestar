@@ -228,3 +228,57 @@ TEST_CASE("Executor with loop", "[blocks][aux]")
     //    ex.trigger();
     //    REQUIRE(blkGain2.o<0>() == -(3 + 3*2)*4);
 }
+
+TEST_CASE("Executor with loop to dot file", "[blocks][aux]")
+{
+    auto blkConst = ls::blocks::std::ConstantBlock<double>{3};
+    auto blkSum = ls::blocks::std::SumBlock<double, 2>{};
+    auto blkGain = ls::blocks::std::GainBlock<double>{2};
+    auto blkGain2 = ls::blocks::std::GainBlock<double>{4};
+
+    connect(blkConst.o<0>(), blkSum.i<0>());
+    connect(blkSum.o<0>(), blkGain.i<0>());
+    connect(blkGain.o<0>(), blkSum.i<1>());
+    connect(blkGain.o<0>(), blkGain2.i<0>());
+    /*
+     * c        s       g1     g2
+     * 0 -----> 1 ----> 2 ---->3
+     *          ^       |
+     *          +-------+
+     */
+
+    ls::blocks::BlockPack bp(blkConst, blkSum, blkGain, blkGain2);
+    bp.makeGraph();
+    ls::blocks::aux::Executor ex(bp);
+    ex.computeExecutionOrder();
+    ex.applyExecutionOrder();
+
+    ::std::stringstream ss;
+    ex.makeDotFile(ss);
+
+    ::std::cout << ss.str() << ::std::endl;
+}
+
+TEST_CASE("Executor with loop to dot file 2", "[blocks][aux]")
+{
+    const int N = 3;
+    ls::blocks::std::ConstantBlock<Eigen::Matrix<double, N, 1>> cb;
+    ls::blocks::std::GainBlock<Eigen::Matrix<double, N, 1>, Eigen::Matrix<double, N, N>> gb;
+    ls::blocks::std::SumBlock<Eigen::Matrix<double, N, 1>, 2> sb;
+    sb.setOperators(decltype(sb)::Plus, decltype(sb)::Minus);
+
+    connect(cb.o<0>(), sb.i<0>());
+    connect(sb.o<0>(), gb.i<0>());
+    connect(gb.o<0>(), sb.i<1>());
+
+    ls::blocks::BlockPack bp(cb, sb, gb);
+    bp.makeGraph();
+    ls::blocks::aux::Executor ex(bp);
+    ex.computeExecutionOrder();
+    ex.applyExecutionOrder();
+
+    ::std::stringstream ss;
+    ex.makeDotFile(ss, true, false);
+
+    ::std::cout << ss.str() << ::std::endl;
+}
