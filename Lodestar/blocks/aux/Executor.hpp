@@ -32,6 +32,7 @@ namespace ls {
                 //  and Clang in that case.
                 void computeExecutionOrder()
                 {
+                    blockPack.makeGraph();
                     executionOrder = blockPack.blocks;
                     components = StronglyConnectedComponents::findComponents(blockPack.graph);
 
@@ -54,6 +55,12 @@ namespace ls {
                         blk->setPriority(i);
                         i++;
                     }
+                }
+
+                void resolveExecutionOrder()
+                {
+                    computeExecutionOrder();
+                    applyExecutionOrder();
                 }
 
                 bool order(BlockProto *blk1, BlockProto *blk2) const;

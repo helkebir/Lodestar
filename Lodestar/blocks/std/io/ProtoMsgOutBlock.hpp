@@ -15,15 +15,15 @@ namespace ls {
             class ProtoMsgOutBlock :
                     public Block<
                             ::std::tuple<TType>,
-                            BlockProto::empty,
-                            ::std::tuple<pb_istream_t *>
+                            ::std::tuple<pb_ostream_t *>,
+                            ::std::tuple<pb_ostream_t *>
                     > {
             public:
                 using Base =
                 Block<
                         ::std::tuple<TType>,
-                        BlockProto::empty,
-                        ::std::tuple<pb_istream_t *>
+                        ::std::tuple<pb_ostream_t *>,
+                        ::std::tuple<pb_ostream_t *>
                 >;
 
                 ProtoMsgOutBlock()
@@ -63,7 +63,8 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    ls::io::NanopbWrapper<TType>::encode(this->template i<0>().object, info(), stream());
+                    ls::io::NanopbWrapper<TType>::encode(b->template i<0>().object, info(), stream());
+                    b.template o<0>() = b.template p<0>();
                 }
             };
         }
@@ -94,19 +95,19 @@ namespace ls {
 
         template<typename TType>
         const ::std::array<::std::string, BlockTraits<std::ProtoMsgOutBlock<TType>>::kIns> BlockTraits<std::ProtoMsgOutBlock<TType>>::inTypes =
-                {};
-
-        template<typename TType>
-        const ::std::array<::std::string, BlockTraits<std::ProtoMsgOutBlock<TType>>::kOuts> BlockTraits<std::ProtoMsgOutBlock<TType>>::outTypes =
                 {demangle(typeid(TType).name())};
 
         template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::ProtoMsgOutBlock<TType>>::kOuts> BlockTraits<std::ProtoMsgOutBlock<TType>>::outTypes =
+                {demangle(typeid(pb_ostream_t *).name())};
+
+        template<typename TType>
         const ::std::array<::std::string, BlockTraits<std::ProtoMsgOutBlock<TType>>::kPars> BlockTraits<std::ProtoMsgOutBlock<TType>>::parTypes =
-                {demangle(typeid(pb_istream_t *).name())};
+                {demangle(typeid(pb_ostream_t *).name())};
 
         template<typename TType>
         const ::std::array<::std::string, 1> BlockTraits<std::ProtoMsgOutBlock<TType>>::templateTypes =
-                {demangle(typeid(pb_istream_t *).name())};
+                {demangle(typeid(pb_ostream_t *).name())};
     }
 }
 
