@@ -49,6 +49,8 @@ namespace ls {
                     info.encrypted = BEncrypt;
                     info.slot = this->template i<0>().connectionPtrs.begin()->slotId;
                     info.id = this->template i<0>().connectionPtrs.begin()->blockId;
+
+                    return  info;
                 }
 
             protected:

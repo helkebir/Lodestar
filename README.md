@@ -51,6 +51,24 @@ Inputs --->| Block : f(Input, Parameters) -> Outputs |---> Outputs
 Simply clone the [repository](https://github.com/helkebir/Lodestar) and build using CMake.
 If you just want to grab a static library, run `cmake ..` instead of a debug build.
 
+<details>
+  <summary>Installing/disabling dependencies</summary>
+
+You can install the dependencies as follows:
+
+- On Ubuntu (Debian):
+  ```bash
+  sudo apt-get install libginac-dev libcln-dev libnng-dev
+  ```
+- On macOS:
+  ```bash
+  brew install ginac nng
+  ```
+You can disable GiNaC and NNG using the `-DWITH_GINAC=OFF -DWITH_NNG=OFF` flags when running the `cmake` command:
+
+```cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_GINAC=OFF -DWITH_NNG=OFF```
+</details>
+
 ```bash
 git clone https://github.com/helkebir/Lodestar
 cd Lodestar
@@ -76,6 +94,7 @@ a simple program.
 #include <Lodestar/blocks/aux/Executor.hpp>
 
 using namespace ls::blocks;
+using namespace ls::blocks::std;
 
 /*
  *                (+)
@@ -90,9 +109,9 @@ using namespace ls::blocks;
 
 int main()
 {
-    std::ConstantBlock<double> c{5}, c2{2};
-    std::SumBlock<double, 2> s;
-    std::GainBlock<double> g{0.5};
+    ConstantBlock<double> c{5}, c2{2};
+    SumBlock<double, 2> s;
+    GainBlock<double> g{0.5};
     
     s.setOperators(decltype(s)::Plus, decltype(s)::Minus);
     
@@ -142,7 +161,7 @@ This project is licensed under the BSD3 License - see the [LICENSE.md](LICENSE.m
 ## Acknowledgments
 
 Inspiration was drawn from the following projects, old and new alike:
-* Modelica, for its approach to [block definitions](https://specification.modelica.org/maint/3.5/class-predefined-types-and-declarations.html#S6.I1.i4.p1), syntax, as well as a number of [canonical blocks](https://doc.modelica.org/Modelica%204.0.0/Resources/helpDymola/Modelica_Blocks.html#Modelica.Blocks)
+* [Modelica](https://modelica.org/), for its approach to [block definitions](https://specification.modelica.org/maint/3.5/class-predefined-types-and-declarations.html#S6.I1.i4.p1), syntax, as well as a number of [canonical blocks](https://doc.modelica.org/Modelica%204.0.0/Resources/helpDymola/Modelica_Blocks.html#Modelica.Blocks).
 * [Esterel](https://en.wikipedia.org/wiki/Esterel) and [Lustre](https://en.wikipedia.org/wiki/Lustre_(programming_language)), for their approach to signal passing and handling, as well as functional block definitions.
 
 The name _Lodestar_ is used to refer to a guiding or navigation star (such as Polaris), underscoring the goal of

@@ -22,7 +22,7 @@ namespace ls {
         struct MsgInfo {
             int id = -1;
             int slot = 0;
-            long publicKey = 0;
+            unsigned long publicKey = 0;
             bool encrypted = false;
             ls_proto_Type type = ls_proto_Type_unknown_t;
         };
@@ -435,18 +435,22 @@ namespace ls {
                 int j;
             };
 
-            static auto makeDecodingMessage(Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, NanopbArg &nArg,
+            static auto makeDecodingMessage(Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, NanopbArg &nArg, MatrixCounter &MC,
                                             const ls_proto_MatrixHerald &mHerald) -> typename NanopbWrapper<TScalar>::arrayType
             {
                 typename NanopbWrapper<TScalar>::arrayType array;
                 array.size = NRows * NCols;
 
-                auto MC = new MatrixCounter{};
-                MC->M = &M;
-                MC->i = 0;
-                MC->j = 0;
+//                auto MC = new MatrixCounter{};
+//                MC->M = &M;
+//                MC->i = 0;
+//                MC->j = 0;
 
-                nArg.data = MC;
+                MC.M = &M;
+                MC.i = 0;
+                MC.j = 0;
+
+                nArg.data = &MC;
                 static ::std::function<bool(pb_istream_t *, const pb_field_t *, void **)> fDecode;
 
                 if (mHerald.type == ls_proto_Type_double_t) {
@@ -612,10 +616,10 @@ namespace ls {
 
                 herald.blockId = info.id;
                 herald.slotId = info.slot;
-                herald.publicKey = info.publicKey;
                 herald.msgType = info.type;
-                herald.has_encrypted = true;
-                herald.encrypted = info.encrypted;
+                if (info.encrypted) {
+                    herald.has_sign = true;
+                }
 
                 msgArg->dataConst = &M;
 
@@ -629,25 +633,26 @@ namespace ls {
                 static auto heraldRecv = makeHerald();
                 static auto subHeraldRecv = makeSubHerald();
                 static auto msgArgRecv = new ls::io::NanopbArg{};
-                static auto msgRecv = makeDecodingMessage(M, *msgArgRecv, subHeraldRecv);
-
-                auto MC = (MatrixCounter *) msgArgRecv->data;
-                MC->M = &M;
-                MC->i = 0;
-                MC->j = 0;
+                MatrixCounter MC;
+                static auto msgRecv = makeDecodingMessage(M, *msgArgRecv, MC, subHeraldRecv);
 
                 auto heraldRes = pb_decode_delimited(&stream, ls_proto_Herald_fields, &heraldRecv);
 
                 info.id = heraldRecv.blockId;
                 info.slot = heraldRecv.slotId;
-                info.publicKey = heraldRecv.publicKey;
                 info.type = heraldRecv.msgType;
-                info.encrypted = heraldRecv.has_encrypted && heraldRecv.encrypted;
+                if (heraldRecv.has_sign) {
+                    info.encrypted = true;
+                }
 
                 return heraldRes &&
                        pb_decode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHeraldRecv) &&
                        pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
             }
+
+            enum {
+                kMessageSize = ls_proto_Herald_size + ls_proto_MatrixHerald_size + NRows * NCols * sizeof(TScalar) + 50
+            };
         };
 
         template<typename TScalar, int NRows>
@@ -750,17 +755,20 @@ namespace ls {
                 int i;
             };
 
-            static auto makeDecodingMessage(Eigen::Vector<TScalar, NRows> &v, NanopbArg &nArg,
+            static auto makeDecodingMessage(Eigen::Vector<TScalar, NRows> &v, NanopbArg &nArg, VectorCounter &vC,
                                             const ls_proto_VectorHerald &vHerald) -> typename NanopbWrapper<TScalar>::arrayType
             {
                 typename NanopbWrapper<TScalar>::arrayType array;
                 array.size = NRows;
 
-                auto vC = new VectorCounter{};
-                vC->v = &v;
-                vC->i = 0;
+//                auto vC = new VectorCounter{};
+//                vC->v = &v;
+//                vC->i = 0;
 
-                nArg.data = vC;
+                vC.v = &v;
+                vC.i = 0;
+
+                nArg.data = &vC;
                 static ::std::function<bool(pb_istream_t *, const pb_field_t *, void **)> fDecode;
 
                 if (vHerald.type == ls_proto_Type_double_t) {
@@ -819,10 +827,10 @@ namespace ls {
 
                 herald.blockId = info.id;
                 herald.slotId = info.slot;
-                herald.publicKey = info.publicKey;
                 herald.msgType = info.type;
-                herald.has_encrypted = true;
-                herald.encrypted = info.encrypted;
+                if (info.encrypted) {
+                    herald.has_sign = true;
+                }
 
                 msgArg->dataConst = &v;
 
@@ -836,24 +844,26 @@ namespace ls {
                 static auto heraldRecv = makeHerald();
                 static auto subHeraldRecv = makeSubHerald();
                 static auto msgArgRecv = new ls::io::NanopbArg{};
-                static auto msgRecv = makeDecodingMessage(v, *msgArgRecv, subHeraldRecv);
-
-                auto vC = (VectorCounter *) msgArgRecv->data;
-                vC->v = &v;
-                vC->i = 0;
+                VectorCounter vc;
+                static auto msgRecv = makeDecodingMessage(v, *msgArgRecv, vc, subHeraldRecv);
 
                 auto heraldRes = pb_decode_delimited(&stream, ls_proto_Herald_fields, &heraldRecv);
 
                 info.id = heraldRecv.blockId;
                 info.slot = heraldRecv.slotId;
-                info.publicKey = heraldRecv.publicKey;
                 info.type = heraldRecv.msgType;
-                info.encrypted = heraldRecv.has_encrypted && heraldRecv.encrypted;
+                if (heraldRecv.has_sign) {
+                    info.encrypted = true;
+                }
 
                 return heraldRes &&
                        pb_decode_delimited(&stream, ls_proto_VectorHerald_fields, &subHeraldRecv) &&
                        pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
             }
+
+            enum {
+                kMessageSize = ls_proto_Herald_size + ls_proto_VectorHerald_size + NRows * sizeof(TScalar) + 50
+            };
         };
     }
 }

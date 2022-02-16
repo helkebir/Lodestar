@@ -16,6 +16,19 @@ namespace ls {
             class StronglyConnectedComponents {
             public:
                 struct SCCResult {
+                    SCCResult() : components(0, ::std::vector<int>(0))
+                    {}
+
+                    SCCResult(const ::std::vector<::std::vector<int>> &v) : components(v.begin(), v.end())
+                    {}
+
+                    SCCResult & operator=(SCCResult other)
+                    {
+                        ::std::swap(components, other.components);
+
+                        return *this;
+                    }
+
                     struct FullConnection {
                         const bool isInput;
                         const BlockProto *src;
@@ -24,7 +37,7 @@ namespace ls {
                         const int dstSlot;
                     };
 
-                    ::std::vector<::std::vector<int>> components;
+                    ::std::vector<::std::vector<int>> components{};
 
                     // External input connections, output connections
                     ::std::pair<
@@ -47,11 +60,13 @@ namespace ls {
 
                     bool containsAlgebraicLoops(const BlockPack &bp) const;
 
-                    ::std::vector<const BlockProto *> extractBlocks(const ::std::vector<FullConnection> &connections) const;
+                    ::std::vector<const BlockProto *>
+                    extractBlocks(const ::std::vector<FullConnection> &connections) const;
 
                     ::std::size_t getComponentLength(int componentIdx = 0) const;
 
 #ifdef LS_USE_GINAC
+
                     GiNaC::lst getSymbolicEquationList(const BlockPack &bp, int componentIdx = 0) const;
 
                     GiNaC::lst getInterconnectionEquationList(const BlockPack &bp, int componentIdx = 0) const;
@@ -69,13 +84,15 @@ namespace ls {
                     getAlgebraicEquationsJacobian(const GiNaC::lst &eqs, const GiNaC::lst &vars);
 
                     static ::std::pair<GiNaC::matrix, GiNaC::matrix>
-                    solveAlgebraicEquationsNewtonRaphson(const GiNaC::lst &eqs, const GiNaC::matrix &jac, const GiNaC::lst &vars);
+                    solveAlgebraicEquationsNewtonRaphson(const GiNaC::lst &eqs, const GiNaC::matrix &jac,
+                                                         const GiNaC::lst &vars);
 
                     static void expandListToSymbols(const GiNaC::lst &l, GiNaC::lst &g);
 
                     static void expandListToSymbols(const GiNaC::matrix &l, GiNaC::lst &g);
 
                     static void substituteExpressions(GiNaC::ex &ex, GiNaC::lst &subs);
+
 #endif
                 };
 

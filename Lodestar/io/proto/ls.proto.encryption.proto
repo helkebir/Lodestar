@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package ls.proto;
+
+enum Encryption {
+  ed25519 = 0;
+}

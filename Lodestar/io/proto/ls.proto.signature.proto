@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package ls.proto;
+
+import "ls.proto.encryption.proto";
+
+message Signature {
+  optional Encryption enc = 1;
+  optional fixed64 sign0 = 2;
+  optional fixed64 sign1 = 3;
+  optional fixed64 sign2 = 4;
+  optional fixed64 sign3 = 5;
+  optional fixed64 sign4 = 6;
+  optional fixed64 sign5 = 7;
+  optional fixed64 sign6 = 8;
+  optional fixed64 sign7 = 9;
+  optional fixed64 pk0 = 10;
+  optional fixed64 pk1 = 11;
+  optional fixed64 pk2 = 12;
+  optional fixed64 pk3 = 13;
+}

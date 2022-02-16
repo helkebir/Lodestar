@@ -7,9 +7,11 @@
 
 #include "Lodestar/blocks/BlockPack.hpp"
 #include "Lodestar/blocks/aux/StronglyConnectedComponents.hpp"
+#include <Lodestar/cli/ExecuteCommand.hpp>
 
 #include <utility>
 #include <algorithm>
+#include <regex>
 
 #define FMT_HEADER_ONLY
 
@@ -81,16 +83,29 @@ namespace ls {
                             bool slotLabels = false, float rankSep = 2,
                             float nodeSep = 2);
 
+                void
+                makeSimpleDotFile(::std::stringstream &ss, bool lineLabels = true,
+                                  bool slotLabels = false, float rankSep = 2,
+                                  float nodeSep = 2);
+
+                ::std::string
+                getAsciiGraph(bool lineLabels = true,
+                              bool slotLabels = false, float rankSep = 2,
+                              float nodeSep = 2);
+
+                unsigned long getComponentSize() const;
+
             protected:
-                static bool
+                static void
                 replace(::std::string &str, const ::std::string &from,
                         const ::std::string &to)
                 {
-                    size_t start_pos = str.find(from);
-                    if (start_pos == ::std::string::npos)
-                        return false;
-                    str.replace(start_pos, from.length(), to);
-                    return true;
+                    str = ::std::regex_replace(str, ::std::regex(from), to);
+//                    size_t start_pos = str.find(from);
+//                    if (start_pos == ::std::string::npos)
+//                        return false;
+//                    str.replace(start_pos, from.length(), to);
+//                    return true;
                 }
 
             };

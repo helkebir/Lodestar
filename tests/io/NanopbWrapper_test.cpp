@@ -38,7 +38,8 @@ TEST_CASE("NanopbWrapper Matrix", "[io][proto]")
     auto heraldRecv = ls::io::NanopbWrapper<decltype(N)>::makeHerald();
     auto subHeraldRecv = ls::io::NanopbWrapper<decltype(N)>::makeSubHerald();
     auto msgArgRecv = ls::io::NanopbArg{};
-    auto msgRecv = ls::io::NanopbWrapper<decltype(N)>::makeDecodingMessage(N, msgArgRecv, subHeraldRecv);
+    ls::io::NanopbWrapper<decltype(N)>::MatrixCounter MC{};
+    auto msgRecv = ls::io::NanopbWrapper<decltype(N)>::makeDecodingMessage(N, msgArgRecv, MC, subHeraldRecv);
 
     pb_istream_t istream = pb_istream_from_buffer(buffer, sizeof(buffer));
 
@@ -60,15 +61,16 @@ TEST_CASE("NanopbWrapper Matrix", "[io][proto]")
 
 TEST_CASE("NanopbWrapper Matrix shorthand", "[io][proto]")
 {
-    ::std::uint8_t buffer[1024];
-
-    pb_ostream_t stream;
-    stream = pb_ostream_from_buffer(buffer, 1024);
 
     Eigen::Matrix<double, 3, 2> M, N;
     M << 1, 2,
             3, 4,
             5, 6;
+
+    ::std::uint8_t buffer[ls::io::NanopbWrapper<decltype(M)>::kMessageSize];
+
+    pb_ostream_t stream;
+    stream = pb_ostream_from_buffer(buffer, ls::io::NanopbWrapper<decltype(M)>::kMessageSize);
 
     N.setZero();
 
@@ -93,13 +95,13 @@ TEST_CASE("NanopbWrapper Matrix shorthand", "[io][proto]")
 
 TEST_CASE("NanopbWrapper Vector", "[io][proto]")
 {
-    ::std::uint8_t buffer[1024];
-
-    pb_ostream_t stream;
-    stream = pb_ostream_from_buffer(buffer, 1024);
-
     Eigen::Vector<double, 12> M, N;
     M << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2;
+
+    ::std::uint8_t buffer[ls::io::NanopbWrapper<decltype(M)>::kMessageSize];
+
+    pb_ostream_t stream;
+    stream = pb_ostream_from_buffer(buffer, ls::io::NanopbWrapper<decltype(M)>::kMessageSize);
 
     N.setZero();
 
@@ -121,7 +123,8 @@ TEST_CASE("NanopbWrapper Vector", "[io][proto]")
     auto heraldRecv = ls::io::NanopbWrapper<decltype(N)>::makeHerald();
     auto subHeraldRecv = ls::io::NanopbWrapper<decltype(N)>::makeSubHerald();
     auto msgArgRecv = ls::io::NanopbArg{};
-    auto msgRecv = ls::io::NanopbWrapper<decltype(N)>::makeDecodingMessage(N, msgArgRecv, subHeraldRecv);
+    ls::io::NanopbWrapper<decltype(N)>::VectorCounter vC{};
+    auto msgRecv = ls::io::NanopbWrapper<decltype(N)>::makeDecodingMessage(N, msgArgRecv, vC, subHeraldRecv);
 
     pb_istream_t istream = pb_istream_from_buffer(buffer, sizeof(buffer));
 

@@ -257,6 +257,14 @@ TEST_CASE("Executor with loop to dot file", "[blocks][aux]")
     ex.makeDotFile(ss);
 
     ::std::cout << ss.str() << ::std::endl;
+
+    ss.clear();
+    ss.str(::std::string());
+    ex.makeSimpleDotFile(ss, true, true);
+
+    ::std::cout << ss.str() << ::std::endl;
+
+    ::std::cout << ex.getAsciiGraph(true, true) << ::std::endl;
 }
 
 TEST_CASE("Executor with loop to dot file 2", "[blocks][aux]")
@@ -281,4 +289,36 @@ TEST_CASE("Executor with loop to dot file 2", "[blocks][aux]")
     ex.makeDotFile(ss, true, false);
 
     ::std::cout << ss.str() << ::std::endl;
+}
+
+TEST_CASE("Executor without loop", "[blocks][aux]")
+{
+    ls::blocks::std::ConstantBlock<double> c{5}, c2{2};
+    ls::blocks::std::SumBlock<double, 2> s;
+    ls::blocks::std::GainBlock<double> g{0.5};
+
+    s.setOperators(decltype(s)::Plus, decltype(s)::Minus);
+
+    // We now establish the interconnections:
+    connect(c.o<0>(), g.i<0>());
+    connect(g.o<0>(), s.i<0>());
+    connect(c2.o<0>(), s.i<1>());
+
+    // We group all our blocks in a BlockPack object,
+    // which contains all components of our system.
+    ls::blocks::BlockPack bp{c, c2, s, g};
+
+    // We pass the BlockPack onto the Executor,
+    // which will allow us to resolve the execution order,
+    // providing a single trigger function for the entire system.
+    ls::blocks::aux::Executor ex{bp};
+    ex.resolveExecutionOrder();
+
+    // Triggering the entire system is as simple as
+    // calling the trigger function of the executor.
+    ex.trigger();
+
+    ::std::cout << ex.getAsciiGraph(true, true) << ::std::endl;
+
+    REQUIRE(ex.getComponentSize() == ex.components.components.size());
 }

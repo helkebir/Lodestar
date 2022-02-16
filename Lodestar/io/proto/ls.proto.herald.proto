@@ -3,11 +3,11 @@ syntax = "proto2";
 package ls.proto;
 
 import "ls.proto.types.proto";
+import "ls.proto.signature.proto";
 
 message Herald {
   required int32 blockId = 1;
   required int32 slotId = 2;
   required Type msgType = 3;
-  optional uint64 publicKey = 4;
-  optional bool encrypted = 5;
+  optional Signature sign = 4;
 }

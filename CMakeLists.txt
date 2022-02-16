@@ -52,8 +52,9 @@ install(TARGETS Lodestar DESTINATION lib)
 install(DIRECTORY dep/Eigen/ DESTINATION include/Lodestar/Eigen)
 install(DIRECTORY dep/ersatz/ersatz DESTINATION include/Lodestar/ersatz)
 install(DIRECTORY dep/nanopb/ DESTINATION include/Lodestar)
-install(DIRECTORY dep/ersatz/ersatz/dep/fmt DESTINATION include/Lodestar/fmt)
+install(DIRECTORY dep/ersatz/ersatz/dep/fmt/ DESTINATION include/Lodestar/fmt)
 install(DIRECTORY dep/unsupported/ DESTINATION include/Lodestar/unsupported)
+install(DIRECTORY dep/CLI11/ DESTINATION include/Lodestar/CLI11)
 install(FILES cmake/config/LodestarConfig.cmake DESTINATION lib/cmake/Lodestar)
 
 

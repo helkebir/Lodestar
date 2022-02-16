@@ -5,6 +5,7 @@
 #define PB_LS_PROTO_LS_PROTO_HERALD_PB_H_INCLUDED
 #include <pb.h>
 #include "ls.proto.types.pb.h"
+#include "ls.proto.signature.pb.h"
 
 #if PB_PROTO_HEADER_VERSION != 40
 #error Regenerate this file with the current version of nanopb generator.
@@ -15,10 +16,8 @@ typedef struct _ls_proto_Herald {
     int32_t blockId; 
     int32_t slotId; 
     ls_proto_Type msgType; 
-    bool has_publicKey;
-    uint64_t publicKey; 
-    bool has_encrypted;
-    bool encrypted; 
+    bool has_sign;
+    ls_proto_Signature sign; 
 } ls_proto_Herald;
 
 
@@ -27,25 +26,24 @@ extern "C" {
 #endif
 
 /* Initializer values for message structs */
-#define ls_proto_Herald_init_default             {0, 0, _ls_proto_Type_MIN, false, 0, false, 0}
-#define ls_proto_Herald_init_zero                {0, 0, _ls_proto_Type_MIN, false, 0, false, 0}
+#define ls_proto_Herald_init_default             {0, 0, _ls_proto_Type_MIN, false, ls_proto_Signature_init_default}
+#define ls_proto_Herald_init_zero                {0, 0, _ls_proto_Type_MIN, false, ls_proto_Signature_init_zero}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define ls_proto_Herald_blockId_tag              1
 #define ls_proto_Herald_slotId_tag               2
 #define ls_proto_Herald_msgType_tag              3
-#define ls_proto_Herald_publicKey_tag            4
-#define ls_proto_Herald_encrypted_tag            5
+#define ls_proto_Herald_sign_tag                 4
 
 /* Struct field encoding specification for nanopb */
 #define ls_proto_Herald_FIELDLIST(X, a) \
 X(a, STATIC,   REQUIRED, INT32,    blockId,           1) \
 X(a, STATIC,   REQUIRED, INT32,    slotId,            2) \
 X(a, STATIC,   REQUIRED, UENUM,    msgType,           3) \
-X(a, STATIC,   OPTIONAL, UINT64,   publicKey,         4) \
-X(a, STATIC,   OPTIONAL, BOOL,     encrypted,         5)
+X(a, STATIC,   OPTIONAL, MESSAGE,  sign,              4)
 #define ls_proto_Herald_CALLBACK NULL
 #define ls_proto_Herald_DEFAULT NULL
+#define ls_proto_Herald_sign_MSGTYPE ls_proto_Signature
 
 extern const pb_msgdesc_t ls_proto_Herald_msg;
 
@@ -53,7 +51,7 @@ extern const pb_msgdesc_t ls_proto_Herald_msg;
 #define ls_proto_Herald_fields &ls_proto_Herald_msg
 
 /* Maximum encoded size of messages (where known) */
-#define ls_proto_Herald_size                     37
+#define ls_proto_Herald_size                     136
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -37,7 +37,7 @@ ls::blocks::aux::Executor::makeDotFile(std::stringstream &ss, bool lineLabels,
                                        bool slotLabels, float rankSep,
                                        float nodeSep)
 {
-    ss << "digraph R {\n";
+    ss << "digraph {\n";
     ss << "  rankdir=LR;\n";
     ss << "  overlap=false;\n";
     ss << fmt::format("  ranksep={:.2f};\n", rankSep);
@@ -46,44 +46,24 @@ ls::blocks::aux::Executor::makeDotFile(std::stringstream &ss, bool lineLabels,
     ss << "\n";
 
     ::std::vector<int> algebraicLoops;
-    algebraicLoops.reserve(components.components.size());
-    for (int idx = 0; idx < components.components.size(); idx++)
-        if (components.isAlgebraicLoop(blockPack, idx))
+    if (!this->components.components.empty())
+        algebraicLoops.reserve(this->components.components.size());
+    for (auto idx = 0; idx < this->components.components.size(); idx++)
+        if (this->components.isAlgebraicLoop(blockPack, idx))
             algebraicLoops.push_back(idx);
-
-    auto getAlgebraicLoopsColors = [&](int blockId) -> ::std::string {
-        ::std::string res;
-        int iComponents = 1;
-        for (int i: algebraicLoops) {
-            if (::std::any_of(components.components[i].begin(),
-                              components.components[i].end(),
-                              [blockId](int id) {
-                                  return (id == blockId);
-                              })) {
-                if (iComponents > 1)
-                    res += fmt::format(":{}", iComponents);
-                else
-                    res = ::std::to_string(iComponents);
-
-                iComponents++;
-            }
-        }
-
-        return res;
-    };
 
     auto getSharedAlgebraicLoopsColors = [&](int blockId1,
                                              int blockId2) -> ::std::string {
         ::std::string res;
         int iComponents = 1;
         for (int i: algebraicLoops) {
-            if (::std::any_of(components.components[i].begin(),
-                              components.components[i].end(),
+            if (::std::any_of(this->components.components[i].begin(),
+                              this->components.components[i].end(),
                               [blockId1](int id) {
                                   return (id == blockId1);
                               }) &&
-                ::std::any_of(components.components[i].begin(),
-                              components.components[i].end(),
+                ::std::any_of(this->components.components[i].begin(),
+                              this->components.components[i].end(),
                               [blockId2](int id) {
                                   return (id == blockId2);
                               })) {
@@ -189,20 +169,126 @@ ls::blocks::aux::Executor::makeDotFile(std::stringstream &ss, bool lineLabels,
         for (const auto oSlot: blk->outputPointers) {
             for (const auto iSlotOther: oSlot->connectionPtrs) {
                 ::std::string colors = getSharedAlgebraicLoopsColors(oSlot->blockId, iSlotOther->blockId);
+                ::std::string outType = traits->outTypes[i];
+                replace(outType, "<", "\\<");
+                replace(outType, ">", "\\>");
                 ss << fmt::format(
                         "  blk{}:o{}:e -> blk{}:i{}:w [label=\"<{}>\"{}];\n",
                         oSlot->blockId, oSlot->slotId,
                         iSlotOther->blockId,
                         iSlotOther->slotId,
-                        lineLabels ? traits->outTypes[i] : "",
+                        lineLabels ? outType : "",
                         colors.empty() ? "" : ", color=\"" + colors + "\""
-                        );
+                );
             }
             i++;
         }
     }
 
     ss << "}";
+}
+
+void
+ls::blocks::aux::Executor::makeSimpleDotFile(std::stringstream &ss, bool lineLabels, bool slotLabels, float rankSep,
+                                             float nodeSep)
+{
+    ::std::vector<int> algebraicLoops;
+    if (!this->components.components.empty())
+        algebraicLoops.reserve(this->components.components.size());
+    for (auto idx = 0; idx < this->components.components.size(); idx++)
+        if (this->components.isAlgebraicLoop(blockPack, idx))
+            algebraicLoops.push_back(idx);
+
+    auto getSharedAlgebraicLoopsLabels = [&](int blockId1,
+                                             int blockId2) -> ::std::string {
+        ::std::string res;
+        int iComponents = 0;
+        for (int i: algebraicLoops) {
+            if (::std::any_of(this->components.components[i].begin(),
+                              this->components.components[i].end(),
+                              [blockId1](int id) {
+                                  return (id == blockId1);
+                              }) &&
+                ::std::any_of(this->components.components[i].begin(),
+                              this->components.components[i].end(),
+                              [blockId2](int id) {
+                                  return (id == blockId2);
+                              })) {
+                if (iComponents > 0)
+                    res += fmt::format("; AL{}", iComponents);
+                else
+                    res = "AL" + ::std::to_string(iComponents);
+
+                iComponents++;
+            }
+        }
+
+        return res;
+    };
+
+    ss << "digraph {\n";
+//    ss << "  rankdir=LR;\n";
+//    ss << "  overlap=false;\n";
+//    ss << fmt::format("  ranksep={:.2f};\n", rankSep);
+//    ss << fmt::format("  nodesep={:.2f};\n", nodeSep);
+//    ss << "\n";
+
+    for (const auto blk: executionOrder) {
+        const auto traits = blockPack.getTraitsByPtr(blk);
+        ss << fmt::format("  subgraph cluster_{} {{\n", blk->id);
+        ss << fmt::format("    blk{} [label=\"{}{}\"];\n", blk->id, blockTypeToString(traits->blockType),
+                          traits->directFeedthrough ? "\\n(dir. fd-thru)"
+                                                    : "");
+        ss << fmt::format("    label=\"Block \\#{}\";\n", blk->id);
+        ss << "  }\n\n";
+    }
+
+    for (const auto blk: executionOrder) {
+        const auto traits = blockPack.getTraitsByPtr(blk);
+
+        int i = 0;
+        for (const auto oSlot: blk->outputPointers) {
+            for (const auto iSlotOther: oSlot->connectionPtrs) {
+                auto loopLabels = getSharedAlgebraicLoopsLabels(oSlot->blockId, iSlotOther->blockId);
+                ::std::string outType = traits->outTypes[i];
+                replace(outType, "<", "\\<");
+                replace(outType, ">", "\\>");
+                ss << fmt::format(
+                        "  blk{} -> blk{} [label=\"{}{}{}\"];\n",
+                        oSlot->blockId,
+                        iSlotOther->blockId,
+                        slotLabels ? fmt::format("(o{}, i{})", oSlot->slotId, iSlotOther->slotId) : "",
+                        lineLabels ? "\\n<" + outType + ">" : "",
+                        loopLabels.empty() ? "" : "\\n" + loopLabels
+                );
+            }
+            i++;
+        }
+    }
+
+    ss << "}";
+}
+
+::std::string
+ls::blocks::aux::Executor::getAsciiGraph(bool lineLabels, bool slotLabels, float rankSep, float nodeSep)
+{
+    ::std::stringstream ss{};
+
+    makeSimpleDotFile(ss, lineLabels, slotLabels, rankSep, nodeSep);
+
+    if (ls::cli::ExecuteCommand::commandExists("graph-easy")) {
+        auto out = ss.str();
+        out = ::std::regex_replace(out, ::std::regex("\\\\"), "\\\\");
+        ::std::cout << "===: " << out << ::std::endl;
+        return ls::cli::ExecuteCommand::getStdout("echo '" + out + "' | graph-easy --from=dot --as_ascii");
+    }
+
+    return "Error: graph-easy could not be found; no graph generated.";
+}
+
+unsigned long ls::blocks::aux::Executor::getComponentSize() const
+{
+    return components.components.size();
 }
 
 //void ls::blocks::aux::Executor::trigger()
