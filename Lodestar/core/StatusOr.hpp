@@ -19,21 +19,21 @@ namespace ls {
         public:
             using type = TType;
 
-            explicit StatusOr();
+            StatusOr();
 
-            explicit StatusOr(const Status &status);
+            StatusOr(const Status &status);
 
-            explicit StatusOr(const TType &value);
+            StatusOr(const TType &value);
 
             StatusOr(const StatusOr &other);
 
             template<typename TTypeOther>
-            explicit StatusOr(const StatusOr<TTypeOther> &other,
-                              typename std::enable_if<std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
+            StatusOr(const StatusOr<TTypeOther> &other,
+                     typename std::enable_if<std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
 
             template<typename TTypeOther>
-            explicit StatusOr(const StatusOr<TTypeOther> &other,
-                              typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
+            StatusOr(const StatusOr<TTypeOther> &other,
+                     typename std::enable_if<!std::is_convertible<TTypeOther, TType>::value>::type * = nullptr);
 
             StatusOr &operator=(const StatusOr &other);
 
@@ -87,7 +87,7 @@ namespace ls {
         template<typename TType>
         inline StatusOr<TType>::StatusOr(const TType &value)
         {
-            if (std::is_pointer<decltype(value)>::value)
+            if (!std::is_pointer<decltype(&value)>::value)
                 status_ = util::InternalError(); // nullptr is not a valid argument.
             else {
                 status_ = util::OkStatus();

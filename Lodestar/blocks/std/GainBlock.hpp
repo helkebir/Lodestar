@@ -28,6 +28,23 @@ namespace ls {
             };
 
             /**
+             * @enum ls::blocks::std::GainBlockConvolutionMode
+             * @brief Convolution modes for @c GainBlock
+             */
+            enum class GainBlockConvolutionMode {
+                /// Reflect about the edge of the last pixel. Also known as half-sample symmetric.
+                Reflect,
+                /// Fill all values beyond edges with a constant value.
+                Constant,
+                /// Extend by replicating last pixel.
+                Nearest,
+                /// Extend by reflecting about the center of the last pixel. Also known as whole-sample symmetric.
+                Mirror,
+                /// Wrap around to the opposing edge.
+                Wrap
+            };
+
+            /**
              * @brief Multiplies input by a value (gain).
              * @ingroup blocks_module
              *
@@ -40,6 +57,13 @@ namespace ls {
              * - @link GainBlockOperator::Convolution Convolution @endlink
              * - @link GainBlockOperator::ElementWise Elementwise @endlink
              *
+             * The following convolution modes are available:
+             * - @link GainBlockConvolutionMode::Reflect Reflect @endlink
+             * - @link GainBlockConvolutionMode::Constant Constant @endlink
+             * - @link GainBlockConvolutionMode::Nearest Nearest @endlink
+             * - @link GainBlockConvolutionMode::Mirror Mirror @endlink
+             * - @link GainBlockConvolutionMode::Wrap Wrap @endlink
+             *
              * This class raises `static_assert`s if the gain and input are
              * not multiplicable.
              *
@@ -49,20 +73,21 @@ namespace ls {
              * @tparam TInput Input type.
              * @tparam TGain Gain type.
              * @tparam TOps Multiplication type.
+             * @tparam TConv Convolution mode.
              */
-            template<typename TInput, typename TGain = TInput, GainBlockOperator TOps = GainBlockOperator::Left>
+            template<typename TInput, typename TGain = TInput, GainBlockOperator TOps = GainBlockOperator::Left, GainBlockConvolutionMode TConv = GainBlockConvolutionMode::Reflect>
             class GainBlock :
                     public Block<
                             ::std::tuple<TInput>,
                             ::std::tuple<typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>::returnType>::returnType>,
-                            ::std::tuple<TGain>
+                            ::std::tuple<TGain, double>
                     > {
             public:
                 /// Output type trait.
                 using OutputTrait = typename ::std::conditional<TOps != GainBlockOperator::Right, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>>::type;
                 static_assert(OutputTrait::value, "Gain is not multiplicable with input.");
                 /// Sanitized output type trait.
-                using SanitizedOutputTrait = typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>::returnType>;
+                using SanitizedOutputTrait = typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename OutputTrait::returnType>;
 
                 /// Output type.
                 using OutputType = typename SanitizedOutputTrait::returnType;
@@ -72,20 +97,34 @@ namespace ls {
                 Block<
                         ::std::tuple<TInput>,
                         ::std::tuple<OutputType>,
-                        ::std::tuple<TGain>
+                        ::std::tuple<TGain, double>
                 >;
 
                 /// Utility type alias for @c GainBlockOperator.
                 using Ops = GainBlockOperator;
 
-                /// Utility type alias for left multiplication.
-                static constexpr GainBlockOperator Left = Ops::Left;
-                /// Utility type alias for right multiplication.
-                static constexpr GainBlockOperator Right = Ops::Right;
-                /// Utility type alias for convolution.
-                static constexpr GainBlockOperator Convolution = Ops::Convolution;
-                /// Utility type alias for elementwise multiplication.
-                static constexpr GainBlockOperator ElementWise = Ops::ElementWise;
+                /// Utility type alias for @c GainBlockOperator.
+                using Conv = GainBlockConvolutionMode;
+
+                /// Utility alias for left multiplication.
+                static constexpr Ops Left = Ops::Left;
+                /// Utility alias for right multiplication.
+                static constexpr Ops Right = Ops::Right;
+                /// Utility alias for convolution.
+                static constexpr Ops Convolution = Ops::Convolution;
+                /// Utility alias for elementwise multiplication.
+                static constexpr Ops ElementWise = Ops::ElementWise;
+
+                /// Utility alias for reflect convolution mode.
+                static constexpr Conv Reflect = Conv::Reflect;
+                /// Utility alias for constant convolution mode.
+                static constexpr Conv Constant = Conv::Constant;
+                /// Utility alias for nearest convolution mode.
+                static constexpr Conv Nearest = Conv::Nearest;
+                /// Utility alias for mirror convolution mode.
+                static constexpr Conv Mirror = Conv::Mirror;
+                /// Utility alias for wrap convolution mode.
+                static constexpr Conv Wrap = Conv::Wrap;
 
                 // TODO: Find way to potentially make operator compile-time
                 //  settable.
@@ -173,6 +212,30 @@ namespace ls {
                     return this->template p<0>();
                 }
 
+                // TODO: Make constantVal type user-settable.
+
+                /**
+                 * Returns reference to constant value (used when GainBlockConvolutionMode is Constant).
+                 *
+                 * @return Reference to constant value.
+                 */
+                typename ::std::tuple_element<1, typename Base::Params>::type &
+                constantVal()
+                {
+                    return this->template p<1>();
+                }
+
+                /**
+                 * Returns const reference to constant value (used when GainBlockConvolutionMode is Constant).
+                 *
+                 * @return Const reference to constant value.
+                 */
+                const typename ::std::tuple_element<1, typename Base::Params>::type &
+                constantVal() const
+                {
+                    return this->template p<1>();
+                }
+
 #ifdef LS_USE_GINAC
 
                 const ::std::array<GiNaC::ex, Base::kIns> &inputSymbols()
@@ -237,7 +300,7 @@ namespace ls {
                                 this->outputSymbols_[i] = GiNaC::lst_to_matrix(output);
                             } else {
                                 this->outputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
-                                                       "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                                       "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" +
                                                        ::std::to_string(this->id) +
                                                        "}"};
                             }
@@ -252,7 +315,8 @@ namespace ls {
                 const ::std::array<GiNaC::ex, Base::kPars> &parameterSymbols()
                 {
                     if (!this->isInitParameter_) {
-                        for (int i = 0; i < Base::kPars; i++) {
+                        int i = 0;
+                        {
                             if (ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TGain>::value) {
                                 GiNaC::lst par;
                                 for (int ii = 0; ii <
@@ -274,11 +338,18 @@ namespace ls {
                                 this->parameterSymbols_[i] = GiNaC::lst_to_matrix(par);
                             } else {
                                 this->parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
-                                                       "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                                       "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
                                                        ::std::to_string(this->id) +
                                                        "}"};
                             }
                         }
+
+                        // constant value symbol
+                        i++;
+                        this->parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
+                                                                   "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
+                                                                   ::std::to_string(this->id) +
+                                                                   "}"};
 
                         this->isInitParameter_ = true;
                     }
@@ -382,15 +453,15 @@ namespace ls {
          * @tparam TInput Input type.
          * @tparam TGain Gain type.
          */
-        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
-        class BlockTraits<std::GainBlock<TInput, TGain, TOps>> {
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
+        class BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>> {
         public:
             static constexpr const BlockType blockType = BlockType::GainBlock;
             enum {
                 directFeedthrough = true
             };
 
-            using type = std::GainBlock<TInput, TGain, TOps>;
+            using type = std::GainBlock<TInput, TGain, TOps, TConv>;
             using Base = typename type::Base;
 
             enum {
@@ -403,24 +474,24 @@ namespace ls {
             static const ::std::array<::std::string, kOuts> outTypes;
             static const ::std::array<::std::string, kPars> parTypes;
 
-            static const ::std::array<::std::string, 3> templateTypes;
+            static const ::std::array<::std::string, 4> templateTypes;
         };
 
-        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
-        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kIns> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::inTypes =
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::kIns> BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::inTypes =
                 {demangle(typeid(TInput).name())};
 
-        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
-        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kOuts> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::outTypes =
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::kOuts> BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::outTypes =
                 {demangle(typeid(typename std::GainBlock<TInput, TGain, TOps>::OutputType).name())};
 
-        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
-        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps>>::kPars> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::parTypes =
-                {demangle(typeid(TGain).name())};
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
+        const ::std::array<::std::string, BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::kPars> BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::parTypes =
+                {demangle(typeid(TGain).name()), "double"};
 
-        template<typename TInput, typename TGain, std::GainBlockOperator TOps>
-        const ::std::array<::std::string, 3> BlockTraits<std::GainBlock<TInput, TGain, TOps>>::templateTypes =
-                {demangle(typeid(TInput).name()), demangle(typeid(TGain).name()), demangle(typeid(TOps).name())};
+        template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
+        const ::std::array<::std::string, 4> BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::templateTypes =
+                {demangle(typeid(TInput).name()), demangle(typeid(TGain).name()), demangle(typeid(TOps).name()), demangle(typeid(TConv).name())};
     }
 }
 
