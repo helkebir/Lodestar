@@ -111,7 +111,7 @@ namespace ls {
 
         template<typename TInput, std::MinMaxBlockOperator TOps>
         const ::std::array<::std::string, BlockTraits<std::MinMaxBlock<TInput, TOps>>::kOuts> BlockTraits<std::MinMaxBlock<TInput, TOps>>::outTypes =
-                {demangle(typeid(std::MinMaxBlock<TInput, TOps>::OutputType).name())};
+                {demangle(typeid(typename std::MinMaxBlock<TInput, TOps>::OutputType).name())};
 
         template<typename TInput, std::MinMaxBlockOperator TOps>
         const ::std::array<::std::string, BlockTraits<std::MinMaxBlock<TInput, TOps>>::kPars> BlockTraits<std::MinMaxBlock<TInput, TOps>>::parTypes =

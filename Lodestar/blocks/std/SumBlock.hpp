@@ -345,35 +345,35 @@ namespace ls {
 
                 void triggerFunction(Base &b)
                 {
-                    b.template o<0>() = sum(zero());
+                    b.template o<0>().object = zero();
+                    sum(b.template o<0>().object);
+                    b.template o<0>().propagate();
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
-                typename ::std::enable_if<(TIdx > 0), TType>::type
-                sum(TType value)
+                typename ::std::enable_if<(TIdx > 0), void>::type
+                sum(TType &res)
                 {
-                    return sum<TIdx - 1>(
-                            value +
+                    res = res +
                             SumBlockOperatorHelper::interpret(
                                     (this->template p<0>())[TIdx]) *
-                            this->template i<TIdx>());
+                            this->template i<TIdx>();
+                    return sum<TIdx - 1>(res);
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
-                typename ::std::enable_if<(TIdx == 0), TType>::type
-                sum(TType value)
+                typename ::std::enable_if<(TIdx == 0), void>::type
+                sum(TType &res)
                 {
-                    return value +
-                           SumBlockOperatorHelper::interpret(
-                                   (this->template p<0>())[TIdx]) *
-                           this->template i<TIdx>();
+                    res = res +
+                    SumBlockOperatorHelper::interpret((this->template p<0>())[TIdx]) * this->template i<TIdx>();
                 }
 
                 template<unsigned int TIdx = Base::kIns - 1>
-                typename ::std::enable_if<(TIdx < 0), TType>::type
-                sum(TType value)
+                typename ::std::enable_if<(TIdx < 0), void>::type
+                sum(TType &res)
                 {
-                    return value;
+                    return;
                 }
             };
         }
