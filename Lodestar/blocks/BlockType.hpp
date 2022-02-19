@@ -39,8 +39,14 @@ namespace ls {
             FunctionBlock,
             /// Gain block.
             GainBlock,
+            /// Min/max block.
+            MinMaxBlock,
+            /// Min/max index block.
+            MinMaxIdxBlock,
             /// Multiplexer block.
             MuxBlock,
+            /// Protocol Buffers output block.
+            ProtoMsgOutBlock,
             /// Real and imaginary to complex block.
             ReImToComplexBlock,
             /// Saturation block.
@@ -51,8 +57,8 @@ namespace ls {
             SumBlock,
             /// Switch (manual) block.
             SwitchBlock,
-            /// Protocol Buffers output block.
-            ProtoMsgOutBlock
+            /// Unary absolute value block.
+            UnaryAbsBlock,
         };
 
         static
