@@ -44,6 +44,16 @@ namespace ls {
                 Wrap
             };
 
+#define OUTPUT_GAINBLOCK() \
+    typename ::std::conditional< \
+    TOps == GainBlockOperator::Convolution, \
+    TInput,                \
+    typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ::std::conditional< \
+        TOps != GainBlockOperator::Right,                                                                     \
+        ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>,                             \
+        ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>                              \
+        >::type::returnType>::returnType>::type
+
             /**
              * @brief Multiplies input by a value (gain).
              * @ingroup blocks_module
@@ -79,18 +89,30 @@ namespace ls {
             class GainBlock :
                     public Block<
                             ::std::tuple<TInput>,
-                            ::std::tuple<typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>::returnType>::returnType>,
+                            ::std::tuple<OUTPUT_GAINBLOCK()>,
                             ::std::tuple<TGain, double>
                     > {
             public:
                 /// Output type trait.
-                using OutputTrait = typename ::std::conditional<TOps != GainBlockOperator::Right, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>, ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>>::type;
-                static_assert(OutputTrait::value, "Gain is not multiplicable with input.");
+                using OutputTrait = typename ::std::conditional<
+                        TOps != GainBlockOperator::Right,
+                        ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>,
+                        ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>
+                >::type;
+                static_assert(OutputTrait::value || (TOps == GainBlockOperator::Convolution),
+                              "Gain is not multiplicable with input.");
                 /// Sanitized output type trait.
                 using SanitizedOutputTrait = typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename OutputTrait::returnType>;
 
                 /// Output type.
-                using OutputType = typename SanitizedOutputTrait::returnType;
+                using OutputType = OUTPUT_GAINBLOCK();
+
+                /// Gain type trait.
+                using GainTrait = ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TGain>;
+                /// Input type trait.
+                using InputTrait = ls::aux::TemplateTraits::BinaryOperators::parseMatrixLike<TInput>;
+                static_assert((TOps != GainBlockOperator::Convolution) || (GainTrait::value && InputTrait ::value),
+                              "For convolution, TInput and TGain must be matrix-like.");
 
                 /// Base @c Block class type alias.
                 using Base =
@@ -262,10 +284,11 @@ namespace ls {
 
                                 this->inputSymbols_[i] = GiNaC::lst_to_matrix(input);
                             } else {
-                                this->inputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i),
-                                                       "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
-                                                       ::std::to_string(this->id) +
-                                                       "}"};
+                                this->inputSymbols_[i] = GiNaC::symbol{
+                                        "blk" + ::std::to_string(this->id) + "_i_" + ::std::to_string(i),
+                                        "\\text{BLK}^{i, " + ::std::to_string(i) + "}_{" +
+                                        ::std::to_string(this->id) +
+                                        "}"};
                             }
                         }
 
@@ -299,10 +322,11 @@ namespace ls {
 
                                 this->outputSymbols_[i] = GiNaC::lst_to_matrix(output);
                             } else {
-                                this->outputSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
-                                                       "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" +
-                                                       ::std::to_string(this->id) +
-                                                       "}"};
+                                this->outputSymbols_[i] = GiNaC::symbol{
+                                        "blk" + ::std::to_string(this->id) + "_o_" + ::std::to_string(i),
+                                        "\\text{BLK}^{o, " + ::std::to_string(i) + "}_{" +
+                                        ::std::to_string(this->id) +
+                                        "}"};
                             }
                         }
 
@@ -337,19 +361,21 @@ namespace ls {
 
                                 this->parameterSymbols_[i] = GiNaC::lst_to_matrix(par);
                             } else {
-                                this->parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
-                                                       "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
-                                                       ::std::to_string(this->id) +
-                                                       "}"};
+                                this->parameterSymbols_[i] = GiNaC::symbol{
+                                        "blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
+                                        "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
+                                        ::std::to_string(this->id) +
+                                        "}"};
                             }
                         }
 
                         // constant value symbol
                         i++;
-                        this->parameterSymbols_[i] = GiNaC::symbol{"blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
-                                                                   "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
-                                                                   ::std::to_string(this->id) +
-                                                                   "}"};
+                        this->parameterSymbols_[i] = GiNaC::symbol{
+                                "blk" + ::std::to_string(this->id) + "_p_" + ::std::to_string(i),
+                                "\\text{BLK}^{p, " + ::std::to_string(i) + "}_{" +
+                                ::std::to_string(this->id) +
+                                "}"};
 
                         this->isInitParameter_ = true;
                     }
@@ -367,11 +393,10 @@ namespace ls {
                  * @tparam TTOps Shadows @c TOps.
                  * @return @c void if active.
                  */
-                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps != Right>::type* = nullptr>
-                typename ::std::enable_if<TOps != Right>::type bindEquation()
+                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps == Left>::type * = nullptr>
+                void bindEquation()
                 {
-                    this->equation = [](Base &b) -> void
-                    {
+                    this->equation = [](Base &b) -> void {
                         b.template o<0>().object =
                                 b.template p<0>() * b.template i<0>().object;
                         b.template o<0>().propagate();
@@ -380,11 +405,12 @@ namespace ls {
 #ifdef LS_USE_GINAC
                     GiNaC::function_options fops("blkf" + ::std::to_string(this->id) + "__", this->blkFunc_NPARAMS);
 
-                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
+                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](
+                            const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
                         GiNaC::ex res = 0;
                         int i = 0;
 
-                        for (auto & ex : exvec) {
+                        for (auto &ex: exvec) {
                             res += this->parameterSymbols()[0] * ex;
 
                             i++;
@@ -408,11 +434,10 @@ namespace ls {
                  * @tparam TTOps Shadows @c TOps.
                  * @return @c void if active.
                  */
-                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps == Right>::type* = nullptr>
+                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<TTOps == Right>::type * = nullptr>
                 void bindEquation()
                 {
-                    this->equation = [](Base &b) -> void
-                    {
+                    this->equation = [](Base &b) -> void {
                         b.template o<0>().object =
                                 b.template i<0>().object * b.template p<0>();
                         b.template o<0>().propagate();
@@ -421,11 +446,12 @@ namespace ls {
 #ifdef LS_USE_GINAC
                     GiNaC::function_options fops("blkf" + ::std::to_string(this->id) + "__", this->blkFunc_NPARAMS);
 
-                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
+                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](
+                            const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
                         GiNaC::ex res = 0;
                         int i = 0;
 
-                        for (auto & ex : exvec) {
+                        for (auto &ex: exvec) {
                             res += ex * this->parameterSymbols()[0];
 
                             i++;
@@ -441,6 +467,236 @@ namespace ls {
                             fops
                     );
 #endif
+                }
+
+                template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
+                        typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Reflect))>::type * = nullptr>
+                static void convolve(Base &b)
+                {
+                    static const auto NRowsKernel = GainTrait::rows;
+                    static const auto NColsKernel = GainTrait::cols;
+                    static const auto NRowsInput = InputTrait::rows;
+                    static const auto NColsInput = InputTrait::cols;
+
+                    auto getInput = [&](int i, int j) {
+                        if (i < 0)
+                            i = (-i - 1) % NRowsInput;
+                        if (i >= NRowsInput)
+                            i = (2*NRowsInput - i - 1) % NRowsInput;
+
+                        if (j < 0)
+                            j = (-j - 1) % NColsInput;
+                        if (j >= NColsInput)
+                            j = (2*NColsInput - j - 1) % NColsInput;
+
+                        return b.template i<0>().object(i, j);
+                    };
+
+                    b.template o<0>().object.setZero();
+
+                    for (int i=0; i < NRowsInput; i++) {
+                        for (int j=0; j < NColsInput; j++) {
+                            for (int ii=0; ii < NRowsKernel; ii++) {
+                                for (int jj=0; jj < NColsKernel; jj++) {
+                                    b.template o<0>().object(i, j) -= b.template p<0>()(ii, jj) * getInput(i - (NRowsKernel-1)/2 + ii, j - (NColsKernel-1)/2 + jj);
+                                }
+                            }
+                        }
+                    }
+
+                    b.template o<0>().propagate();
+                }
+
+                template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
+                        typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Constant))>::type * = nullptr>
+                static void convolve(Base &b)
+                {
+                    static const auto NRowsKernel = GainTrait::rows;
+                    static const auto NColsKernel = GainTrait::cols;
+                    static const auto NRowsInput = InputTrait::rows;
+                    static const auto NColsInput = InputTrait::cols;
+
+                    auto getInput = [&](int i, int j) {
+                        if (i < 0)
+                            return b.template p<1>();
+                        if (i >= NRowsInput)
+                            return b.template p<1>();
+
+                        if (j < 0)
+                            return b.template p<1>();
+                        if (j >= NColsInput)
+                            return b.template p<1>();
+
+                        return b.template i<0>().object(i, j);
+                    };
+
+                    b.template o<0>().object.setZero();
+
+                    for (int i=0; i < NRowsInput; i++) {
+                        for (int j=0; j < NColsInput; j++) {
+                            for (int ii=0; ii < NRowsKernel; ii++) {
+                                for (int jj=0; jj < NColsKernel; jj++) {
+                                    b.template o<0>().object(i, j) -= b.template p<0>()(ii, jj) * getInput(i - (NRowsKernel-1)/2 + ii, j - (NColsKernel-1)/2 + jj);
+                                }
+                            }
+                        }
+                    }
+
+                    b.template o<0>().propagate();
+                }
+
+                template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
+                        typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Nearest))>::type * = nullptr>
+                static void convolve(Base &b)
+                {
+                    static const auto NRowsKernel = GainTrait::rows;
+                    static const auto NColsKernel = GainTrait::cols;
+                    static const auto NRowsInput = InputTrait::rows;
+                    static const auto NColsInput = InputTrait::cols;
+
+                    auto getInput = [&](int i, int j) {
+                        if (i < 0)
+                            i = 0;
+                        if (i >= NRowsInput)
+                            i = NRowsInput - 1;
+
+                        if (j < 0)
+                            j = 0;
+                        if (j >= NColsInput)
+                            j = NColsInput-1;
+
+                        return b.template i<0>().object(i, j);
+                    };
+
+                    b.template o<0>().object.setZero();
+
+                    for (int i=0; i < NRowsInput; i++) {
+                        for (int j=0; j < NColsInput; j++) {
+                            for (int ii=0; ii < NRowsKernel; ii++) {
+                                for (int jj=0; jj < NColsKernel; jj++) {
+                                    b.template o<0>().object(i, j) -= b.template p<0>()(ii, jj) * getInput(i - (NRowsKernel-1)/2 + ii, j - (NColsKernel-1)/2 + jj);
+                                }
+                            }
+                        }
+                    }
+
+                    b.template o<0>().propagate();
+                }
+
+                template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
+                        typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Mirror))>::type * = nullptr>
+                static void convolve(Base &b)
+                {
+                    static const auto NRowsKernel = GainTrait::rows;
+                    static const auto NColsKernel = GainTrait::cols;
+                    static const auto NRowsInput = InputTrait::rows;
+                    static const auto NColsInput = InputTrait::cols;
+
+                    auto getInput = [&](int i, int j) {
+                        if (i < 0)
+                            i = (-i) % NRowsInput;
+                        if (i >= NRowsInput)
+                            i = (2*NRowsInput - i - 2) % NRowsInput;
+
+                        if (j < 0)
+                            j = (-j) % NColsInput;
+                        if (j >= NColsInput)
+                            j = (2*NColsInput - j - 2) % NColsInput;
+
+                        return b.template i<0>().object(i, j);
+                    };
+
+                    b.template o<0>().object.setZero();
+
+                    for (int i=0; i < NRowsInput; i++) {
+                        for (int j=0; j < NColsInput; j++) {
+                            for (int ii=0; ii < NRowsKernel; ii++) {
+                                for (int jj=0; jj < NColsKernel; jj++) {
+                                    b.template o<0>().object(i, j) -= b.template p<0>()(ii, jj) * getInput(i - (NRowsKernel-1)/2 + ii, j - (NColsKernel-1)/2 + jj);
+                                }
+                            }
+                        }
+                    }
+
+                    b.template o<0>().propagate();
+                }
+
+                template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
+                        typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Wrap))>::type * = nullptr>
+                static void convolve(Base &b)
+                {
+                    static const auto NRowsKernel = GainTrait::rows;
+                    static const auto NColsKernel = GainTrait::cols;
+                    static const auto NRowsInput = InputTrait::rows;
+                    static const auto NColsInput = InputTrait::cols;
+
+                    auto getInput = [&](int i, int j) {
+                        if (i < 0)
+                            i = (NRowsInput + i) % NRowsInput;
+                        if (i >= NRowsInput)
+                            i = i % NRowsInput;
+
+                        if (j < 0)
+                            j = (NColsInput + j) % NColsInput;
+                        if (j >= NColsInput)
+                            j = j % NColsInput;
+
+                        return b.template i<0>().object(i, j);
+                    };
+
+                    b.template o<0>().object.setZero();
+
+                    for (int i=0; i < NRowsInput; i++) {
+                        for (int j=0; j < NColsInput; j++) {
+                            for (int ii=0; ii < NRowsKernel; ii++) {
+                                for (int jj=0; jj < NColsKernel; jj++) {
+                                    b.template o<0>().object(i, j) -= b.template p<0>()(ii, jj) * getInput(i - (NRowsKernel-1)/2 + ii, j - (NColsKernel-1)/2 + jj);
+                                }
+                            }
+                        }
+                    }
+
+                    b.template o<0>().propagate();
+                }
+
+                /**
+                 * @brief Sets trigger function for convolution @c TOps.
+                 *
+                 * @tparam TTOps Shadows @c TOps.
+                 * @return @c void if active.
+                 */
+                template<GainBlockOperator TTOps = TOps, typename ::std::enable_if<
+                        TTOps == Convolution>::type * = nullptr>
+                void bindEquation()
+                {
+                    this->equation = [](Base &b) -> void {
+                        convolve(b);
+                    };
+
+//#ifdef LS_USE_GINAC
+//                    GiNaC::function_options fops("blkf" + ::std::to_string(this->id) + "__", this->blkFunc_NPARAMS);
+//
+//                    ls::blocks::symbolicEvalFunctionMap[this->id] = [&](
+//                            const ::std::vector<GiNaC::ex> &exvec) -> GiNaC::ex {
+//                        GiNaC::ex res = 0;
+//                        int i = 0;
+//
+//                        for (auto &ex: exvec) {
+//                            res += ex * this->parameterSymbols()[0];
+//
+//                            i++;
+//                        }
+//
+//                        return res;
+//                    };
+//
+//                    fops.eval_func(ls::blocks::symbolicEval);
+//
+//
+//                    this->serial = GiNaC::function::register_new(
+//                            fops
+//                    );
+//#endif
                 }
 
                 // TODO: Implement convolution and elementwise multiplication.
@@ -491,9 +747,11 @@ namespace ls {
 
         template<typename TInput, typename TGain, std::GainBlockOperator TOps, std::GainBlockConvolutionMode TConv>
         const ::std::array<::std::string, 4> BlockTraits<std::GainBlock<TInput, TGain, TOps, TConv>>::templateTypes =
-                {demangle(typeid(TInput).name()), demangle(typeid(TGain).name()), demangle(typeid(TOps).name()), demangle(typeid(TConv).name())};
+                {demangle(typeid(TInput).name()), demangle(typeid(TGain).name()), demangle(typeid(TOps).name()),
+                 demangle(typeid(TConv).name())};
     }
 }
 
+#undef OUTPUT_GAINBLOCK
 
 #endif //LODESTAR_GAINBLOCK_HPP

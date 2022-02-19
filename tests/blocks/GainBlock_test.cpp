@@ -247,3 +247,33 @@ TEST_CASE("GainBlock and ConstantBlock", "[blocks][std]")
 
 #endif
 }
+
+TEST_CASE("GainBlock convolution", "[blocks][std]")
+{
+    ls::blocks::std::GainBlock<
+            Eigen::Matrix<double, 5, 5>,
+            Eigen::Matrix<double, 3, 3>,
+            ls::blocks::std::GainBlockOperator::Convolution,
+            ls::blocks::std::GainBlockConvolutionMode::Reflect
+    > gb;
+
+    Eigen::Matrix<double, 5, 5> I;
+    I << 1 , 2 , 3 , 4 , 5 ,
+         6 , 7 , 8 , 9 , 10,
+         11, 12, 13, 14, 15,
+         16, 17, 18, 19, 20,
+         21, 22, 23, 24, 25;
+
+    Eigen::Matrix<double, 3, 3> K;
+    K << -1, 0, 1,
+         -2, 0, 2,
+         -1, 0, 1;
+
+    gb.i<0>() = I;
+    gb.gain() = K;
+    gb.trigger();
+
+
+
+    ::std::cout << "Convolution:\n" << gb.o<0>().object << ::std::endl;
+}
