@@ -469,6 +469,13 @@ namespace ls {
 #endif
                 }
 
+                /**
+                 * Convolution function with reflection boundary condition.
+                 *
+                 * @tparam TTOps Copy of @c TOps
+                 * @tparam TTConv Copy of @c TConv
+                 * @param b Base block object.
+                 */
                 template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
                         typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Reflect))>::type * = nullptr>
                 static void convolve(Base &b)
@@ -507,6 +514,13 @@ namespace ls {
                     b.template o<0>().propagate();
                 }
 
+                /**
+                 * Convolution function with constant boundary condition.
+                 *
+                 * @tparam TTOps Copy of @c TOps
+                 * @tparam TTConv Copy of @c TConv
+                 * @param b Base block object.
+                 */
                 template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
                         typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Constant))>::type * = nullptr>
                 static void convolve(Base &b)
@@ -545,6 +559,13 @@ namespace ls {
                     b.template o<0>().propagate();
                 }
 
+                /**
+                 * Convolution function with nearest boundary condition.
+                 *
+                 * @tparam TTOps Copy of @c TOps
+                 * @tparam TTConv Copy of @c TConv
+                 * @param b Base block object.
+                 */
                 template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
                         typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Nearest))>::type * = nullptr>
                 static void convolve(Base &b)
@@ -583,6 +604,13 @@ namespace ls {
                     b.template o<0>().propagate();
                 }
 
+                /**
+                 * Convolution function with mirror boundary condition.
+                 *
+                 * @tparam TTOps Copy of @c TOps
+                 * @tparam TTConv Copy of @c TConv
+                 * @param b Base block object.
+                 */
                 template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
                         typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Mirror))>::type * = nullptr>
                 static void convolve(Base &b)
@@ -621,6 +649,13 @@ namespace ls {
                     b.template o<0>().propagate();
                 }
 
+                /**
+                 * Convolution function with wrap boundary condition.
+                 *
+                 * @tparam TTOps Copy of @c TOps
+                 * @tparam TTConv Copy of @c TConv
+                 * @param b Base block object.
+                 */
                 template<GainBlockOperator TTOps = TOps, GainBlockConvolutionMode TTConv = TConv,
                         typename ::std::enable_if<((TTOps == Convolution) && (TTConv == Wrap))>::type * = nullptr>
                 static void convolve(Base &b)
