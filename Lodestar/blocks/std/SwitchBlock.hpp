@@ -168,19 +168,87 @@ namespace ls {
 
         }
 
-        template<typename TType, std::SwitchBlockParameter TPar>
-        class BlockTraits<std::SwitchBlock<TType, TPar>> {
+        template<typename TType>
+        class BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>> {
         public:
             static constexpr const BlockType blockType = BlockType::SwitchBlock;
-            static constexpr const bool directFeedthrough = true;
+            enum {
+                directFeedthrough = true
+            };
 
-            using type = std::SwitchBlock<TType, TPar>;
+            using type = std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>;
             using Base = typename type::Base;
 
-            static const constexpr int kIns = type::Base::kIns;
-            static const constexpr int kOuts = type::Base::kOuts;
-            static const constexpr int kPars = type::Base::kPars;
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
         };
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::kIns> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::inTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::kOuts> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::outTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::kPars> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::parTypes =
+                {};
+
+        template<typename TType>
+        const ::std::array<::std::string, 2> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>>::templateTypes =
+                {demangle(typeid(TType).name()), demangle(typeid(std::SwitchBlockParameter::AdditionalInput).name())};
+
+        template<typename TType>
+        class BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>> {
+        public:
+            static constexpr const BlockType blockType = BlockType::SwitchBlock;
+            enum {
+                directFeedthrough = true
+            };
+
+            using type = std::SwitchBlock<TType, std::SwitchBlockParameter::AdditionalInput>;
+            using Base = typename type::Base;
+
+            enum {
+                kIns = Base::kIns,
+                kOuts = Base::kOuts,
+                kPars = Base::kPars
+            };
+
+            static const ::std::array<::std::string, kIns> inTypes;
+            static const ::std::array<::std::string, kOuts> outTypes;
+            static const ::std::array<::std::string, kPars> parTypes;
+
+            static const ::std::array<::std::string, 2> templateTypes;
+        };
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::kIns> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::inTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::kOuts> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::outTypes =
+                {demangle(typeid(TType).name())};
+
+        template<typename TType>
+        const ::std::array<::std::string, BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::kPars> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::parTypes =
+                {"bool"};
+
+        template<typename TType>
+        const ::std::array<::std::string, 2> BlockTraits<std::SwitchBlock<TType, std::SwitchBlockParameter::Parametric>>::templateTypes =
+                {demangle(typeid(TType).name()), demangle(typeid(std::SwitchBlockParameter::Parametric).name())};
+
+
     }
 }
 

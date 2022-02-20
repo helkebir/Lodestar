@@ -27,10 +27,17 @@ namespace ls {
             UnknownBlock,
             /// Generic block (for debug purposes).
             GenericBlock,
+            /// Custom block (user-defined blocks).
+            CustomBlock,
+            /* Standard blocks */
+            /// Buffer block.
+            BufferBlock,
             /// Constant block.
             ConstantBlock,
             /// Converter block.
             ConverterBlock,
+            /// Dead zone block.
+            DeadzoneBlock,
             /// Demultiplexer block.
             DemuxBlock,
             /// Discrete state-space block.
@@ -59,6 +66,8 @@ namespace ls {
             SwitchBlock,
             /// Unary absolute value block.
             UnaryAbsBlock,
+            /// Unary mean value block.
+            UnaryMeanBlock,
         };
 
         static
