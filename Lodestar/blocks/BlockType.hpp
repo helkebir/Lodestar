@@ -60,6 +60,8 @@ namespace ls {
             SaturationBlock,
             /// Signum block.
             SignumBlock,
+            /// Simple PID controller block.
+            SimplePIDBlock,
             /// Summation block.
             SumBlock,
             /// Switch (manual) block.
@@ -77,19 +79,27 @@ namespace ls {
                 default:
                     return "UnknownBlock";
                 ADD_BLOCKTYPE_CASE(GenericBlock);
+                ADD_BLOCKTYPE_CASE(CustomBlock);
+                ADD_BLOCKTYPE_CASE(BufferBlock);
                 ADD_BLOCKTYPE_CASE(ConstantBlock);
                 ADD_BLOCKTYPE_CASE(ConverterBlock);
+                ADD_BLOCKTYPE_CASE(DeadzoneBlock);
                 ADD_BLOCKTYPE_CASE(DemuxBlock);
                 ADD_BLOCKTYPE_CASE(DiscreteStateSpaceBlock);
                 ADD_BLOCKTYPE_CASE(FunctionBlock);
                 ADD_BLOCKTYPE_CASE(GainBlock);
+                ADD_BLOCKTYPE_CASE(MinMaxBlock);
+                ADD_BLOCKTYPE_CASE(MinMaxIdxBlock);
                 ADD_BLOCKTYPE_CASE(MuxBlock);
+                ADD_BLOCKTYPE_CASE(ProtoMsgOutBlock);
                 ADD_BLOCKTYPE_CASE(ReImToComplexBlock);
                 ADD_BLOCKTYPE_CASE(SaturationBlock);
                 ADD_BLOCKTYPE_CASE(SignumBlock);
+                ADD_BLOCKTYPE_CASE(SimplePIDBlock);
                 ADD_BLOCKTYPE_CASE(SumBlock);
                 ADD_BLOCKTYPE_CASE(SwitchBlock);
-                ADD_BLOCKTYPE_CASE(ProtoMsgOutBlock);
+                ADD_BLOCKTYPE_CASE(UnaryAbsBlock);
+                ADD_BLOCKTYPE_CASE(UnaryMeanBlock);
             }
 
             return "UnknownBlock";
