@@ -38,14 +38,20 @@ namespace ls {
             ConverterBlock,
             /// Dead zone block.
             DeadzoneBlock,
+            /// Delay block.
+            DelayBlock,
             /// Demultiplexer block.
             DemuxBlock,
+            /// Differentiator block.
+            DifferentiatorBlock,
             /// Discrete state-space block.
             DiscreteStateSpaceBlock,
             /// Function block.
             FunctionBlock,
             /// Gain block.
             GainBlock,
+            /// Integrator block.
+            IntegratorBlock,
             /// Min/max block.
             MinMaxBlock,
             /// Min/max index block.
@@ -84,10 +90,13 @@ namespace ls {
                 ADD_BLOCKTYPE_CASE(ConstantBlock);
                 ADD_BLOCKTYPE_CASE(ConverterBlock);
                 ADD_BLOCKTYPE_CASE(DeadzoneBlock);
+                ADD_BLOCKTYPE_CASE(DelayBlock);
                 ADD_BLOCKTYPE_CASE(DemuxBlock);
+                ADD_BLOCKTYPE_CASE(DifferentiatorBlock);
                 ADD_BLOCKTYPE_CASE(DiscreteStateSpaceBlock);
                 ADD_BLOCKTYPE_CASE(FunctionBlock);
                 ADD_BLOCKTYPE_CASE(GainBlock);
+                ADD_BLOCKTYPE_CASE(IntegratorBlock);
                 ADD_BLOCKTYPE_CASE(MinMaxBlock);
                 ADD_BLOCKTYPE_CASE(MinMaxIdxBlock);
                 ADD_BLOCKTYPE_CASE(MuxBlock);
