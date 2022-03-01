@@ -67,7 +67,7 @@ namespace ls {
         public:
             static constexpr const BlockType blockType = BlockType::DelayBlock;
             enum {
-                directFeedthrough = (NDelay > 0)
+                directFeedthrough = (NDelay < 1)
             };
 
             using type = std::DelayBlock<TInput, NDelay>;

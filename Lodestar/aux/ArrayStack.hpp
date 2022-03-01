@@ -284,6 +284,11 @@ namespace ls {
                 return array_.begin() + size_;
             }
 
+            const arrayType &array() const noexcept
+            {
+                return array_;
+            }
+
         protected:
             arrayType array_;
             size_t size_;

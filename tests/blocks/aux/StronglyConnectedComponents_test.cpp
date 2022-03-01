@@ -173,7 +173,7 @@ TEST_CASE("StronglyConnectedComponents applied 2", "[blocks][aux]")
 
     REQUIRE(internalIO.size() == 4);
 
-    for (const auto &input : internalIO) {
+    for (const auto &input: internalIO) {
         if (input.src->id == blkSum.id)
             REQUIRE(((input.dst->id == blkSum2.id) && (input.dstSlot == 0)));
         if (input.src->id == blkSum2.id)
@@ -259,7 +259,7 @@ TEST_CASE("StronglyConnectedComponents applied 3", "[blocks][aux]")
 
     REQUIRE(internalIO.size() == 5);
 
-    for (const auto &input : internalIO) {
+    for (const auto &input: internalIO) {
         if (input.src->id == blkSum.id)
             REQUIRE(((input.dst->id == blkSum2.id) && (input.dstSlot == 0)));
         if (input.src->id == blkSum2.id)
@@ -269,7 +269,8 @@ TEST_CASE("StronglyConnectedComponents applied 3", "[blocks][aux]")
                 REQUIRE(input.dstSlot == 1);
             else if (input.dst->id == blkGain2.id)
                 REQUIRE(input.dstSlot == 0);
-        } if (input.src->id == blkGain2.id)
+        }
+        if (input.src->id == blkGain2.id)
             REQUIRE(((input.dst->id == blkSum.id) && (input.dstSlot == 2)));
     }
 
@@ -342,13 +343,13 @@ TEST_CASE("StronglyConnectedComponents symbolic", "[blocks][aux]")
     ::std::cout << "blkGain2: " << blkGain2.id << ::std::endl;
     ::std::cout << "--------------------------------" << ::std::endl;
 
-    for (auto iSymb : *bp.inputSymbols[2]) {
+    for (auto iSymb: *bp.inputSymbols[2]) {
         ::std::cout << iSymb << ::std::endl;
     }
 
     ::std::cout << "------------" << ::std::endl;
 
-    for (auto iSymb : blkSum.inputSymbols()) {
+    for (auto iSymb: blkSum.inputSymbols()) {
         ::std::cout << iSymb << ::std::endl;
     }
 
@@ -400,7 +401,7 @@ TEST_CASE("StronglyConnectedComponents symbolic", "[blocks][aux]")
 
     REQUIRE(internalIO.size() == 5);
 
-    for (const auto &input : internalIO) {
+    for (const auto &input: internalIO) {
         if (input.src->id == blkSum.id)
             REQUIRE(((input.dst->id == blkSum2.id) && (input.dstSlot == 0)));
         if (input.src->id == blkSum2.id)
@@ -410,7 +411,8 @@ TEST_CASE("StronglyConnectedComponents symbolic", "[blocks][aux]")
                 REQUIRE(input.dstSlot == 1);
             else if (input.dst->id == blkGain2.id)
                 REQUIRE(input.dstSlot == 0);
-        } if (input.src->id == blkGain2.id)
+        }
+        if (input.src->id == blkGain2.id)
             REQUIRE(((input.dst->id == blkSum.id) && (input.dstSlot == 2)));
     }
 
@@ -429,6 +431,105 @@ TEST_CASE("StronglyConnectedComponents symbolic", "[blocks][aux]")
 
     //    REQUIRE(components.intersects(0, 1));
     //    REQUIRE(components.isSubset(0, 1));
+}
+
+#include <Lodestar/blocks/std/ConstantBlock.hpp>
+#include <Lodestar/blocks/std/SumBlock.hpp>
+#include <Lodestar/blocks/std/GainBlock.hpp>
+#include <Lodestar/blocks/std/SaturationBlock.hpp>
+#include <Lodestar/blocks/std/DelayBlock.hpp>
+
+using namespace ls::blocks::std;
+
+#include <Lodestar/blocks/aux/Executor.hpp>
+
+TEST_CASE("StronglyConnectComponents fuzzy PID", "[blocks][aux]")
+{
+    using TScalar = float;
+    using TType = float;
+    using TMatrix = float;
+
+    TScalar T = 1e-4;
+
+    ConstantBlock<TScalar> constBlk{0};
+    GainBlock<TType, TMatrix> gainK, gainKp, gainKd, gainKi, gainKuPD, gainKuI;
+    GainBlock<TType, TScalar> gainTinv1{1.f / T}, gainTinv2{1.f / T};
+    DelayBlock<TType> delay1, delay2, delay3, delay4, delay5, process;
+    SumBlock<TType, 2> sum1, sum2, sum3, sum4, sum5, sum6, sum7, fuzzyPDSum;
+
+    sum1.setOperators(decltype(sum1)::Plus, decltype(sum1)::Minus);
+    sum2.setOperators(decltype(sum2)::Plus, decltype(sum2)::Minus);
+    sum5.setOperators(decltype(sum5)::Plus, decltype(sum5)::Minus);
+
+    auto &sp = sum1.i<0>();
+    auto &e = sum1.o<0>();
+    auto &d = gainTinv2.o<0>();
+    auto &r = gainTinv1.o<0>();
+    auto &duPD = fuzzyPDSum.o<0>();
+    auto &duI = sum4.o<0>();
+    auto &uPD = sum5.o<0>();
+    auto &uI = sum6.o<0>();
+    auto &uPID = sum7.o<0>();
+
+    connect(e, delay1.i<0>());
+    connect(delay1.o<0>(), gainKi.i<0>());
+    connect(gainKi.o<0>(), sum4.i<0>());
+
+    connect(e, delay2.i<0>());
+    connect(delay2.o<0>(), sum3.i<0>());
+    connect(e, sum3.i<1>());
+    connect(sum3.o<0>(), gainTinv2.i<0>());
+    connect(d, gainKp.i<0>());
+
+    connect(e, sum2.i<0>());
+    connect(e, delay3.i<0>());
+    connect(delay3.o<0>(), sum2.i<1>());
+    connect(sum2.o<0>(), gainTinv1.i<0>());
+
+    connect(r, gainK.i<0>());
+    connect(r, gainKd.i<0>());
+    connect(gainK.o<0>(), sum4.i<1>());
+
+    connect(gainKp.o<0>(), fuzzyPDSum.i<0>());
+    connect(gainKd.o<0>(), fuzzyPDSum.i<1>());
+    connect(duPD, gainKuPD.i<0>());
+    connect(gainKuPD.o<0>(), sum5.i<0>());
+    connect(uPD, delay4.i<0>());
+    connect(delay4.o<0>(), sum5.i<1>());
+
+    connect(sum4.o<0>(), gainKuI.i<0>());
+    connect(gainKuI.o<0>(), sum6.i<0>());
+    connect(uI, delay5.i<0>());
+    connect(delay5.o<0>(), sum6.i<1>());
+
+    connect(uPD, sum7.i<0>());
+    connect(uI, sum7.i<1>());
+
+    connect(constBlk.o<0>(), sp);
+    connect(uPID, process.i<0>());
+    connect(process.o<0>(), sum1.i<1>());
+
+    gainKp.gain() = 10;
+    gainKi.gain() = 0.2;
+    gainKd.gain() = 0.1;
+    gainKd.gain() *= 0.1;
+
+    gainK.gain() = 1;
+    gainKuPD.gain() = 1;
+    gainKuI.gain() = 1;
+
+    ls::blocks::BlockPack bp{gainK, gainKp, gainKd, gainKi, gainKuPD, gainKuI, gainTinv1, gainTinv2, delay1,
+                             delay2, delay3, delay4, delay5, sum1, sum2, sum3, sum4, sum5, sum6, sum7, fuzzyPDSum, process, constBlk};
+
+    bp.makeGraph();
+    ls::blocks::aux::Executor ex(bp);
+    ex.resolveExecutionOrder();
+
+    ::std::stringstream ss;
+    ex.makeDotFile(ss, true, false);
+
+    ::std::cout << "HERE\n";
+    ::std::cout << ss.str() << ::std::endl;
 }
 
 #endif

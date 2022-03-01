@@ -23,27 +23,31 @@ namespace ls {
             static const size_t kOrder = 1;
 
             template<size_t TSamples>
-            static typename std::enable_if<(TSamples > kOrder) && (TSamples <= 7), TType>::type
+            static typename std::enable_if<(TSamples > kOrder), TType>::type
             compute(TScalarType h, const std::array<TType, TSamples> &a)
             {
                 return computeImpl(h, a);
             }
 
             template<size_t TSamples>
-            static typename std::enable_if<(TSamples > kOrder) && (TSamples <= 7), TType>::type
+            static typename std::enable_if<(TSamples > kOrder), TType>::type
             compute(TScalarType h, const std::array<TType, TSamples> &a, const size_t size)
             {
+
                 switch (size) {
+                    case 0:
+                    case 1:
+                        return {};
                     case 2:
-                        return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
+                        return BackwardDifference<TType, 2, 1>::compute(a[1], a[0], h);
                     case 3:
-                        return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
+                        return BackwardDifference<TType, 3, 1>::compute(a[2], a[1], a[0], h);
                     case 4:
-                        return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
+                        return BackwardDifference<TType, 4, 1>::compute(a[3], a[2], a[1], a[0], h);
                     case 5:
-                        return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
+                        return BackwardDifference<TType, 5, 1>::compute(a[4], a[3], a[2], a[1], a[0], h);
                     case 6:
-                        return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
+                        return BackwardDifference<TType, 6, 1>::compute(a[5], a[4], a[3], a[2], a[1], a[0], h);
                 }
 
                 return computeImpl(h, a);
@@ -100,7 +104,9 @@ namespace ls {
                 return BackwardDifference<TType, 6, 1>::compute(a[5], a[4], a[3], a[2], a[1], a[0], h);
             }
 
-            static inline TType computeImpl(TScalarType h, const std::array<TType, 7> &a)
+            template<size_t TSamples>
+            static typename std::enable_if<(TSamples > kOrder) && (TSamples >= 7), TType>::type
+            computeImpl(TScalarType h, const std::array<TType, TSamples> &a)
             {
                 return BackwardDifference<TType, 7, 1>::compute(a[6], a[5], a[4], a[3], a[2], a[1], a[0], h);
             }

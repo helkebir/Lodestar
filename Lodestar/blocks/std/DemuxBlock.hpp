@@ -414,7 +414,7 @@ namespace ls {
             static const ::std::array<::std::string, kOuts> outTypes;
             static const ::std::array<::std::string, kPars> parTypes;
 
-//            static const ::std::array<::std::string, 3> templateTypes;
+            static const ::std::array<::std::string, 2> templateTypes;
         };
 
         template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
@@ -423,7 +423,7 @@ namespace ls {
 
         template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
         const ::std::array<::std::string, BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kOuts> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::outTypes =
-            ls::aux::TemplateTools::create_array<BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kIns>(
+            ls::aux::TemplateTools::create_array<BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kOuts>(
                     demangle(typeid(TScalar).name())
             );
 
@@ -431,9 +431,9 @@ namespace ls {
         const ::std::array<::std::string, BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::kPars> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::parTypes =
                 {demangle(typeid(TOps).name())};
 
-//        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
-//        const ::std::array<::std::string, 3> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::templateTypes =
-//                {demangle(typeid(TOps).name()), demangle(typeid(TOps).name())};
+        template<typename TScalar, int TRows, int TCols, std::DemuxBlockOperator TOps>
+        const ::std::array<::std::string, 2> BlockTraits<std::DemuxBlock<Eigen::Matrix<TScalar, TRows, TCols>, TOps>>::templateTypes =
+                {demangle(typeid(Eigen::Matrix<TScalar, TRows, TCols>).name()), demangle(typeid(TOps).name())};
     }
 }
 

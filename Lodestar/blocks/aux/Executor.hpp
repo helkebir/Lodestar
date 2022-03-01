@@ -38,7 +38,7 @@ namespace ls {
                     executionOrder = blockPack.blocks;
                     components = StronglyConnectedComponents::findComponents(blockPack.graph);
 
-                    ::std::sort(executionOrder.begin(),
+                    ::std::stable_sort(executionOrder.begin(),
                                 executionOrder.end(),
                                 [&](
                                         BlockProto *a,

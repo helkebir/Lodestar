@@ -48,11 +48,16 @@ namespace ls {
     typename ::std::conditional< \
     TOps == GainBlockOperator::Convolution, \
     TInput,                \
-    typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ::std::conditional< \
+    typename ::std::conditional< \
+        ::std::is_arithmetic<TGain>::value, \
+        TInput,            \
+        typename ls::aux::TemplateTraits::BinaryOperators::sanitizeTypeMultiplicable<typename ::std::conditional< \
         TOps != GainBlockOperator::Right,                                                                     \
         ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TGain, TInput>,                             \
         ls::aux::TemplateTraits::BinaryOperators::isMultiplicable<TInput, TGain>                              \
-        >::type::returnType>::returnType>::type
+        >::type::returnType>::returnType \
+        >::type                      \
+    >::type
 
             /**
              * @brief Multiplies input by a value (gain).
