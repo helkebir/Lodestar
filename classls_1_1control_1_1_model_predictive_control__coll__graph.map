@@ -1,0 +1,5 @@
+<map id="ls::control::ModelPredictiveControl&lt; THorizonLength, TScalar, TStateDim, TInputDim, TOutputDim &gt;" name="ls::control::ModelPredictiveControl&lt; THorizonLength, TScalar, TStateDim, TInputDim, TOutputDim &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="536,5,767,76"/>
+<area shape="rect" id="node2" href="$classls_1_1systems_1_1_state_space.html" title=" " alt="" coords="268,5,463,76"/>
+<area shape="rect" id="node3" href="$classls_1_1systems_1_1_system_stateless.html" title=" " alt="" coords="5,27,219,54"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="ls::blocks::std::ReImToComplexBlock&lt; Eigen::Matrix&lt; TScalar, TRows, TCols &gt;, typename ::std::enable_if&lt;(::std::is_same&lt; TScalar, float &gt;::value||::std::is_same&lt; TScalar, double &gt;::value||::std::is_same&lt; TScalar, long double &gt;::value)&gt;::type &gt;" name="ls::blocks::std::ReImToComplexBlock&lt; Eigen::Matrix&lt; TScalar, TRows, TCols &gt;, typename ::std::enable_if&lt;(::std::is_same&lt; TScalar, float &gt;::value||::std::is_same&lt; TScalar, double &gt;::value||::std::is_same&lt; TScalar, long double &gt;::value)&gt;::type &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="828,5,1091,135"/>
+<area shape="rect" id="node2" href="$classls_1_1blocks_1_1_block.html" title=" " alt="" coords="521,5,780,135"/>
+<area shape="rect" id="node3" href="$classls_1_1blocks_1_1_block_base.html" title=" " alt="" coords="215,5,473,135"/>
+<area shape="rect" id="node4" href="$classls_1_1blocks_1_1_block_proto.html" title=" " alt="" coords="5,57,167,83"/>
+</map>

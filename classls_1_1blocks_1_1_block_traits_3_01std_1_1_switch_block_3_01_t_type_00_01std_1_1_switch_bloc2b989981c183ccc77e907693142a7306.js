@@ -1,0 +1,9 @@
+var classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306 =
+[
+    [ "Base", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#a0b9af1d8d84c66f038db5807e3d759ff", null ],
+    [ "type", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#a062b00c7c4c30e1ca27d2bf6a2058408", null ],
+    [ "directFeedthrough", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#a70fb01fd5ec74667ae35620656363786ac0767b71e0da7be4e07b597248bc3167", null ],
+    [ "kIns", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#ae876c516e3aa48d3d29d5e67bb1f6bc3ad5e13104cb9d027e89bc8e2a1e6db2cd", null ],
+    [ "kOuts", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#ae876c516e3aa48d3d29d5e67bb1f6bc3a766ddef546f5d896d5ebd0272b0f1738", null ],
+    [ "kPars", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_switch_block_3_01_t_type_00_01std_1_1_switch_bloc2b989981c183ccc77e907693142a7306.html#ae876c516e3aa48d3d29d5e67bb1f6bc3a9a7a9f63c9f435d89005d0fc5f347568", null ]
+];

@@ -1,0 +1,6 @@
+<map id="ls::blocks::std::GainBlock&lt; TInput, TGain, TOps, TConv &gt;" name="ls::blocks::std::GainBlock&lt; TInput, TGain, TOps, TConv &gt;">
+<area shape="rect" id="node1" title="Multiplies input by a value (gain)." alt="" coords="759,27,987,69"/>
+<area shape="rect" id="node2" href="$classls_1_1blocks_1_1_block.html" title=" " alt="" coords="507,5,711,91"/>
+<area shape="rect" id="node3" href="$classls_1_1blocks_1_1_block_base.html" title=" " alt="" coords="215,5,459,91"/>
+<area shape="rect" id="node4" href="$classls_1_1blocks_1_1_block_proto.html" title=" " alt="" coords="5,35,167,61"/>
+</map>

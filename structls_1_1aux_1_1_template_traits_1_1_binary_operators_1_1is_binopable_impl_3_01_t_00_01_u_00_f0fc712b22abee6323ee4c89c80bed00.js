@@ -1,0 +1,4 @@
+var structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1is_binopable_impl_3_01_t_00_01_u_00_f0fc712b22abee6323ee4c89c80bed00 =
+[
+    [ "returnType", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1is_binopable_impl_3_01_t_00_01_u_00_f0fc712b22abee6323ee4c89c80bed00.html#ad3e8fbd5aadb3591c266ef6d467ef46b", null ]
+];

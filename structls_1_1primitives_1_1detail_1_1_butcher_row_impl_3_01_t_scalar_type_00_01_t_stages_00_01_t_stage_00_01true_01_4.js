@@ -1,0 +1,4 @@
+var structls_1_1primitives_1_1detail_1_1_butcher_row_impl_3_01_t_scalar_type_00_01_t_stages_00_01_t_stage_00_01true_01_4 =
+[
+    [ "weights", "structls_1_1primitives_1_1detail_1_1_butcher_row_impl_3_01_t_scalar_type_00_01_t_stages_00_01_t_stage_00_01true_01_4.html#a6ca813ce0338dcef3bd64e0f26dfba89", null ]
+];

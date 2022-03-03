@@ -1,0 +1,9 @@
+var classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6 =
+[
+    [ "Base", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#a9d3d05791f84dd0e51f3a3fe1d268ebe", null ],
+    [ "type", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#abd99960d87e7874283b7d30e11ca7d3b", null ],
+    [ "directFeedthrough", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#a9dbb2e21b9461c7aa0c9d988e047f654a8e55af2f833890cebb97980e51862959", null ],
+    [ "kIns", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#a04ed10b60d1a17fd407e1b201bfe4b10a8914a14e8b7c1fc2a9e278ea2da7fda4", null ],
+    [ "kOuts", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#a04ed10b60d1a17fd407e1b201bfe4b10a03aa41968a23edf7f9cf61dec01f3cec", null ],
+    [ "kPars", "classls_1_1blocks_1_1_block_traits_3_01std_1_1_simple_p_i_d_block_3_01_t_type_00_01std_1_1_simplb387ba7b05f17ca970cdd48bcad4a7a6.html#a04ed10b60d1a17fd407e1b201bfe4b10aa627037f723df04d03a3cfa36faa6995", null ]
+];

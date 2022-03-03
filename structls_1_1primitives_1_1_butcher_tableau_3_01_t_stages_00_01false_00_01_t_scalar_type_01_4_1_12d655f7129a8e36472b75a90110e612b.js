@@ -1,0 +1,4 @@
+var structls_1_1primitives_1_1_butcher_tableau_3_01_t_stages_00_01false_00_01_t_scalar_type_01_4_1_12d655f7129a8e36472b75a90110e612b =
+[
+    [ "type", "structls_1_1primitives_1_1_butcher_tableau_3_01_t_stages_00_01false_00_01_t_scalar_type_01_4_1_12d655f7129a8e36472b75a90110e612b.html#aa49b0515023b96d105a08cb54fbe1848", null ]
+];

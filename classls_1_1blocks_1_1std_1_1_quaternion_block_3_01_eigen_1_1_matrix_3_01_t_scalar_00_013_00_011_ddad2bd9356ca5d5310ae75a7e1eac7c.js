@@ -1,0 +1,14 @@
+var classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c =
+[
+    [ "Base", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#aa124dda07132e41d1f92c890c5f31bf8", null ],
+    [ "Quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a7ce4c4a4c047dca887bc660e35fdaffd", null ],
+    [ "type", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a7fab2d7700ce3c82f2a1b5702827d737", null ],
+    [ "QuaternionBlock", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a40c3ee3990e68cf549d3d39967ab6746", null ],
+    [ "QuaternionBlock", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a286c40aaae25ab7cc353e526e524aed8", null ],
+    [ "bindEquation", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#adf53aa9a44e621d8f5b13e999cbe7f56", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#aef213935bde7c1402ee873a2d75d2651", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a0cec943c9c78166179f2dc4a94e26146", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a0c81f94886a7f3baeb8814c59fe8cb46", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#affff2f4619000e2761ad74d8f49d28d5", null ],
+    [ "triggerFunction", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_ddad2bd9356ca5d5310ae75a7e1eac7c.html#a64516cb0be53fe1791cc2efcfa0fb427", null ]
+];

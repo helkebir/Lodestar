@@ -1,0 +1,5 @@
+var structls_1_1primitives_1_1detail_1_1_butcher_row_impl_3_01_t_scalar_type_00_01_t_stages_00_01_t_stage_00_01false_01_4 =
+[
+    [ "node", "structls_1_1primitives_1_1detail_1_1_butcher_row_impl_3_01_t_scalar_type_00_01_t_stages_00_01_t_stage_00_01false_01_4.html#a9a43da03d0f0fc3d463a9c4facd576e3", null ],
+    [ "rkCoefficients", "structls_1_1primitives_1_1detail_1_1_butcher_row_impl_3_01_t_scalar_type_00_01_t_stages_00_01_t_stage_00_01false_01_4.html#a7f9ac107e9e34d9a04fa0d8acc708a56", null ]
+];

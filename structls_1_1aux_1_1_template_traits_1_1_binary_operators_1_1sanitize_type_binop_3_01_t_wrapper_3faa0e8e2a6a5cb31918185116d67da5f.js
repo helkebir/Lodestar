@@ -1,0 +1,8 @@
+var structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f =
+[
+    [ "condition1", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f.html#a753509ff95eb26c6e5b4a0c1e3a31007", null ],
+    [ "condition2", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f.html#a4ad0555357d682cfbe6b3e707fe79de9", null ],
+    [ "input", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f.html#adbf88384bbd3df4d61ce391832595b2e", null ],
+    [ "returnType", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f.html#a243b61037873448176bfda7f25a8e236", null ],
+    [ "sanitized", "structls_1_1aux_1_1_template_traits_1_1_binary_operators_1_1sanitize_type_binop_3_01_t_wrapper_3faa0e8e2a6a5cb31918185116d67da5f.html#a15b97b4da0c5648aa76ddff799daca72", null ]
+];

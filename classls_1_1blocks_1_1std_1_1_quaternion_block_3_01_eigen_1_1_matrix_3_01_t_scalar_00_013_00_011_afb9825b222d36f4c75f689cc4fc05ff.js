@@ -1,0 +1,13 @@
+var classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff =
+[
+    [ "Base", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#a706bc374fe7e625b63f4f2dc17748ed5", null ],
+    [ "Quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#a3789c432a1ba065a04f20fcf8798f23f", null ],
+    [ "type", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#ab3c53a23e10a1a96c3c3f06cf0f0a7ea", null ],
+    [ "QuaternionBlock", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#acd76b3af74581f2eac42afb402381fd8", null ],
+    [ "QuaternionBlock", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#aaa6c51ab17670e6e6a2c0fb3fdaa0e27", null ],
+    [ "bindEquation", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#a9edfeea20d4cedfc220dac0ddb147b12", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#aa29c2da798ee2f2299927435055ef317", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#a61d31f3b17b30c4ab65a5a34711bfde5", null ],
+    [ "quaternion", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#aa4140f4a59c043dae4e4afb623a6e1ca", null ],
+    [ "triggerFunction", "classls_1_1blocks_1_1std_1_1_quaternion_block_3_01_eigen_1_1_matrix_3_01_t_scalar_00_013_00_011_afb9825b222d36f4c75f689cc4fc05ff.html#af324b1afb066e7204e2418582c1157c0", null ]
+];
