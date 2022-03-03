@@ -29,5 +29,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: docs-cpp
-          publish_dir: ./out/html
+          publish_dir: ./doc/out/html
           cname: docs.ldstr.dev
