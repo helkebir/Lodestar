@@ -16,14 +16,28 @@
 
 #include <Lodestar/aux/AlwaysFalse.hpp>
 #include <Eigen/Dense>
+#include <libhydrogen/hydrogen.h>
 
 namespace ls {
     namespace io {
+        template<typename T>
+        static void toCharBuffer(void *a, const T &n)
+        {
+            memcpy(a, &n, sizeof(T));
+        }
+
+        template<typename T>
+        static void fromCharBuffer(const void *a, T &n)
+        {
+            memcpy(&n, a, sizeof(T));
+        }
+
         struct MsgInfo {
             int id = -1;
             int slot = 0;
             unsigned long publicKey = 0;
             bool encrypted = false;
+            ::std::uint8_t sign[64];
             ls_proto_Type type = ls_proto_Type_unknown_t;
         };
 
@@ -435,8 +449,9 @@ namespace ls {
                 int j;
             };
 
-            static auto makeDecodingMessage(Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, NanopbArg &nArg, MatrixCounter &MC,
-                                            const ls_proto_MatrixHerald &mHerald) -> typename NanopbWrapper<TScalar>::arrayType
+            static auto
+            makeDecodingMessage(Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, NanopbArg &nArg, MatrixCounter &MC,
+                                const ls_proto_MatrixHerald &mHerald) -> typename NanopbWrapper<TScalar>::arrayType
             {
                 typename NanopbWrapper<TScalar>::arrayType array;
                 array.size = NRows * NCols;
@@ -607,7 +622,8 @@ namespace ls {
                 return array;
             }
 
-            static bool encode(const Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, const MsgInfo &info, pb_ostream_t &stream)
+            static bool
+            encode(const Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, const MsgInfo &info, pb_ostream_t &stream)
             {
                 static auto herald = makeHerald();
                 static auto subHerald = makeSubHerald();
@@ -623,9 +639,14 @@ namespace ls {
 
                 msgArg->dataConst = &M;
 
-                return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
-                       pb_encode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHerald) &&
-                       pb_encode_delimited(&stream, ls_proto_ArrayDouble_fields, &msg);
+                if (::std::is_same<TScalar, double>::value)
+                    return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
+                           pb_encode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHerald) &&
+                           pb_encode_delimited(&stream, ls_proto_ArrayDouble_fields, &msg);
+                if (::std::is_same<TScalar, float>::value)
+                    return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
+                           pb_encode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHerald) &&
+                           pb_encode_delimited(&stream, ls_proto_ArrayFloat_fields, &msg);
             }
 
             static bool decode(Eigen::Matrix<TScalar, NRows, NCols, NOptions> &M, MsgInfo &info, pb_istream_t &stream)
@@ -645,9 +666,14 @@ namespace ls {
                     info.encrypted = true;
                 }
 
-                return heraldRes &&
-                       pb_decode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHeraldRecv) &&
-                       pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
+                if (::std::is_same<TScalar, double>::value)
+                    return heraldRes &&
+                           pb_decode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHeraldRecv) &&
+                           pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
+                if (::std::is_same<TScalar, float>::value)
+                    return heraldRes &&
+                           pb_decode_delimited(&stream, ls_proto_MatrixHerald_fields, &subHeraldRecv) &&
+                           pb_decode_delimited(&stream, ls_proto_ArrayFloat_fields, &msgRecv);
             }
 
             enum {
@@ -750,6 +776,56 @@ namespace ls {
                 return array;
             }
 
+            static ls_proto_ArrayBytes
+            makeEncryptedEncodingMessage(const Eigen::Vector<TScalar, NRows> &v, NanopbArg &nArg,
+                                         const ls_proto_VectorHerald &mHerald, const ls_proto_Herald &herald)
+            {
+                hydro_init();
+                ls_proto_ArrayBytes array;
+
+                ::std::uint8_t sk[hydro_secretbox_KEYBYTES] = {0};
+
+                toCharBuffer(sk, herald.sign.sign0);
+                toCharBuffer(sk + 8, herald.sign.sign1);
+                toCharBuffer(sk + 16, herald.sign.sign2);
+                toCharBuffer(sk + 24, herald.sign.sign3);
+
+                nArg.dataConst = &v;
+                static ::std::function<bool(pb_ostream_t *, const pb_field_t *, void *const *)> fEncode;
+
+                array = ls_proto_ArrayBytes_init_default;
+                fEncode = decltype(fEncode){
+                        [=](pb_ostream_t *stream, const pb_field_t *field, void *const *arg) -> bool {
+                            auto mArg = (NanopbArg *) *arg;
+                            auto v = (const Eigen::Vector<TScalar, NRows> *) mArg->dataConst;
+                            double value;
+                            ::std::uint8_t cipher[NRows * sizeof(TScalar) + hydro_secretbox_HEADERBYTES] = {0};
+                            ::std::uint8_t buffer[NRows * sizeof(TScalar)] = {0};
+
+                            for (size_t i = 0; i < NRows; i++)
+                                toCharBuffer(buffer + i * sizeof(TScalar), (*v)[i]);
+
+                            if (!pb_encode_tag_for_field(stream, field))
+                                return false;
+
+                            hydro_secretbox_encrypt(cipher, buffer, sizeof(buffer), 0, "Lodestar", sk);
+
+                            if (!pb_encode_string(stream, cipher,
+                                                  sizeof(cipher)))
+                                return false;
+
+                            return true;
+                        }};
+
+                nArg.fEncode = &fEncode;
+
+                array.values.funcs.encode = &encode_nanopb;
+                array.values.arg = (void *) &nArg;
+                array.size = NRows * sizeof(TScalar) + hydro_secretbox_HEADERBYTES;
+
+                return array;
+            }
+
             struct VectorCounter {
                 void *v;
                 int i;
@@ -818,25 +894,114 @@ namespace ls {
                 return array;
             }
 
+            static ls_proto_ArrayBytes
+            makeEncryptedDecodingMessage(Eigen::Vector<TScalar, NRows> &v, NanopbArg &nArg, VectorCounter &vC,
+                                         const ls_proto_VectorHerald &vHerald, const ls_proto_Herald &herald)
+            {
+                ls_proto_ArrayBytes array;
+                array.size = NRows;
+
+                ::std::uint8_t sk[hydro_secretbox_KEYBYTES] = {0};
+
+                toCharBuffer(sk, herald.sign.sign0);
+                toCharBuffer(sk + 8, herald.sign.sign1);
+                toCharBuffer(sk + 16, herald.sign.sign2);
+                toCharBuffer(sk + 24, herald.sign.sign3);
+
+
+//                auto vC = new VectorCounter{};
+//                vC->v = &v;
+//                vC->i = 0;
+
+                vC.v = &v;
+                vC.i = 0;
+
+                nArg.data = &vC;
+                static ::std::function<bool(pb_istream_t *, const pb_field_t *, void **)> fDecode;
+
+                array = ls_proto_ArrayBytes_init_default;
+
+                fDecode = decltype(fDecode){[=](pb_istream_t *stream, const pb_field_t *field, void **arg) -> bool {
+                    ::std::uint8_t buffer[NRows * sizeof(TScalar) + hydro_secretbox_HEADERBYTES] = {0};
+                    ::std::uint8_t decrypted[NRows * sizeof(TScalar)] = {0};
+
+                    auto vC = (VectorCounter *) ((NanopbArg *) *arg)->data;
+                    auto v = (Eigen::Vector<TScalar, NRows> *) vC->v;
+                    double value = 0;
+
+                    if (stream->bytes_left > sizeof(buffer) || !pb_read(stream, buffer, sizeof(buffer)))
+                        return false;
+
+                    if (hydro_secretbox_decrypt(decrypted, buffer,
+                                                 NRows * sizeof(TScalar) + hydro_secretbox_HEADERBYTES, 0, "Lodestar",
+                                                 sk) != 0)
+                        return false;
+
+                    for (size_t i = 0; i < NRows; i++) {
+                        (*v)[vC->i] = reinterpret_cast<const TScalar *>(decrypted)[i];
+
+                        vC->i++;
+                        vC->i = vC->i % NRows;
+                    }
+
+                    return true;
+                }};
+
+                nArg.fDecode = &fDecode;
+
+                array.values.funcs.decode = &decode_nanopb;
+                array.values.arg = (void *) &nArg;
+
+                return array;
+            }
+
             static bool encode(const Eigen::Vector<TScalar, NRows> &v, const MsgInfo &info, pb_ostream_t &stream)
             {
                 static auto herald = makeHerald();
                 static auto subHerald = makeSubHerald();
                 static auto msgArg = new ls::io::NanopbArg{};
-                static auto msg = makeEncodingMessage(v, *msgArg, subHerald);
+                msgArg->dataConst = &v;
 
                 herald.blockId = info.id;
                 herald.slotId = info.slot;
                 herald.msgType = info.type;
+
                 if (info.encrypted) {
+                    static auto msg = makeEncryptedEncodingMessage(v, *msgArg, subHerald, herald);
+
                     herald.has_sign = true;
+                    herald.sign.has_sign0 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign), herald.sign.sign0);
+                    herald.sign.has_sign1 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 1, herald.sign.sign1);
+                    herald.sign.has_sign2 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 2, herald.sign.sign2);
+                    herald.sign.has_sign3 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 3, herald.sign.sign3);
+                    herald.sign.has_sign4 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 4, herald.sign.sign4);
+                    herald.sign.has_sign5 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 5, herald.sign.sign5);
+                    herald.sign.has_sign6 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 6, herald.sign.sign6);
+                    herald.sign.has_sign7 = true;
+                    fromCharBuffer(reinterpret_cast<const ::std::uint64_t *>(info.sign) + 7, herald.sign.sign7);
+
+                    return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
+                           pb_encode_delimited(&stream, ls_proto_VectorHerald_fields, &subHerald) &&
+                           pb_encode_delimited(&stream, ls_proto_ArrayBytes_fields, &msg);
+                } else {
+                    static auto msg = makeEncodingMessage(v, *msgArg, subHerald);
+
+                    if (::std::is_same<TScalar, double>::value)
+                        return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
+                               pb_encode_delimited(&stream, ls_proto_VectorHerald_fields, &subHerald) &&
+                               pb_encode_delimited(&stream, ls_proto_ArrayDouble_fields, &msg);
+                    if (::std::is_same<TScalar, float>::value)
+                        return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
+                               pb_encode_delimited(&stream, ls_proto_VectorHerald_fields, &subHerald) &&
+                               pb_encode_delimited(&stream, ls_proto_ArrayFloat_fields, &msg);
                 }
-
-                msgArg->dataConst = &v;
-
-                return pb_encode_delimited(&stream, ls_proto_Herald_fields, &herald) &&
-                       pb_encode_delimited(&stream, ls_proto_VectorHerald_fields, &subHerald) &&
-                       pb_encode_delimited(&stream, ls_proto_ArrayDouble_fields, &msg);
             }
 
             static bool decode(Eigen::Vector<TScalar, NRows> &v, MsgInfo &info, pb_istream_t &stream)
@@ -845,7 +1010,6 @@ namespace ls {
                 static auto subHeraldRecv = makeSubHerald();
                 static auto msgArgRecv = new ls::io::NanopbArg{};
                 VectorCounter vc;
-                static auto msgRecv = makeDecodingMessage(v, *msgArgRecv, vc, subHeraldRecv);
 
                 auto heraldRes = pb_decode_delimited(&stream, ls_proto_Herald_fields, &heraldRecv);
 
@@ -854,11 +1018,32 @@ namespace ls {
                 info.type = heraldRecv.msgType;
                 if (heraldRecv.has_sign) {
                     info.encrypted = true;
-                }
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign), heraldRecv.sign.sign0);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 1, heraldRecv.sign.sign1);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 2, heraldRecv.sign.sign2);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 3, heraldRecv.sign.sign3);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 4, heraldRecv.sign.sign4);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 5, heraldRecv.sign.sign5);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 6, heraldRecv.sign.sign6);
+                    toCharBuffer(reinterpret_cast<::std::uint64_t *>(info.sign) + 7, heraldRecv.sign.sign7);
 
-                return heraldRes &&
-                       pb_decode_delimited(&stream, ls_proto_VectorHerald_fields, &subHeraldRecv) &&
-                       pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
+                    static auto msgRecv = makeEncryptedDecodingMessage(v, *msgArgRecv, vc, subHeraldRecv, heraldRecv);
+
+                    return heraldRes &&
+                           pb_decode_delimited(&stream, ls_proto_VectorHerald_fields, &subHeraldRecv) &&
+                           pb_decode_delimited(&stream, ls_proto_ArrayBytes_fields, &msgRecv);
+                } else {
+                    static auto msgRecv = makeDecodingMessage(v, *msgArgRecv, vc, subHeraldRecv);
+
+                    if (::std::is_same<TScalar, double>::value)
+                        return heraldRes &&
+                               pb_decode_delimited(&stream, ls_proto_VectorHerald_fields, &subHeraldRecv) &&
+                               pb_decode_delimited(&stream, ls_proto_ArrayDouble_fields, &msgRecv);
+                    if (::std::is_same<TScalar, float>::value)
+                        return heraldRes &&
+                               pb_decode_delimited(&stream, ls_proto_VectorHerald_fields, &subHeraldRecv) &&
+                               pb_decode_delimited(&stream, ls_proto_ArrayFloat_fields, &msgRecv);
+                }
             }
 
             enum {

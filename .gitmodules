@@ -4,3 +4,6 @@
 [submodule "dep/ersatz"]
 	path = dep/ersatz
 	url = https://github.com/helkebir/ersatz
+[submodule "dep/libhydrogen"]
+	path = dep/libhydrogen
+	url = https://github.com/jedisct1/libhydrogen

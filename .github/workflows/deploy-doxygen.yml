@@ -1,0 +1,43 @@
+name: Doxygen deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - name: Install doxygen
+        run: |
+          sudo apt-add-repository universe
+          sudo apt-get update
+          sudo apt-get install doxygen
+
+      - name: Build documentation
+        run: |
+          cd doc
+          doxygen Doxyfile
+
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check for linting errors
+        run: npm test
+
+      - name: Build production website
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: docs-cpp
+          publish_dir: ./out/html
+          cname: docs.ldstr.dev

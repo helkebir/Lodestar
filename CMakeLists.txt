@@ -33,7 +33,10 @@ file(GLOB_RECURSE ERSATZ_SOURCES "dep/ersatz/ersatz/*.cpp")
 file(GLOB_RECURSE NANOPB_BASE_HEADERS "dep/nanopb/*.h")
 file(GLOB_RECURSE NANOPB_BASE_SOURCES "dep/nanopb/*.c")
 
-add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS} ${ERSATZ_SOURCES} ${ERSATZ_HEADERS} ${NANOPB_BASE_SOURCES} ${NANOPB_BASE_HEADERS})
+set(HYDROGEN_HEADERS dep/libhydrogen/hydrogen.h)
+set(HYDROGEN_SOURCES dep/libhydrogen/hydrogen.c)
+
+add_library(Lodestar STATIC ${LODESTAR_SOURCES} ${LODESTAR_HEADERS} ${ERSATZ_SOURCES} ${ERSATZ_HEADERS} ${NANOPB_BASE_SOURCES} ${NANOPB_BASE_HEADERS} ${HYDROGEN_SOURCES} ${HYDROGEN_HEADERS})
 set_target_properties(Lodestar PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(Lodestar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Lodestar)
@@ -55,6 +58,7 @@ install(DIRECTORY dep/nanopb/ DESTINATION include/Lodestar)
 install(DIRECTORY dep/ersatz/ersatz/dep/fmt/ DESTINATION include/Lodestar/fmt)
 install(DIRECTORY dep/unsupported/ DESTINATION include/Lodestar/unsupported)
 install(DIRECTORY dep/CLI11/ DESTINATION include/Lodestar/CLI11)
+install(DIRECTORY dep/libhydrogen/ DESTINATION include/Lodestar/libhydrogen)
 install(FILES cmake/config/LodestarConfig.cmake DESTINATION lib/cmake/Lodestar)
 
 

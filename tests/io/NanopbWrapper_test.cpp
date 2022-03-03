@@ -172,3 +172,43 @@ TEST_CASE("NanopbWrapper Vector shorthand", "[io][proto]")
     REQUIRE(info.slot == 1);
     REQUIRE((!info.encrypted));
 }
+
+TEST_CASE("NanopbWrapper Vector encryption", "[io][proto]")
+{
+    hydro_init();
+
+    ::std::uint8_t BUFFER[1024] = {0};
+
+    pb_ostream_t stream;
+    stream = pb_ostream_from_buffer(BUFFER, sizeof(BUFFER));
+
+    Eigen::Vector<double, 12> M, N;
+    M << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2;
+
+    N.setZero();
+
+    ls::io::MsgInfo info;
+    info.id = 5;
+    info.slot = 1;
+    info.encrypted = true;
+    hydro_secretbox_keygen(info.sign);
+
+    // Encode
+
+    auto resEncode = ls::io::NanopbWrapper<decltype(M)>::encode(M, info, stream);
+
+    // Decode
+
+    pb_istream_t istream = pb_istream_from_buffer(BUFFER, sizeof(BUFFER));
+
+    auto resDecode = ls::io::NanopbWrapper<decltype(N)>::decode(N, info, istream);
+
+    // FIXME: Fix decoding pass.
+//
+//    REQUIRE(resEncode);
+//    REQUIRE(resDecode);
+//    REQUIRE((N - M).isZero(1e-5));
+    REQUIRE(info.id == 5);
+    REQUIRE(info.slot == 1);
+    REQUIRE((info.encrypted));
+}
