@@ -17,22 +17,12 @@ jobs:
         run: |
           sudo apt-add-repository universe
           sudo apt-get update
-          sudo apt-get install doxygen
+          sudo apt-get install doxygen graphviz
 
       - name: Build documentation
         run: |
           cd doc
           doxygen Doxyfile
-
-      
-      - name: Install dependencies
-        run: npm install
-
-      - name: Check for linting errors
-        run: npm test
-
-      - name: Build production website
-        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
