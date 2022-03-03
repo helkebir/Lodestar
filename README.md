@@ -143,7 +143,7 @@ int main()
 
 ## Help
 
-Documentation is still a work-in-progress; feel free to look around in the header files, and open an issue in the meantime!
+More information can be found on the [Lodestar website](https://ldstr.dev). If you need any more help, feel free to open an issue!
 
 ## Authors
 
